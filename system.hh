@@ -11,7 +11,7 @@ private:
 	std::vector<Event *>::iterator findEvent(Event *e);
 public:
 	System() : currentTick(0) {}
-	void schedule(Event *e, Tick t);
+	bool schedule(Event *e, Tick t);			//Returns 1 on succesfully scheduling, 0 on failure.
 	void reschedule(Event *e, Tick t);
 	void runSimulation(Tick endTick=-1);
 	Tick currTick() { return currentTick; }

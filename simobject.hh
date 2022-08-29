@@ -10,7 +10,7 @@ private:
 public:
 	SimObject(System * _sys) : sys(_sys) {}
 	Tick currTick() { return sys->currTick(); }
-	void schedule(Event *e, Tick t) { sys->schedule(e,t); }
+	bool schedule(Event *e, Tick t) { sys->schedule(e,t); }
 	void reschedule(Event *e, Tick t) { sys->reschedule(e,t); }
 	virtual void initialize() = 0;
 };

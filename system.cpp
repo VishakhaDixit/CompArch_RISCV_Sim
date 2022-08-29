@@ -14,19 +14,24 @@ System::findEvent(Event *e) {
 	return MEQ.end();
 }
 
-void
+bool
 System::schedule(Event *e, Tick t) {
-	assert(t>=currentTick);
+	assert(t >= currentTick);
 	std::cout << "Attempting to schedule " << e->description() << " at time " << t << std::endl;
 	if (!(e->isScheduled())) {
 		e->schedule(t);
 		for (auto it = MEQ.begin(); it != MEQ.end(); it++) {
 			if (e->time() < (*it)->time()) {
 				MEQ.insert(it, e);
-				return;
+				return true;
+			}
+			else if(e->time() == (*it)->time())
+			{
+				return false;
 			}
 		}
 		MEQ.push_back(e);
+		return 1;
 	} else {
 		std::cout << "ERROR: Event already scheduled. Cannot be rescheduled.\n";
 		assert(0);
