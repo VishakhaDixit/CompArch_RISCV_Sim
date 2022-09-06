@@ -8,18 +8,20 @@
 class Event {
 private:
 	Tick eventTime;
-	bool scheduled;
+	int eventValue;
 public:
-	Event() : eventTime(0), scheduled(false) { }
-	void schedule(Tick newTime) {
+	Event() : eventTime(0), eventValue(0) { }
+	void schedule(Tick newTime, int newVal) {
 		eventTime = newTime;
-		scheduled = true;
+		eventValue = newVal;
 	}
 	void deschedule() {
 		eventTime = -1;
-		scheduled = false;
+		eventValue = -1;
 	}
-	bool isScheduled() { return scheduled; }
+	void setValue(int v) { eventValue = v; }
+	void setTime(Tick t) { eventTime = t; }
+	int getValue() { return eventValue; }
 	Tick time() { return eventTime; }
 	virtual void process() = 0;
 	virtual const char* description() = 0;

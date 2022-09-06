@@ -15,36 +15,33 @@ System::findEvent(Event *e) {
 }
 
 bool
-System::schedule(Event *e, Tick t) {
+System::schedule(Event *e, Tick t, int v) {
 	assert(t >= currentTick);
-	std::cout << "Attempting to schedule " << e->description() << " at time " << t << std::endl;
-	if (!(e->isScheduled())) {
-		e->schedule(t);
-		for (auto it = MEQ.begin(); it != MEQ.end(); it++) {
-			if (e->time() < (*it)->time()) {
-				MEQ.insert(it, e);
-				return true;
-			}
-			else if(e->time() == (*it)->time())
-			{
-				return false;
-			}
+	
+	e->schedule(t,v);
+	for (auto it = MEQ.begin(); it != MEQ.end(); it++) {
+		if (e->time() < (*it)->time()) {
+			MEQ.insert(it, e);
+			std::cout << "Scheduled new " << e->description() << " time = " << t << ", " << "val = " << v <<  std::endl;
+			return true;
 		}
-		MEQ.push_back(e);
-		return 1;
-	} else {
-		std::cout << "ERROR: Event already scheduled. Cannot be rescheduled.\n";
-		assert(0);
+		else if(e->time() == (*it)->time())
+		{
+			return false;
+		}
 	}
+	MEQ.push_back(e);
+	std::cout << "Scheduled new " << e->description() << " time = " << t << ", " << "val = " << v <<  std::endl;
+	return true;
 }
 
 void
-System::reschedule(Event *e, Tick t) {
+System::reschedule(Event *e, Tick t, int v) {
 	assert(t>=currentTick);
 	std::cout << "Attempting to schedule " << e->description() << " at time " << t << std::endl;
-	if (e->isScheduled() && t < e->time()) {
+	if (t < e->time()) {
 		MEQ.erase(findEvent(e));
-		e->schedule(t);
+		e->schedule(t,v);
 		for (auto it = MEQ.begin(); it != MEQ.end(); it++) {
 			if (e->time() < (*it)->time()) {
 				MEQ.insert(it, e);
@@ -57,17 +54,40 @@ System::reschedule(Event *e, Tick t) {
 
 void
 System::runSimulation(Tick endTick) {
+	printMEQ();
+
 	while (currentTick <= endTick) {
-		std::cout << "Simulation Tick: " << currentTick << std::endl;
-		printMEQ();
-		while (MEQ.begin() != MEQ.end()) {
-			// printMEQ();
-			if (MEQ.front()->time() < currentTick) {
+		std::cout << "\nSimulation Tick: " << currentTick << std::endl;
+		
+		while (MEQ.begin() != MEQ.end()) 
+		{
+			if (MEQ.front()->time() < currentTick) 
+			{
 				std::cout << "Event was scheduled prior to currentTick\n";
 				assert(0);
-			} else if (MEQ.front()->time() == currentTick) {
-				popEvent()->process();
-			} else {
+			} 
+			else if (MEQ.front()->time() == currentTick) 
+			{
+				int val = MEQ.front()->getValue();
+				Event *e = popEvent();
+				e->setValue(val);
+				e->process();
+				std::cout << "tick = " << currentTick << "," << "val = " << val << std::endl;
+				
+				//Generate new event time
+				Tick newEventTime = 0;
+				int newEventVal = e->getValue();
+				bool isScheduled = false;
+
+				while(!isScheduled)
+				{
+					newEventTime = (rand() % val) +1;;
+					isScheduled = schedule(e, newEventTime, newEventVal);
+				}
+				printMEQ();
+			} 
+			else 
+			{
 				break;
 			}
 		}
@@ -77,7 +97,7 @@ System::runSimulation(Tick endTick) {
 
 void
 System::printMEQ() {
-	std::cout << "Start of MEQ\n";
+	std::cout << "\nStart of MEQ\n";
 	for (auto e : MEQ) {
 		std::cout << e->time() << ":" << e->description() << std::endl;
 	}

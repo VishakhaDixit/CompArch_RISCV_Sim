@@ -20,21 +20,22 @@ private:
 
 public:
 	SimObjectTest(System * sys) : SimObject(sys), e(new TestEvent(this)), clk_tick(10) {}
+	
 	virtual void initialize() override {
 		//Generate random 20 events
 		uint8_t event_cnt = 0;
 		Tick event_time;
-		// int event_val;
+		int event_val;
 		bool isScheduled;
 
 		srand(time(0));
 
 		while(event_cnt < 20)
 		{
-			event_time = 1+ (rand() % 100);
-			// event_val = rand()%100;
+			event_time = 1+ (rand() % 1000);
+			event_val = rand()%10000;
 
-			isScheduled = schedule(e, event_time);
+			isScheduled = schedule(e, event_time, event_val);
 
 			if(isScheduled)
 			{
@@ -48,12 +49,9 @@ public:
 			}
 		}
 	}
-	void process() {
-		std::cout << "I am processing on Tick " << currTick() << std::endl;
-		//Generate new event time
-		// Tick newEventTime = 0;
-		// newEventTime = rand()%(100-currTick() + 1) + currTick();
-
-		schedule(e, currTick()+clk_tick);
+	
+	void process() 
+	{
+		std::cout << "Processing: " << std::endl;
 	}
 };
