@@ -32,8 +32,8 @@ public:
 
 		while(event_cnt < 20)
 		{
-			event_time = 1+ (rand() % 1000);
-			event_val = rand()%10000;
+			event_time = 1+ (rand() % 100);
+			event_val = rand()%1000;
 
 			isScheduled = schedule(e, event_time, event_val);
 

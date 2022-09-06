@@ -81,7 +81,7 @@ System::runSimulation(Tick endTick) {
 
 				while(!isScheduled)
 				{
-					newEventTime = (rand() % val) +1;;
+					newEventTime = currentTick + (rand() % val) +1;
 					isScheduled = schedule(e, newEventTime, newEventVal);
 				}
 				printMEQ();
