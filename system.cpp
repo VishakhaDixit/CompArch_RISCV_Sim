@@ -56,7 +56,7 @@ System::processNewEvent()
 	Event *e = popEvent();
 	e->setValue(eveVal);
 	e->process();
-	std::cout << "tick = " << currentTick << "," << "val = " << eveVal << std::endl;
+	std::cout << "tick = " << prevEveTime << "," << "val = " << eveVal << std::endl;
 	
 	//Generate new event time
 	Tick newEventTime = 0;
@@ -73,8 +73,8 @@ System::runSimulation(Tick endTick) {
 	while (currentTick <= endTick) {
 		std::cout << "\nSimulation Tick: " << currentTick << std::endl;
 		
-		while (MEQ.begin() != MEQ.end()) 
-		{
+		// while (MEQ.begin() != MEQ.end()) 
+		// {
 			if (MEQ.front()->time() < currentTick) 
 			{
 				std::cout << "Event was scheduled prior to currentTick\n";
@@ -86,11 +86,11 @@ System::runSimulation(Tick endTick) {
 				processNewEvent();
 				printMEQ();
 			} 
-			else 
-			{
-				break;
-			}
-		}
+		// 	else 
+		// 	{
+		// 		break;
+		// 	}
+		// }
 		currentTick++;
 	}
 }
