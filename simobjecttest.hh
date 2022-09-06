@@ -28,25 +28,22 @@ public:
 		int event_val;
 		bool isScheduled;
 
-		srand(time(0));
+		// srand(time(0));
+		time_t time_ptr;
+		time_ptr = time(NULL);
+	
+		// Get the localtime
+		tm* tm_local = localtime(&time_ptr);
 
 		while(event_cnt < 20)
 		{
-			event_time = 1+ (rand() % 100);
+			// event_time = 1+ (rand() % 100);
+			event_time = 1 + tm_local->tm_sec;
 			event_val = rand()%1000;
 
-			isScheduled = schedule(e, event_time, event_val);
-
-			if(isScheduled)
-			{
-				e = new TestEvent(this);
-				event_cnt++;
-			}
-			else
-			{
-				e->deschedule();
-				continue;
-			}
+			schedule(e, event_time, event_val);
+			e = new TestEvent(this);
+			event_cnt++;
 		}
 	}
 	

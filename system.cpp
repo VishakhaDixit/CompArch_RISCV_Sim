@@ -14,25 +14,21 @@ System::findEvent(Event *e) {
 	return MEQ.end();
 }
 
-bool
+void
 System::schedule(Event *e, Tick t, int v) {
 	assert(t >= currentTick);
 	
 	e->schedule(t,v);
 	for (auto it = MEQ.begin(); it != MEQ.end(); it++) {
-		if (e->time() < (*it)->time()) {
+		if (e->time() <= (*it)->time()) {
 			MEQ.insert(it, e);
 			std::cout << "Scheduled new " << e->description() << " time = " << t << ", " << "val = " << v <<  std::endl;
-			return true;
-		}
-		else if(e->time() == (*it)->time())
-		{
-			return false;
+			return;
 		}
 	}
 	MEQ.push_back(e);
 	std::cout << "Scheduled new " << e->description() << " time = " << t << ", " << "val = " << v <<  std::endl;
-	return true;
+	return;
 }
 
 void
@@ -53,6 +49,24 @@ System::reschedule(Event *e, Tick t, int v) {
 }
 
 void
+System::processNewEvent()
+{
+	Tick prevEveTime = MEQ.front()->time();
+	int eveVal = MEQ.front()->getValue();
+	Event *e = popEvent();
+	e->setValue(eveVal);
+	e->process();
+	std::cout << "tick = " << currentTick << "," << "val = " << eveVal << std::endl;
+	
+	//Generate new event time
+	Tick newEventTime = 0;
+	bool isScheduled = false;
+
+	newEventTime = prevEveTime + (rand() % eveVal) +1;
+	schedule(e, newEventTime, eveVal);
+}
+
+void
 System::runSimulation(Tick endTick) {
 	printMEQ();
 
@@ -64,26 +78,12 @@ System::runSimulation(Tick endTick) {
 			if (MEQ.front()->time() < currentTick) 
 			{
 				std::cout << "Event was scheduled prior to currentTick\n";
-				assert(0);
+				processNewEvent();
+				printMEQ();
 			} 
 			else if (MEQ.front()->time() == currentTick) 
 			{
-				int val = MEQ.front()->getValue();
-				Event *e = popEvent();
-				e->setValue(val);
-				e->process();
-				std::cout << "tick = " << currentTick << "," << "val = " << val << std::endl;
-				
-				//Generate new event time
-				Tick newEventTime = 0;
-				int newEventVal = e->getValue();
-				bool isScheduled = false;
-
-				while(!isScheduled)
-				{
-					newEventTime = currentTick + (rand() % val) +1;
-					isScheduled = schedule(e, newEventTime, newEventVal);
-				}
+				processNewEvent();
 				printMEQ();
 			} 
 			else 
