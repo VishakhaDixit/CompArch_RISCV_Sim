@@ -26,9 +26,7 @@ public:
 		uint8_t event_cnt = 0;
 		Tick event_time;
 		int event_val;
-		bool isScheduled;
 
-		// srand(time(0));
 		time_t time_ptr;
 		time_ptr = time(NULL);
 	
@@ -37,7 +35,6 @@ public:
 
 		while(event_cnt < 20)
 		{
-			// event_time = 1+ (rand() % 100);
 			event_time = 1 + tm_local->tm_sec;
 			event_val = rand()%1000;
 
