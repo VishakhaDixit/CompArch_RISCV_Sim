@@ -21,6 +21,11 @@ System::schedule(Event *e, Tick t, int v) {
 	e->schedule(t,v);
 	for (auto it = MEQ.begin(); it != MEQ.end(); it++) {
 		if (e->time() <= (*it)->time()) {
+			if(e->time() == (*it)->time())
+			{
+				if(e->getValue() > (*it)->getValue())
+					continue;
+			}
 			MEQ.insert(it, e);
 			std::cout << "Scheduled new " << e->description() << " time = " << t << ", " << "val = " << v <<  std::endl;
 			return;
@@ -67,30 +72,23 @@ System::processNewEvent()
 }
 
 void
-System::runSimulation(Tick endTick) {
+System::runSimulation(Tick endTick) 
+{
 	printMEQ();
 
-	while (currentTick <= endTick) {
+	while ((currentTick <= endTick) && !(MEQ.empty()))
+	{
 		std::cout << "\nSimulation Tick: " << currentTick << std::endl;
 		
-		// while (MEQ.begin() != MEQ.end()) 
-		// {
-			if (MEQ.front()->time() < currentTick) 
-			{
+		if (MEQ.front()->time() <= currentTick) 
+		{
+			if (MEQ.front()->time() < currentTick)
 				std::cout << "Event was scheduled prior to currentTick\n";
-				processNewEvent();
-				printMEQ();
-			} 
-			else if (MEQ.front()->time() == currentTick) 
-			{
-				processNewEvent();
-				printMEQ();
-			} 
-		// 	else 
-		// 	{
-		// 		break;
-		// 	}
-		// }
+			
+			processNewEvent();
+			printMEQ();
+		} 
+
 		currentTick++;
 	}
 }
@@ -99,7 +97,7 @@ void
 System::printMEQ() {
 	std::cout << "\nStart of MEQ\n";
 	for (auto e : MEQ) {
-		std::cout << e->time() << ":" << e->description() << std::endl;
+		std::cout << e->time() << ":" << e->getValue() << std::endl;
 	}
 	std::cout << "End of MEQ\n";
 }

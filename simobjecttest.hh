@@ -33,6 +33,8 @@ public:
 		// Get the localtime
 		tm* tm_local = localtime(&time_ptr);
 
+		srand(time(0));
+
 		while(event_cnt < 20)
 		{
 			event_time = 1 + tm_local->tm_sec;
