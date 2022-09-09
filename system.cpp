@@ -16,7 +16,7 @@ System::findEvent(Event *e) {
 
 void
 System::schedule(Event *e, Tick t, int v) {
-	assert(t >= currentTick);
+	// assert(t >= currentTick);
 	
 	e->schedule(t,v);
 	for (auto it = MEQ.begin(); it != MEQ.end(); it++) {
