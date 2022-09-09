@@ -3,10 +3,12 @@
 #include <cassert>
 
 std::vector<Event *>::iterator
-System::findEvent(Event *e) {
-	// printMEQ();
-	for (auto it = MEQ.begin(); it != MEQ.end(); it++) {
-		if (*it == e) {
+System::findEvent(Event *e) 
+{
+	for (auto it = MEQ.begin(); it != MEQ.end(); it++) 
+	{
+		if (*it == e) 
+		{
 			std::cout << "Event found\n";
 			return it;
 		}
@@ -15,12 +17,14 @@ System::findEvent(Event *e) {
 }
 
 void
-System::schedule(Event *e, Tick t, int v) {
-	// assert(t >= currentTick);
-	
+System::schedule(Event *e, Tick t, int v) 
+{
 	e->schedule(t,v);
-	for (auto it = MEQ.begin(); it != MEQ.end(); it++) {
-		if (e->time() <= (*it)->time()) {
+
+	for (auto it = MEQ.begin(); it != MEQ.end(); it++) 
+	{
+		if (e->time() <= (*it)->time()) 
+		{
 			if(e->time() == (*it)->time())
 			{
 				if(e->getValue() > (*it)->getValue())
@@ -37,38 +41,24 @@ System::schedule(Event *e, Tick t, int v) {
 }
 
 void
-System::reschedule(Event *e, Tick t, int v) {
+System::reschedule(Event *e, Tick t, int v) 
+{
 	assert(t>=currentTick);
 	std::cout << "Attempting to schedule " << e->description() << " at time " << t << std::endl;
-	if (t < e->time()) {
+	if (t < e->time()) 
+	{
 		MEQ.erase(findEvent(e));
 		e->schedule(t,v);
-		for (auto it = MEQ.begin(); it != MEQ.end(); it++) {
-			if (e->time() < (*it)->time()) {
+		for (auto it = MEQ.begin(); it != MEQ.end(); it++) 
+		{
+			if (e->time() < (*it)->time()) 
+			{
 				MEQ.insert(it, e);
 				return;
 			}
 		}
 		MEQ.push_back(e);
 	}
-}
-
-void
-System::processNewEvent()
-{
-	Tick prevEveTime = MEQ.front()->time();
-	int eveVal = MEQ.front()->getValue();
-	Event *e = popEvent();
-	e->setValue(eveVal);
-	e->process();
-	std::cout << "tick = " << prevEveTime << "," << "val = " << eveVal << std::endl;
-	
-	//Generate new event time
-	Tick newEventTime = 0;
-	bool isScheduled = false;
-
-	newEventTime = prevEveTime + (rand() % eveVal) +1;
-	schedule(e, newEventTime, eveVal);
 }
 
 void
@@ -85,7 +75,11 @@ System::runSimulation(Tick endTick)
 			if (MEQ.front()->time() < currentTick)
 				std::cout << "Event was scheduled prior to currentTick\n";
 			
-			processNewEvent();
+			Tick t = MEQ.front()->time();
+			int v = MEQ.front()->getValue();
+
+			//Generate new Event
+			popEvent()->process(t, v);
 			printMEQ();
 		} 
 
@@ -94,16 +88,19 @@ System::runSimulation(Tick endTick)
 }
 
 void
-System::printMEQ() {
+System::printMEQ() 
+{
 	std::cout << "\nStart of MEQ\n";
-	for (auto e : MEQ) {
+	for (auto e : MEQ) 
+	{
 		std::cout << e->time() << ":" << e->getValue() << std::endl;
 	}
 	std::cout << "End of MEQ\n";
 }
 
 Event *
-System::popEvent() {
+System::popEvent() 
+{
 	Event * tmp = MEQ.front();
 	tmp->deschedule();
 	MEQ.erase(MEQ.begin());

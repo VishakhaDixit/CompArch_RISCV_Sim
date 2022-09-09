@@ -23,7 +23,7 @@ public:
 	void setTime(Tick t) { eventTime = t; }
 	int getValue() { return eventValue; }
 	Tick time() { return eventTime; }
-	virtual void process() = 0;
+	virtual void process(Tick t, int v) = 0;
 	virtual const char* description() = 0;
 };
 

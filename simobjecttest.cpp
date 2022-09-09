@@ -8,7 +8,7 @@ private:
 		SimObjectTest *device;
 	public:
 		TestEvent(SimObjectTest * sot) : Event(), device(sot) {}
-		void process() { device->process(); }
+		void process(Tick t, int v) { device->process(t, v); }
 	};
 
 	TestEvent * e;
@@ -18,8 +18,8 @@ public:
 	virtual void initialize() override {
 		schedule(e, currTick()+1);
 	}
-	void process() {
+	void process(Tick t, int v) {
 		std::cout << "I am processing on Tick: " << currTick() << std::endl;
-		schedule(e, currTick()+1);
+		schedule(e, t, v);
 	}
 };

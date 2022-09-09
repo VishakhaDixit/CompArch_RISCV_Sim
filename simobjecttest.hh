@@ -2,15 +2,18 @@
 #include <iostream>
 #include <sys/time.h>
 
-class SimObjectTest : public SimObject {
+class SimObjectTest : public SimObject 
+{
 private:
-	class TestEvent : public Event {
+	class TestEvent : public Event 
+	{
 	private:
 		SimObjectTest *device;
 	public:
 		TestEvent(SimObjectTest * sot) : Event(), device(sot) {}
-		virtual void process() override { device->process(); }
-		virtual const char* description() override {
+		virtual void process(Tick t, int v) override { device->process(t, v); }
+		virtual const char* description() override 
+		{
 			return "Test Event";
 		}
 	};
@@ -21,7 +24,8 @@ private:
 public:
 	SimObjectTest(System * sys) : SimObject(sys), e(new TestEvent(this)), clk_tick(10) {}
 	
-	virtual void initialize() override {
+	virtual void initialize() override 
+	{
 		//Generate random 20 events
 		uint8_t event_cnt = 0;
 		Tick event_time;
@@ -30,7 +34,7 @@ public:
 		time_t time_ptr;
 		time_ptr = time(NULL);
 	
-		// Get the localtime
+		//Get the localtime
 		tm* tm_local = localtime(&time_ptr);
 
 		srand(time(0));
@@ -46,8 +50,12 @@ public:
 		}
 	}
 	
-	void process() 
+	void process(Tick t, int v) 
 	{
-		std::cout << "Processing: " << std::endl;
+		std::cout << "Processing: " << "tick = " << t << "," << "val = " << v << std::endl;
+
+		t = t + (rand()% v) + 1;
+		Event *e = new TestEvent(this);
+		schedule(e, t, v);
 	}
 };
