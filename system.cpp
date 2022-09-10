@@ -26,10 +26,12 @@ void System::schedule(Event *e, TICK t, int v)
 {
 	e->schEve(t,v);
 
+	//(Q-2, Q-4) Sort & insert events in MEQ.
 	for (auto i = MEQ.begin(); i != MEQ.end(); i++) 
 	{
 		if (e->getTime() <= (*i)->getTime()) 
 		{
+			//Sort based on value if event time is same.
 			if(e->getTime() == (*i)->getTime())
 			{
 				if(e->getValue() > (*i)->getValue())
@@ -65,6 +67,7 @@ void System::executeSim(TICK endClkTick)
 			if (MEQ.front()->getTime() < getCurTick())
 				std::cout << "Event was scheduled prior to currentTick\n";
 			
+			//(Q-3) Read top event from MEQ
 			TICK t = MEQ.front()->getTime();
 			int v = MEQ.front()->getValue();
 

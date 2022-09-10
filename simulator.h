@@ -38,7 +38,7 @@ public:
 	
 	void initSim()
 	{
-		//Generate random 20 events
+		//(Q-1) Generate random 20 events
 		uint8_t event_cnt = 0;
 		TICK event_time;
 		int event_val;
@@ -64,6 +64,7 @@ public:
 	
 	void process(TICK t, int v) 
 	{
+		//(Q-3) Generates new event.
 		std::cout << "Processing: " << "tick = " << t << "," << "val = " << v << std::endl;
 
 		t = t + (rand()% v) + 1;

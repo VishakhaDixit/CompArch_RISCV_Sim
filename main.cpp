@@ -17,6 +17,6 @@ int main() {
 	System *sys = new System();
 	eventSimulator *es = new eventSimulator(sys);
 	es->initSim();				//Initialize Simulator device with random 20 events
-	sys->executeSim(100);		//Run Simulator for 100 clk cycles
+	sys->executeSim(100);		//(Q-5) Run Simulator for 100 clk cycles
 	return 0;
 }
