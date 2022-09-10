@@ -1,108 +1,110 @@
-#include "system.hh"
+/**************************
+ *
+ * @file    system.cpp
+ *
+ * @brief   This file contains definitions for System class APIs.
+ *
+ * @date    Sept 10, 2022
+ *
+ * @author  Vishakha Dixit
+ *
+ **************************/
+
+#include "system.h"
 #include <iostream>
-#include <cassert>
 
-std::vector<Event *>::iterator
-System::findEvent(Event *e) 
+/**************************
+ * @brief       This function inserts the given event in the MEQ in an ordered way.
+ *
+ * @param [in]  Event *e: 	Event class object
+ * 				TICK t: 	Event time
+ * 				int v: 		Event Value
+ *
+ * @return      NULL
+ **************************/
+void System::schedule(Event *e, TICK t, int v) 
 {
-	for (auto it = MEQ.begin(); it != MEQ.end(); it++) 
-	{
-		if (*it == e) 
-		{
-			std::cout << "Event found\n";
-			return it;
-		}
-	}
-	return MEQ.end();
-}
+	e->schEve(t,v);
 
-void
-System::schedule(Event *e, Tick t, int v) 
-{
-	e->schedule(t,v);
-
-	for (auto it = MEQ.begin(); it != MEQ.end(); it++) 
+	for (auto i = MEQ.begin(); i != MEQ.end(); i++) 
 	{
-		if (e->time() <= (*it)->time()) 
+		if (e->getTime() <= (*i)->getTime()) 
 		{
-			if(e->time() == (*it)->time())
+			if(e->getTime() == (*i)->getTime())
 			{
-				if(e->getValue() > (*it)->getValue())
+				if(e->getValue() > (*i)->getValue())
 					continue;
 			}
-			MEQ.insert(it, e);
-			std::cout << "Scheduled new " << e->description() << " time = " << t << ", " << "val = " << v <<  std::endl;
+			MEQ.insert(i, e);
+			std::cout << "Scheduled new Test Event at " << " time = " << t << ", " << "val = " << v <<  std::endl;
 			return;
 		}
 	}
 	MEQ.push_back(e);
-	std::cout << "Scheduled new " << e->description() << " time = " << t << ", " << "val = " << v <<  std::endl;
+	std::cout << "Scheduled new Test Event at" << " time = " << t << ", " << "val = " << v <<  std::endl;
 	return;
 }
 
-void
-System::reschedule(Event *e, Tick t, int v) 
+/**************************
+ * @brief       This function runs the simulation upto given endClkTick.
+ *
+ * @param [in]  TICK endClkTick: Clk tick upto which simulator will execute.
+ *
+ * @return      NULL
+ **************************/
+void System::executeSim(TICK endClkTick) 
 {
-	assert(t>=currentTick);
-	std::cout << "Attempting to schedule " << e->description() << " at time " << t << std::endl;
-	if (t < e->time()) 
-	{
-		MEQ.erase(findEvent(e));
-		e->schedule(t,v);
-		for (auto it = MEQ.begin(); it != MEQ.end(); it++) 
-		{
-			if (e->time() < (*it)->time()) 
-			{
-				MEQ.insert(it, e);
-				return;
-			}
-		}
-		MEQ.push_back(e);
-	}
-}
+	displayMEQ();
 
-void
-System::runSimulation(Tick endTick) 
-{
-	printMEQ();
-
-	while ((currentTick <= endTick) && !(MEQ.empty()))
+	while ((getCurTick() <= endClkTick) && !(MEQ.empty()))
 	{
-		std::cout << "\nSimulation Tick: " << currentTick << std::endl;
+		std::cout << "\nSimulation Tick: " << getCurTick() << std::endl;
 		
-		if (MEQ.front()->time() <= currentTick) 
+		if (MEQ.front()->getTime() <= getCurTick()) 
 		{
-			if (MEQ.front()->time() < currentTick)
+			if (MEQ.front()->getTime() < getCurTick())
 				std::cout << "Event was scheduled prior to currentTick\n";
 			
-			Tick t = MEQ.front()->time();
+			TICK t = MEQ.front()->getTime();
 			int v = MEQ.front()->getValue();
 
 			//Generate new Event
-			popEvent()->process(t, v);
-			printMEQ();
+			popEve()->process(t, v);
+			displayMEQ();
 		} 
 
-		currentTick++;
+		curClkTick++;
 	}
 }
 
-void
-System::printMEQ() 
+/**************************
+ * @brief       This function displays the contents of MEQ.
+ *
+ * @param [in]  NULL
+ *
+ * @return      NULL
+ **************************/
+void System::displayMEQ() 
 {
 	std::cout << "\nStart of MEQ\n";
 	for (auto e : MEQ) 
 	{
-		std::cout << e->time() << ":" << e->getValue() << std::endl;
+		std::cout << e->getTime() << ":" << e->getValue() << std::endl;
 	}
 	std::cout << "End of MEQ\n";
 }
 
-Event *
-System::popEvent() 
+/**************************
+ * @brief       This function remove the front elements of MEQ after setting it's value to default.
+ *
+ * @param [in]  NULL
+ *
+ * @return      Event *: Returns a pointer of event that has been descheduled & erased from MEQ.
+ **************************/
+Event *System::popEve() 
 {
-	Event * tmp = MEQ.front();
-	tmp->deschedule();
+	Event *eve = MEQ.front();
+	eve->dschEve();
 	MEQ.erase(MEQ.begin());
-	return tmp;
+	return eve;
 }
