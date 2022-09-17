@@ -43,7 +43,7 @@ void System::schedule(Event *e, TICK t, int v)
 		}
 	}
 	MEQ.push_back(e);
-	std::cout << "Scheduled new Test Event at" << " time = " << t << ", " << "val = " << v <<  std::endl;
+	std::cout << "Scheduled new Test Event at " << " time = " << t << ", " << "val = " << v <<  std::endl;
 	return;
 }
 
