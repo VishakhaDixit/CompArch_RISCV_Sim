@@ -25,7 +25,7 @@ class System
 	public:
 		System() : curClkTick(0) {}
 		
-		void schedule(Event *e, TICK t, int v);			
+		void schedule(Event *e, TICK t);			
 		void executeSim(TICK endClkTick=-1);
 		TICK getCurTick() { return curClkTick; }
 		void displayMEQ();

@@ -18,32 +18,24 @@
  *
  * @param [in]  Event *e: 	Event class object
  * 				TICK t: 	Event time
- * 				int v: 		Event Value
  *
  * @return      NULL
  **************************/
-void System::schedule(Event *e, TICK t, int v) 
+void System::schedule(Event *e, TICK t) 
 {
-	e->schEve(t,v);
+	e->schEve(t);
 
-	//(Q-2, Q-4) Sort & insert events in MEQ.
 	for (auto i = MEQ.begin(); i != MEQ.end(); i++) 
 	{
-		if (e->getTime() <= (*i)->getTime()) 
+		if (e->getTime() < (*i)->getTime()) 
 		{
-			//Sort based on value if event time is same.
-			if(e->getTime() == (*i)->getTime())
-			{
-				if(e->getValue() > (*i)->getValue())
-					continue;
-			}
 			MEQ.insert(i, e);
-			std::cout << "Scheduled new Test Event at " << " time = " << t << ", " << "val = " << v <<  std::endl;
+			// std::cout << "Scheduled new Test Event at " << " time = " << t <<  std::endl;
 			return;
 		}
 	}
 	MEQ.push_back(e);
-	std::cout << "Scheduled new Test Event at " << " time = " << t << ", " << "val = " << v <<  std::endl;
+	// std::cout << "Scheduled new Test Event at " << " time = " << t <<  std::endl;
 	return;
 }
 
@@ -56,45 +48,28 @@ void System::schedule(Event *e, TICK t, int v)
  **************************/
 void System::executeSim(TICK endClkTick) 
 {
-	displayMEQ();
-
 	while ((getCurTick() <= endClkTick) && !(MEQ.empty()))
 	{
-		std::cout << "\nSimulation Tick: " << getCurTick() << std::endl;
+		std::cout << "\nSimulation Tick: " << getCurTick();
 		
-		if (MEQ.front()->getTime() <= getCurTick()) 
+		while(MEQ.begin() != MEQ.end())
 		{
-			if (MEQ.front()->getTime() < getCurTick())
-				std::cout << "Event was scheduled prior to currentTick\n";
-			
-			//(Q-3) Read top event from MEQ
-			TICK t = MEQ.front()->getTime();
-			int v = MEQ.front()->getValue();
-
-			//Generate new Event
-			popEve()->process(t, v);
-			displayMEQ();
+			if (MEQ.front()->getTime() < getCurTick()) 
+			{
+				std::cout << "\nERROR:-Event was scheduled prior to currentTick\n";
+				return;
+			}
+			else if(MEQ.front()->getTime() == getCurTick())
+			{	
+				//Generate new Event
+				popEve()->process();
+			}
+			else
+				break;
 		} 
 
 		curClkTick++;
 	}
-}
-
-/**************************
- * @brief       This function displays the contents of MEQ.
- *
- * @param [in]  NULL
- *
- * @return      NULL
- **************************/
-void System::displayMEQ() 
-{
-	std::cout << "\nStart of MEQ\n";
-	for (auto e : MEQ) 
-	{
-		std::cout << e->getTime() << ":" << e->getValue() << std::endl;
-	}
-	std::cout << "End of MEQ\n";
 }
 
 /**************************

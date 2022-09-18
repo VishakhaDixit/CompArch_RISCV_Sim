@@ -14,6 +14,7 @@
 #define __EVENT_H__
 
 #include <cinttypes>
+#include <string>
 
 #define TICK uint64_t
 
@@ -21,27 +22,23 @@ class Event
 {
 	private:
 		TICK eveTime;
-		int eveValue;
+
 	public:
-		Event() : eveTime(0), eveValue(0) { }
+		Event() : eveTime(0) { }
 		
-		void schEve(TICK newTime, int newVal) 
+		void schEve(TICK newTime) 
 		{
 			eveTime = newTime;
-			eveValue = newVal;
 		}
 		void dschEve() 
 		{
 			eveTime = -1;
-			eveValue = -1;
 		}
 		
-		void setValue(int v) { eveValue = v; }
 		void setTime(TICK t) { eveTime = t; }
-		int getValue() { return eveValue; }
 		TICK getTime() { return eveTime; }
 		
-		virtual void process(TICK t, int v) = 0;
+		virtual void process() = 0;
 };
 
 #endif //__EVENT_H__

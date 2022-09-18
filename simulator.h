@@ -14,63 +14,44 @@
 #define __SIMULATOR_H__
 
 #include <iostream>
-#include <sys/time.h>
+#include <string>
 #include "system.h"
 #include "event.h"
+#include "pipeline.h"
+#include "inst.h"
 
-class eventSimulator : public System
+using namespace std;
+
+class Simulator : public System
 {
 private:
 	class testEve : public Event 
 	{
 	private:
-		eventSimulator *simDev;
+		Simulator *simDev;
 	public:
-		testEve(eventSimulator * es) : Event(), simDev(es) {}
-		virtual void process(TICK t, int v) override { simDev->process(t, v); }
+		testEve(Simulator * es) : Event(), simDev(es) {}
+		virtual void process() override { simDev->process(); }
 	};
 
 	System *sys;
-	testEve *e;
+	testEve *te;
+
+	vector<inst *> insQ;
+	vector<string> instructions = {"fld f0,0(x1)", "fadd.d f4,f0,f2", "fsd f4,0(x1)", "addi x1,x1,-8", "bne x1,x2"};
+
+	fetch *f;
+	decode *d;
+	execute *e;
+	store *s;
 
 public:
-	eventSimulator(System *_sys) : sys(_sys),  e(new testEve(this)) {}
+	Simulator(System *_sys) : sys(_sys),  te(new testEve(this)), f(new fetch(sys)),
+							d(new decode(sys)), e(new execute(sys)), s(new store(sys)) {}
 	
-	void initSim()
-	{
-		//(Q-1) Generate random 20 events
-		uint8_t event_cnt = 0;
-		TICK event_time;
-		int event_val;
-
-		time_t time_ptr;
-		time_ptr = time(NULL);
-	
-		//Get the localtime
-		tm* tm_local = localtime(&time_ptr);
-
-		srand(time(0));
-
-		while(event_cnt < 20)
-		{
-			event_time = 1 + tm_local->tm_sec;
-			event_val = rand()%1000;
-
-			sys->schedule(e, event_time, event_val);
-			e = new testEve(this);
-			event_cnt++;
-		}
-	}
-	
-	void process(TICK t, int v) 
-	{
-		//(Q-3) Generates new event.
-		std::cout << "Processing: " << "tick = " << t << "," << "val = " << v << std::endl;
-
-		t = t + (rand()% v) + 1;
-		Event *e = new testEve(this);
-		sys->schedule(e, t, v);
-	}
+	void initInsQ();
+	void initSim();
+	void process();
 };
 
 #endif //__SIMULATOR_H__
