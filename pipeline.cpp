@@ -16,7 +16,7 @@ using namespace std;
 
 void fetch::recvInst(inst *i)
 {
-    cout << " Fetch: " << i->getInst();
+    cout << " Fetch: " << i->getInst() << endl;
     curInst = i;
 
     //schedule new event for fetch stage
@@ -33,6 +33,7 @@ void fetch::process()
     else
     {
         sys->schedule(fe,sys->getCurTick()+1);
+        cout << " Fetch: " << curInst->getInst() << endl;
     }
 }
 
@@ -64,6 +65,7 @@ void decode::process()
 
             //Schedule NOP as next instruction
             sys->schedule(de,sys->getCurTick()+1);
+            cout << " Decode: " << curInst->getInst();
 
             return;
         }
