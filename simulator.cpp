@@ -32,8 +32,15 @@ void Simulator::process()
 {
     if(!(f->isBusy()))
     {
-        int clk = sys->getCurTick()%5;
-        f->recvInst(insQ[clk]);
-        sys->schedule(te, sys->getCurTick()+1);
+        //Fetch current instruction from front of the instruction queue
+        inst *i = insQ[0];
+        f->recvInst(i);
+
+        //Pop currently fetched instruction from the queue
+        insQ.erase(insQ.begin());
+        //Schedule next instruction at the end of insQ
+        insQ.push_back(i);
     }
+        
+    sys->schedule(te, sys->getCurTick()+1);
 }

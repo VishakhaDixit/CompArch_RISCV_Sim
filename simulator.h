@@ -49,9 +49,9 @@ public:
 	Simulator(System *_sys) : sys(_sys),  te(new testEve(this)), f(new fetch(sys)),
 							d(new decode(sys)), e(new execute(sys)), s(new store(sys)) {}
 	
-	void initInsQ();
 	void initSim();
 	void process();
+	void initInsQ();
 };
 
 #endif //__SIMULATOR_H__

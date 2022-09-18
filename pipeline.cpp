@@ -32,7 +32,7 @@ void fetch::process()
     }
     else
     {
-        schedule(fe,sys->getCurTick()+1);
+        sys->schedule(fe,sys->getCurTick()+1);
     }
 }
 
@@ -51,11 +51,27 @@ void decode::process()
     //Send decoded instruction to next stage
     if(!nextStage->isBusy())
     {
+        if(curInst->getCst() > 0)
+        {
+            inst *i = new inst();
+            int stall = curInst->getCst();
+            sendInst(curInst);
+            
+            //Set NOP for stall period
+            i->setInst("NOP");
+            i->setCst(stall-1);
+            this->curInst = i;
+
+            //Schedule NOP as next instruction
+            sys->schedule(de,sys->getCurTick()+1);
+
+            return;
+        }
         sendInst(curInst);
     }
     else
     {
-        schedule(de,sys->getCurTick()+1);
+        sys->schedule(de,sys->getCurTick()+1);
     }
 }
 
@@ -78,7 +94,7 @@ void execute::process()
     }
     else
     {
-        schedule(ee,sys->getCurTick()+1);
+        sys->schedule(ee,sys->getCurTick()+1);
     }
 }
 
