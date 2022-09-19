@@ -6,7 +6,7 @@ void Simulator::initInsQ()
     {
         inst *i = new inst();
         i->setInst(val);
-        i->setCst(i->getStallTime(val));
+        i->setCst(stallList[val]);
         insQ.push_back(i);
     }
 }
@@ -18,6 +18,10 @@ void Simulator::initSim()
     {
         initInsQ();
     }
+    //Initialize registers x1 & x2
+    sys->regMap["x1"] = 20;
+    sys->regMap["x2"] = 0;
+
     //Initialize Event List for first clk tick
     sys->schedule(te, getCurTick());
 

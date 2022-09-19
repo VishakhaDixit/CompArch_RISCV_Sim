@@ -15,6 +15,10 @@
 
 #include "event.h"
 #include <vector>
+#include <unordered_map>
+#include <string>
+
+using namespace std;
 
 class System 
 {
@@ -24,6 +28,14 @@ class System
 
 	public:
 		System() : curClkTick(0) {}
+
+		unordered_map<string, int> regMap = 
+		{
+			{"x1", 0},
+			{"x2", 0},
+			{"x3", 0},
+			{"x4", 0}
+		};
 		
 		void schedule(Event *e, TICK t);			
 		void executeSim(TICK endClkTick=-1);

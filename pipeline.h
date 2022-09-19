@@ -92,6 +92,7 @@ class decode : public pipeline
         decode(System *sys) : pipeline(sys), de(new decodeEvent(this)) {};
 
         void recvInst(inst *i);
+        void decodeInst();
         void process();
 };
 

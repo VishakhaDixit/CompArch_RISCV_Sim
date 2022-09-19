@@ -46,11 +46,35 @@ void decode::recvInst(inst * i)
     sys->schedule(de,sys->getCurTick()+1);
 }
 
+void decode::decodeInst()
+{
+    string str = curInst->getInst();
+    int i = 0, j = 0;
+    vector<string> ins;
+    
+    while(j < str.length())
+    {
+        while(str[j] != ' ' && j != str.length())
+        {
+            j++;
+        }
+        ins.push_back(str.substr(i, j-i));
+        j++;
+        i = j;
+    }
+
+    curInst->opcode = ins[0];
+
+    for(int c = 1; c < ins.size(); c++)
+        curInst->oprand.push_back(ins[c]);
+}
+
 void decode::process()
 {
     //Send decoded instruction to next stage
     if(!nextStage->isBusy())
     {
+        this->decodeInst();
         if(curInst->getCst() > 0)
         {
             inst *i = new inst();
