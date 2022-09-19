@@ -39,13 +39,12 @@ void fetch::process()
 
 void decode::recvInst(inst * i)
 {
-    cout << " Decode: " << i->getInst();
+    cout << " Decode: " << i->getInst() << ",";
     curInst = i;
 
     //schedule new event for decode stage
     sys->schedule(de,sys->getCurTick()+1);
 }
-
 
 void decode::process()
 {
@@ -65,7 +64,7 @@ void decode::process()
 
             //Schedule NOP as next instruction
             sys->schedule(de,sys->getCurTick()+1);
-            cout << " Decode: " << curInst->getInst();
+            cout << " Decode: " << curInst->getInst() << ",";
 
             return;
         }
@@ -79,7 +78,7 @@ void decode::process()
 
 void execute::recvInst(inst * i)
 {
-    cout << " Execute: " << i->getInst();
+    cout << " Execute: " << i->getInst() << ",";
     curInst = i;
 
     //schedule new event for execute stage
@@ -102,7 +101,7 @@ void execute::process()
 
 void store::recvInst(inst * i)
 {
-    cout << " Store: " << i->getInst();
+    cout << " Store: " << i->getInst() << ",";
     curInst = i;
 
     //schedule new event for store stage

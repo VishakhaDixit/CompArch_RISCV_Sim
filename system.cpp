@@ -50,7 +50,8 @@ void System::executeSim(TICK endClkTick)
 {
 	while ((getCurTick() <= endClkTick) && !(MEQ.empty()))
 	{
-		std::cout << "\nSimulation Tick: " << getCurTick();
+		displayMEQ();
+		std::cout << "\nSimulation Tick:" << getCurTick();
 		
 		while(MEQ.begin() != MEQ.end())
 		{
@@ -70,6 +71,23 @@ void System::executeSim(TICK endClkTick)
 
 		curClkTick++;
 	}
+}
+
+/**************************
+ * @brief       This function displays the contents of MEQ.
+ *
+ * @param [in]  NULL
+ *
+ * @return      NULL
+ **************************/
+void System::displayMEQ() 
+{
+	std::cout << "\nStart of MEQ\n";
+	for (auto e : MEQ) 
+	{
+		std::cout << "t:"<< e->getTime() << " i:" << " s:" << std::endl;
+	}
+	std::cout << "End of MEQ\n";
 }
 
 /**************************
