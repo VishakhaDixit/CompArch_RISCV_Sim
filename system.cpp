@@ -21,9 +21,9 @@
  *
  * @return      NULL
  **************************/
-void System::schedule(Event *e, TICK t) 
+void System::schedule(Event *e, TICK t, string i, string s) 
 {
-	e->schEve(t);
+	e->schEve(t, i, s);
 
 	for (auto i = MEQ.begin(); i != MEQ.end(); i++) 
 	{
@@ -74,6 +74,7 @@ void System::executeSim(TICK endClkTick)
 	if(MEQ.empty())
 	{
 		cout << " Store: NOP Execute: NOP Decode: NOP Fetch: NOP" << endl;
+		displayMEQ();
 	}
 }
 
@@ -89,7 +90,7 @@ void System::displayMEQ()
 	std::cout << "\nStart of MEQ\n";
 	for (auto e : MEQ) 
 	{
-		std::cout << "t:"<< e->getTime() << " i:" << " s:" << std::endl;
+		std::cout << "TICK:"<< e->getTime() << " INS:" << e->getInst() << " STAGE:" << e->getStage() << std::endl;
 	}
 	std::cout << "End of MEQ\n";
 }

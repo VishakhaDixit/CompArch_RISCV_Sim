@@ -24,7 +24,7 @@ void Simulator::initSim()
     sys->regMap["x2"] = 0;
 
     //Initialize Event List for first clk tick
-    sys->schedule(te, getCurTick());
+    sys->schedule(te, getCurTick(), "N/A", "ClkGen");
 
     //Generate Pipeline by linking together the stages
     f->setNextStage(d);
@@ -47,5 +47,5 @@ void Simulator::process()
         insQ.push_back(i);
     }
         
-    sys->schedule(te, sys->getCurTick()+1);
+    sys->schedule(te, sys->getCurTick()+1, "N/A", "ClkGen");
 }

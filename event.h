@@ -18,25 +18,35 @@
 
 #define TICK uint64_t
 
+using namespace std;
+
 class Event 
 {
 	private:
 		TICK eveTime;
+		string ins;
+		string stage;
 
 	public:
 		Event() : eveTime(0) { }
 		
-		void schEve(TICK newTime) 
+		void schEve(TICK newTime, string i, string s) 
 		{
 			eveTime = newTime;
+			ins = i;
+			stage = s;
 		}
 		void dschEve() 
 		{
 			eveTime = -1;
+			ins = "";
+			stage = "";
 		}
 		
 		void setTime(TICK t) { eveTime = t; }
 		TICK getTime() { return eveTime; }
+		string getInst() { return ins; }
+		string getStage() { return stage; }
 		
 		virtual void process() = 0;
 };

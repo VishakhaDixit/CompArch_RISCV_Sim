@@ -38,7 +38,7 @@ void fetch::recvInst(inst *i)
     curInst = i;
 
     //schedule new event for fetch stage
-    sys->schedule(fe,sys->getCurTick()+1);
+    sys->schedule(fe,sys->getCurTick()+1, curInst->getInst(), "fetch");
 }
 
 void fetch::process()
@@ -50,7 +50,7 @@ void fetch::process()
     }
     else
     {
-        sys->schedule(fe,sys->getCurTick()+1);
+        sys->schedule(fe,sys->getCurTick()+1, curInst->getInst(), "fetch");
         cout << " Fetch: " << curInst->getInst() << endl;
     }
 }
@@ -66,7 +66,7 @@ void decode::recvInst(inst * i)
     curInst = i;
 
     //schedule new event for decode stage
-    sys->schedule(de,sys->getCurTick()+1);
+    sys->schedule(de,sys->getCurTick()+1, curInst->getInst(), "decode");
 }
 
 void decode::decodeInst()
@@ -118,7 +118,8 @@ void decode::process()
             this->curInst = i;
 
             //Schedule NOP as next instruction
-            sys->schedule(de,sys->getCurTick()+1);
+            string curOp = curInst->getInst();
+            sys->schedule(de,sys->getCurTick()+1,  curOp.substr(0, curOp.find(" ")), "decode");
             cout << " Decode: " << curInst->getInst() << ",";
 
             return;
@@ -127,7 +128,7 @@ void decode::process()
     }
     else
     {
-        sys->schedule(de,sys->getCurTick()+1);
+        sys->schedule(de,sys->getCurTick()+1, curInst->getInst(), "execute");
     }
 }
 
@@ -147,7 +148,7 @@ void execute::recvInst(inst * i)
         cout << " Execute: " << i->getOpcode() << " " << i->getOprand(0) << "," << this->getData(1) << "," << this->getData(2);
 
     //schedule new event for execute stage
-    sys->schedule(ee,sys->getCurTick()+1);
+    sys->schedule(ee,sys->getCurTick()+1, curInst->getInst(), "execute");
 }
 
 void execute::executeInst()
@@ -190,7 +191,7 @@ void execute::process()
     }
     else
     {
-        sys->schedule(ee,sys->getCurTick()+1);
+        sys->schedule(ee,sys->getCurTick()+1, curInst->getInst(), "execute");
     }
 }
 
@@ -206,12 +207,12 @@ void store::recvInst(inst * i)
     if(curInst->getInst() == "NOP")
         cout << " Store: " << curInst->getInst();
     else if(curInst->getOpcode() == "bne")
-        cout << " Execute: " << i->getOpcode() << " " << this->getData(0) << "," << this->getData(1);
+        cout << " Store: " << i->getOpcode() << " " << this->getData(0) << "," << this->getData(1);
     else
         cout << " Store: " << i->getOpcode() << " " << i->getOprand(0) << "," << this->getData(1) << "," << this->getData(2);
 
     //schedule new event for store stage
-    sys->schedule(se,sys->getCurTick()+1);
+    sys->schedule(se,sys->getCurTick()+1, curInst->getInst(), "store");
 }
 
 
