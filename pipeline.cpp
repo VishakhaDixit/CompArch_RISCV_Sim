@@ -14,6 +14,19 @@
 
 using namespace std;
 
+int pipeline::getData(int id)
+{
+    int val;
+    string str = curInst->getOprand(id);
+
+    if(curInst->getOprand(id) == "x1" || curInst->getOprand(id) == "x2" || curInst->getOprand(id) == "x3" || curInst->getOprand(id) == "x4")
+        val = sys->regMap[str];
+    else
+        val = stoi(str);
+
+    return val;
+}
+
 void fetch::recvInst(inst *i)
 {
     cout << " Fetch: " << i->getInst() << endl;
@@ -39,7 +52,7 @@ void fetch::process()
 
 void decode::recvInst(inst * i)
 {
-    cout << " Decode: " << i->getInst() << ",";
+    cout << " Decode: " << i->getInst();
     curInst = i;
 
     //schedule new event for decode stage
@@ -49,24 +62,32 @@ void decode::recvInst(inst * i)
 void decode::decodeInst()
 {
     string str = curInst->getInst();
-    int i = 0, j = 0;
-    vector<string> ins;
-    
-    while(j < str.length())
+
+    if(str == "NOP")
     {
-        while(str[j] != ' ' && j != str.length())
-        {
-            j++;
-        }
-        ins.push_back(str.substr(i, j-i));
-        j++;
-        i = j;
+        return;
     }
+    else
+    {
+        int i = 0, j = 0;
+        vector<string> ins;
+        
+        while(j < str.length())
+        {
+            while(str[j] != ' ' && j != str.length())
+            {
+                j++;
+            }
+            ins.push_back(str.substr(i, j-i));
+            j++;
+            i = j;
+        }
 
-    curInst->opcode = ins[0];
+        curInst->setOpcode(ins[0]);
 
-    for(int c = 1; c < ins.size(); c++)
-        curInst->oprand.push_back(ins[c]);
+        for(int c = 1; c < ins.size(); c++)
+            curInst->insertOprand(ins[c]);
+    }
 }
 
 void decode::process()
@@ -102,19 +123,52 @@ void decode::process()
 
 void execute::recvInst(inst * i)
 {
-    cout << " Execute: " << i->getInst() << ",";
     curInst = i;
+    if(curInst->getInst() == "NOP")
+        cout << " Execute: " << i->getInst();
+    else if(curInst->getOpcode() == "bne")
+        cout << " Execute: " << i->getOpcode() << " " << this->getData(0) << "," << this->getData(1);
+    else
+        cout << " Execute: " << i->getOpcode() << " " << i->getOprand(0) << "," << this->getData(1) << "," << this->getData(2);
 
     //schedule new event for execute stage
     sys->schedule(ee,sys->getCurTick()+1);
 }
 
+void execute::executeInst()
+{
+    int val1, val2, result;
+    string op = curInst->getOpcode();
+    
+    if(op == "fld" || op == "fadd.d" || op == "fsd" || op == "addi")
+    {
+        val1 = this->getData(1);
+        val2 = this->getData(2);
+
+        result = val1 + val2;
+        string resReg = curInst->getOprand(0);
+        sys->regMap[resReg] = result;
+    }
+    else if(op == "bne")
+    {
+        val1 = this->getData(0);
+        val2 = this->getData(0);
+
+        if(val1 == val2)
+        {
+            
+        }
+        return;
+    }
+}
 
 void execute::process()
 {
     //Send executed instruction to next stage
     if(!nextStage->isBusy())
     {
+        if(curInst->getInst() != "NOP")
+            this->executeInst();
         sendInst(curInst);
     }
     else
@@ -125,8 +179,13 @@ void execute::process()
 
 void store::recvInst(inst * i)
 {
-    cout << " Store: " << i->getInst() << ",";
     curInst = i;
+    if(curInst->getInst() == "NOP")
+        cout << " Store: " << curInst->getInst();
+    else if(curInst->getOpcode() == "bne")
+        cout << " Execute: " << i->getOpcode() << " " << this->getData(0) << "," << this->getData(1);
+    else
+        cout << " Store: " << i->getOpcode() << " " << i->getOprand(0) << "," << this->getData(1) << "," << this->getData(2);
 
     //schedule new event for store stage
     sys->schedule(se,sys->getCurTick()+1);

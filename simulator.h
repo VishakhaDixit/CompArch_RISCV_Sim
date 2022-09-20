@@ -45,7 +45,7 @@ private:
 	{"fsd x4 0 x1", 0},
 	{"addi x1 x1 -4", 0},
 	{"bne x1 x2", 0}
-};
+	};
 
 	fetch *f;
 	decode *d;

@@ -49,6 +49,7 @@ class pipeline : public System
         {
             return (curInst != NULL);
         }
+        int getData(int id);
 };
 
 class fetch : public pipeline
@@ -115,6 +116,7 @@ class execute : public pipeline
         execute(System *sys) : pipeline(sys), ee(new executeEvent(this)) {};
 
         void recvInst(inst *i);
+        void executeInst();
         void process();
 };
 

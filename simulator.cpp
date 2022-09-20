@@ -18,6 +18,7 @@ void Simulator::initSim()
     {
         initInsQ();
     }
+    
     //Initialize registers x1 & x2
     sys->regMap["x1"] = 20;
     sys->regMap["x2"] = 0;
