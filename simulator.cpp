@@ -1,5 +1,24 @@
+/**************************
+ *
+ * @file    simulator.cpp
+ *
+ * @brief   This file contains definitions for Simulator class APIs.
+ *
+ * @date    Sept 17, 2022
+ *
+ * @author  Vishakha Dixit
+ *
+ **************************/
+
 #include "simulator.h"
 
+/**************************
+ * @brief       This function initializes the Instruction queue with ins to be executed.
+ *
+ * @param [in]  NULL
+ *
+ * @return      NULL
+ **************************/
 void Simulator::initInsQ()
 {
     for(string val : instructions)
@@ -11,6 +30,13 @@ void Simulator::initInsQ()
     }
 }
 
+/**************************
+ * @brief       This function intializes the simulator.
+ *
+ * @param [in]  NULL
+ *
+ * @return      NULL
+ **************************/
 void Simulator::initSim()
 {
     //Init instructions in insQ
@@ -33,6 +59,13 @@ void Simulator::initSim()
     s->setNextStage(NULL);
 }
 
+/**************************
+ * @brief       This function executes an clk event by sending an instruction from insQ to the fetch unit.
+ *
+ * @param [in]  NULL
+ *
+ * @return      NULL
+ **************************/
 void Simulator::process()
 {
     if(!(f->isBusy()))

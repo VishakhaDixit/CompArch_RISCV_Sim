@@ -16,7 +16,7 @@
 int main() {
 	System *sys = new System();
 	Simulator *es = new Simulator(sys);
-	es->initSim();				//Initialize Simulator device with random 20 events
-	sys->executeSim(100);		//(Q-5) Run Simulator for 100 clk cycles
+	es->initSim();				//Initialize Simulator device.
+	sys->executeSim(100);		//Run Simulator for 100 clk cycles, this function terminates if pipeline is flushed.
 	return 0;
 }

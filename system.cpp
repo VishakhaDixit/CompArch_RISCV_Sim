@@ -18,6 +18,8 @@
  *
  * @param [in]  Event *e: 	Event class object
  * 				TICK t: 	Event time
+ * 				string i:	Event Instruction
+ * 				string s:	Event Stage
  *
  * @return      NULL
  **************************/
@@ -30,12 +32,10 @@ void System::schedule(Event *e, TICK t, string i, string s)
 		if (e->getTime() < (*i)->getTime()) 
 		{
 			MEQ.insert(i, e);
-			// std::cout << "Scheduled new Test Event at " << " time = " << t <<  std::endl;
 			return;
 		}
 	}
 	MEQ.push_back(e);
-	// std::cout << "Scheduled new Test Event at " << " time = " << t <<  std::endl;
 	return;
 }
 
@@ -95,6 +95,13 @@ void System::displayMEQ()
 	std::cout << "End of MEQ\n";
 }
 
+/**************************
+ * @brief       This function flushes the contents of MEQ.
+ *
+ * @param [in]  NULL
+ *
+ * @return      NULL
+ **************************/
 void System::flushMEQ()
 {
 	MEQ.clear();

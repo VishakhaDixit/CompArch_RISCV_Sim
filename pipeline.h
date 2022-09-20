@@ -1,6 +1,6 @@
 /**************************
  *
- * @file    inst.h
+ * @file    pipeline.h
  *
  * @brief   This file contains classes for pipeline and it's 4 stages.
  *

@@ -14,6 +14,13 @@
 
 using namespace std;
 
+/**************************
+ * @brief       This function returns the data value from Register.
+ *
+ * @param [in]  int id: index value of oprand.
+ *
+ * @return      int:    data value
+ **************************/
 int pipeline::getData(int id)
 {
     int val;
@@ -27,6 +34,13 @@ int pipeline::getData(int id)
     return val;
 }
 
+/**************************
+ * @brief       This function receives instruction for fetch unit & schedules it for execution.
+ *
+ * @param [in]  inst *i:    Instruction to be fetched.
+ *
+ * @return      NULL
+ **************************/
 void fetch::recvInst(inst *i)
 {
     if(flushFlag == true)
@@ -41,6 +55,13 @@ void fetch::recvInst(inst *i)
     sys->schedule(fe,sys->getCurTick()+1, curInst->getInst(), "fetch");
 }
 
+/**************************
+ * @brief       This function processes received ins by sending it to Decode unit if pipeline is not busy.
+ *
+ * @param [in]  NULL
+ *
+ * @return      NULL
+ **************************/
 void fetch::process()
 {
     //Send fetched instruction to next stage
@@ -55,6 +76,13 @@ void fetch::process()
     }
 }
 
+/**************************
+ * @brief       This function receives instruction for decode unit & schedules it for execution.
+ *
+ * @param [in]  inst *i:    Instruction to be decoded.
+ *
+ * @return      NULL
+ **************************/
 void decode::recvInst(inst * i)
 {
     if(flushFlag == true)
@@ -69,6 +97,13 @@ void decode::recvInst(inst * i)
     sys->schedule(de,sys->getCurTick()+1, curInst->getInst(), "decode");
 }
 
+/**************************
+ * @brief       This function decodes the received ins by identifying the opcode & oprand.
+ *
+ * @param [in]  NULL
+ *
+ * @return      NULL
+ **************************/
 void decode::decodeInst()
 {
     string str = curInst->getInst();
@@ -100,6 +135,14 @@ void decode::decodeInst()
     }
 }
 
+/**************************
+ * @brief       This function processes decoded ins by sending it to Execute unit if pipeline is not busy.
+ *              It also insert NOP ins to stall the pipeline based on time needed for ins to execute.
+ *
+ * @param [in]  NULL
+ *
+ * @return      NULL
+ **************************/
 void decode::process()
 {
     //Send decoded instruction to next stage
@@ -132,6 +175,13 @@ void decode::process()
     }
 }
 
+/**************************
+ * @brief       This function receives instruction for Execute unit & schedules it for execution.
+ *
+ * @param [in]  inst *i:    Instruction to be executed.
+ *
+ * @return      NULL
+ **************************/
 void execute::recvInst(inst * i)
 {
     if(flushFlag == true)
@@ -151,12 +201,19 @@ void execute::recvInst(inst * i)
     sys->schedule(ee,sys->getCurTick()+1, curInst->getInst(), "execute");
 }
 
+/**************************
+ * @brief       This function performs intended operation on oprands based on the opcodes received.
+ *
+ * @param [in]  NULL
+ *
+ * @return      NULL
+ **************************/
 void execute::executeInst()
 {
     int val1, val2, result;
     string op = curInst->getOpcode();
     
-    if(op == "fld" || op == "fadd.d" || op == "fsd" || op == "addi")
+    if(op == "ld" || op == "add.d" || op == "sd" || op == "add")
     {
         val1 = this->getData(1);
         val2 = this->getData(2);
@@ -179,6 +236,13 @@ void execute::executeInst()
     }
 }
 
+/**************************
+ * @brief       This function executes the received instruction & sends it to Store stage for write back.
+ *
+ * @param [in]  NULL
+ *
+ * @return      NULL
+ **************************/
 void execute::process()
 {
     //Send executed instruction to next stage
@@ -195,6 +259,13 @@ void execute::process()
     }
 }
 
+/**************************
+ * @brief       This function receives instruction for Store unit & schedules it for execution.
+ *
+ * @param [in]  inst *i:    Instruction to be written back.
+ *
+ * @return      NULL
+ **************************/
 void store::recvInst(inst * i)
 {
     if(flushFlag == true)
@@ -215,7 +286,13 @@ void store::recvInst(inst * i)
     sys->schedule(se,sys->getCurTick()+1, curInst->getInst(), "store");
 }
 
-
+/**************************
+ * @brief       This function deletes the executed instruction from pipeline.
+ *
+ * @param [in]  NULL
+ *
+ * @return      NULL
+ **************************/
 void store::process()
 {
     //Delete pipelined instruction after write back.
