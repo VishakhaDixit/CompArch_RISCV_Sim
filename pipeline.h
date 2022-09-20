@@ -27,6 +27,8 @@ class pipeline : public System
 
         System *sys;
 
+        bool flushFlag = false;
+
     public:
         pipeline(System *_sys) : sys(_sys), curInst(NULL) {};
         

@@ -71,6 +71,10 @@ void System::executeSim(TICK endClkTick)
 
 		curClkTick++;
 	}
+	if(MEQ.empty())
+	{
+		cout << " Store: NOP Execute: NOP Decode: NOP Fetch: NOP" << endl;
+	}
 }
 
 /**************************
@@ -88,6 +92,11 @@ void System::displayMEQ()
 		std::cout << "t:"<< e->getTime() << " i:" << " s:" << std::endl;
 	}
 	std::cout << "End of MEQ\n";
+}
+
+void System::flushMEQ()
+{
+	MEQ.clear();
 }
 
 /**************************

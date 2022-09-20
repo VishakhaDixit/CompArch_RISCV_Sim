@@ -41,6 +41,7 @@ class System
 		void executeSim(TICK endClkTick=-1);
 		TICK getCurTick() { return curClkTick; }
 		void displayMEQ();
+		void flushMEQ();
 		Event *popEve();
 };
 

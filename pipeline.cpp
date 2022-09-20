@@ -29,6 +29,11 @@ int pipeline::getData(int id)
 
 void fetch::recvInst(inst *i)
 {
+    if(flushFlag == true)
+    {
+        cout << " Fetch: NOP";
+        return;
+    }
     cout << " Fetch: " << i->getInst() << endl;
     curInst = i;
 
@@ -52,6 +57,11 @@ void fetch::process()
 
 void decode::recvInst(inst * i)
 {
+    if(flushFlag == true)
+    {
+        cout << " Decode: NOP";
+        return;
+    }
     cout << " Decode: " << i->getInst();
     curInst = i;
 
@@ -123,6 +133,11 @@ void decode::process()
 
 void execute::recvInst(inst * i)
 {
+    if(flushFlag == true)
+    {
+        cout << " Execute: NOP";
+        return;
+    }
     curInst = i;
     if(curInst->getInst() == "NOP")
         cout << " Execute: " << i->getInst();
@@ -152,11 +167,12 @@ void execute::executeInst()
     else if(op == "bne")
     {
         val1 = this->getData(0);
-        val2 = this->getData(0);
+        val2 = this->getData(1);
 
         if(val1 == val2)
         {
-            
+            flushFlag = true;
+            sys->flushMEQ();
         }
         return;
     }
@@ -169,7 +185,8 @@ void execute::process()
     {
         if(curInst->getInst() != "NOP")
             this->executeInst();
-        sendInst(curInst);
+        if(flushFlag == false)
+            sendInst(curInst);
     }
     else
     {
@@ -179,6 +196,12 @@ void execute::process()
 
 void store::recvInst(inst * i)
 {
+    if(flushFlag == true)
+    {
+        cout << " Store: NOP";
+        sys->flushMEQ();
+        return;
+    }
     curInst = i;
     if(curInst->getInst() == "NOP")
         cout << " Store: " << curInst->getInst();
