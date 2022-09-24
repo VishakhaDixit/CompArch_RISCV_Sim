@@ -213,7 +213,7 @@ void execute::executeInst()
     int val1, val2, result;
     string op = curInst->getOpcode();
     
-    if(op == "ld" || op == "add.d" || op == "sd" || op == "add")
+    if(op == "ld" || op == "add.d" || op == "sd" || op == "addi")
     {
         val1 = this->getData(1);
         val2 = this->getData(2);
@@ -275,10 +275,8 @@ void store::recvInst(inst * i)
         return;
     }
     curInst = i;
-    if(curInst->getInst() == "NOP")
-        cout << " Store: " << curInst->getInst();
-    else if(curInst->getOpcode() == "bne")
-        cout << " Store: " << i->getOpcode() << " " << this->getData(0) << "," << this->getData(1);
+    if(curInst->getInst() == "NOP" || curInst->getOpcode() == "bne")
+        cout << " Store: " << "NOP";
     else
         cout << " Store: " << i->getOpcode() << " " << i->getOprand(0) << "," << this->getData(1) << "," << this->getData(2);
 
