@@ -2,7 +2,7 @@
  *
  * @file    main.cpp
  *
- * @brief   This program tends to implement an Event Driven Simulator.
+ * @brief   This program tends to implement an Event Driven Simulator with 4 stage pipeline.
  *
  * @date    Sep 10, 2022
  *
