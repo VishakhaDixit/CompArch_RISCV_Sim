@@ -73,7 +73,7 @@ void System::executeSim(TICK endClkTick)
 	}
 	if(MEQ.empty())
 	{
-		cout << " Store: NOP Execute: NOP Decode: NOP Fetch: NOP" << endl;
+		cout << " Store: NOP, Execute: NOP, Decode: NOP, Fetch: NOP" << endl;
 		displayMEQ();
 	}
 }

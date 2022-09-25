@@ -27,7 +27,7 @@ class System
 		std::vector<Event *> MEQ;
 
 	public:
-		System() : curClkTick(0) {}
+		System() : curClkTick(1) {}
 
 		unordered_map<string, int> regMap = 
 		{
