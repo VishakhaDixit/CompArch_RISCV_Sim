@@ -24,13 +24,13 @@ class Event
 {
 	private:
 		TICK eveTime;
-		string ins;
+		uint32_t ins;
 		string stage;
 
 	public:
 		Event() : eveTime(0) { }
 		
-		void schEve(TICK newTime, string i, string s) 
+		void schEve(TICK newTime, uint32_t i, string s) 
 		{
 			eveTime = newTime;
 			ins = i;
@@ -39,13 +39,13 @@ class Event
 		void dschEve() 
 		{
 			eveTime = -1;
-			ins = "";
+			ins = 0;
 			stage = "";
 		}
 		
 		void setTime(TICK t) { eveTime = t; }
 		TICK getTime() { return eveTime; }
-		string getInst() { return ins; }
+		uint32_t getInst() { return ins; }
 		string getStage() { return stage; }
 		
 		virtual void process() = 0;
