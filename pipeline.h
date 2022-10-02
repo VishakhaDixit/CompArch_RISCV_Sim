@@ -51,7 +51,6 @@ class pipeline : public System
         {
             return (curInst != NULL);
         }
-        int getData(int id);
 };
 
 class fetch : public pipeline
