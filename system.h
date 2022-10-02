@@ -37,7 +37,7 @@ class System
 			{"x4", 0}
 		};
 		
-		void schedule(Event *e, TICK t, string i, string s);			
+		void schedule(Event *e, TICK t, uint32_t i, string s);			
 		void executeSim(TICK endClkTick=-1);
 		TICK getCurTick() { return curClkTick; }
 		void displayMEQ();

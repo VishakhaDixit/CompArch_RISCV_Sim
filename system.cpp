@@ -23,7 +23,7 @@
  *
  * @return      NULL
  **************************/
-void System::schedule(Event *e, TICK t, string i, string s) 
+void System::schedule(Event *e, TICK t, uint32_t i, string s) 
 {
 	e->schEve(t, i, s);
 
