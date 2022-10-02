@@ -21,11 +21,9 @@
  **************************/
 void Simulator::initInsQ()
 {
-    for(string val : instructions)
+    for(uint32_t val : instructions)
     {
-        inst *i = new inst();
-        i->setInst(val);
-        i->setCst(stallList[val]);
+        inst *i = new inst(val);
         insQ.push_back(i);
     }
 }
@@ -50,7 +48,7 @@ void Simulator::initSim()
     sys->regMap["x2"] = 0;
 
     //Initialize Event List for first clk tick
-    sys->schedule(te, getCurTick(), "N/A", "ClkGen");
+    sys->schedule(te, getCurTick(), 0x00, "ClkGen");
 
     //Generate Pipeline by linking together the stages
     f->setNextStage(d);
@@ -80,5 +78,5 @@ void Simulator::process()
         insQ.push_back(i);
     }
         
-    sys->schedule(te, sys->getCurTick()+1, "N/A", "ClkGen");
+    sys->schedule(te, sys->getCurTick()+1, 0x00, "ClkGen");
 }

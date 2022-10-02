@@ -38,13 +38,10 @@ private:
 	testEve *te;
 
 	vector<inst *> insQ;
-	vector<string> instructions = {"ld x3 0 x1", "add.d x4 x3 x2", "sd x4 0 x1", "addi x1 x1 -4", "bne x1 x2"};
-	unordered_map<string, int> stallList = {        //Stall tick per instruction
-	{"ld x3 0 x1", 3},
-	{"add.d x4 x3 x2", 3},
-	{"sd x4 0 x1", 3},
-	{"addi x1 x1 -4", 3},
-	{"bne x1 x2", 2}
+	vector<uint32_t> instructions = 
+	{
+		0x00300193,
+		0x00618193
 	};
 
 	fetch *f;
