@@ -23,21 +23,40 @@ using namespace std;
 class inst
 {
     protected:
-        string instruction;
-        int cst;                                        //Current stall tick        
-        string opcode;
-        vector<string> oprand;
+        int cst;             //Current stall tick        
+
+        uint32_t binIns;    //  Binary Instruction
+        int32_t opcode;
+        int32_t rd, func3, func7, rs1, rs2, shamt, imm12b, imm20b;
+        uint32_t result;
 
     public:
-        string getInst() { return instruction; }
-        void setInst(string i) { instruction = i; }
-        int getCst() { return cst; }
-        void setCst(int c) { cst = c; }
-        void setOpcode(string op) { opcode = op; }
-        string getOpcode() { return opcode; }
-        void insertOprand(string op) { oprand.push_back(op); }
-        string getOprand(int i) { return oprand[i]; }
-        int getTotalOprands() { return oprand.size(); }
+        inst(uint32_t data) : binIns(data) {};
+
+        uint32_t getInst() { return binIns; }
+        void    setInst(uint32_t i) { binIns = i; }
+        int     getCst() { return cst; }
+        void    setCst(int i) { cst = i; }
+        void    setOpcode(int32_t op) { opcode = op; }
+        int32_t getOpcode() { return opcode; }
+        int32_t getrd() { return rd; }
+        void    setrd(int32_t data) { rd = data; }
+        int32_t getfunc3() { return func3; }
+        int32_t getrs1() { return rs1; }
+        int32_t getrs2() { return rs2; }
+        int32_t getfunc7() { return func7; }
+        int32_t getimm12b() { return imm12b; }
+        int32_t getimm20b() { return imm20b; }
+        int32_t getshamt() { return shamt; }
+        void    setfunc3(int32_t i) { func3 = i; }
+        void    setrs1(int32_t i) { rs1 = i; }
+        void    setrs2(int32_t i) { rs2 = i; }
+        void    setfunc7(int32_t i) { func7 = i; }
+        void    setshamt(int32_t i) { shamt = i; }
+        void    setimm12b(int32_t i) { imm12b = i; }
+        void    setimm20b(int32_t i) { imm20b = i; }   
+        int32_t getResult() { return result; }
+        void    setresult(int32_t data) { result = data; }
 };
 
 #endif //__INST_H__
