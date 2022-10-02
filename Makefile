@@ -16,6 +16,7 @@ $(TARGET) : $(OBJS)
 clean :
 	rm -rf $(TARGET)
 	rm -rf *.o
+	rm result.txt
 
 run :
-	./$(TARGET)
+	./$(TARGET) >> result.txt
