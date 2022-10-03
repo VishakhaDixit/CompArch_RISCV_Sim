@@ -14,7 +14,6 @@
 #define __INST_H__
 
 #include <string>
-#include <unordered_map>
 
 #define MAX_INS (5)
 
@@ -24,10 +23,10 @@ class inst
 {
     protected:
         int cst;             //Current stall tick        
-
         uint32_t binIns;    //  Binary Instruction
         int32_t opcode;
         int32_t rd, func3, func7, rs1, rs2, shamt, imm12b, imm20b;
+        string insType;
         uint32_t result;
 
     public:
@@ -35,6 +34,8 @@ class inst
 
         uint32_t getInst() { return binIns; }
         void    setInst(uint32_t i) { binIns = i; }
+        string  getInsType() { return insType; }
+        void    setInsType(string i) { insType = i; }
         int     getCst() { return cst; }
         void    setCst(int i) { cst = i; }
         void    setOpcode(int32_t op) { opcode = op; }

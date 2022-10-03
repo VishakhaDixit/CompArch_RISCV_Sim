@@ -26,10 +26,8 @@ void fetch::recvInst(inst *i)
 {
     if(flushFlag == true)
     {
-        cout << " Fetch: NOP";
         return;
     }
-    cout << " Fetch: " << i->getInst() << endl;
     curInst = i;
 
     //schedule new event for fetch stage
@@ -53,7 +51,6 @@ void fetch::process()
     else
     {
         sys->schedule(fe,sys->getCurTick()+1, curInst->getInst(), "fetch");
-        cout << " Fetch: " << curInst->getInst() << endl;
     }
 }
 
@@ -68,11 +65,10 @@ void decode::recvInst(inst * i)
 {
     if(flushFlag == true)
     {
-        cout << " Decode: NOP,";
         return;
     }
-    cout << " Decode: " << i->getInst() << ",";
     curInst = i;
+    std::cout << "Decode unit received instruction " << i->getInst() << endl;
 
     //schedule new event for decode stage
     sys->schedule(de,sys->getCurTick()+1, curInst->getInst(), "decode");
@@ -305,40 +301,123 @@ void decode::process()
     if(!nextStage->isBusy())
     {
         this->decodeInst();
-        int32_t op = curInst->getOpcode();
 
-        //Different Instructions take different clk cycles for execution
-        if(op == 0x33)
+        switch(curInst->getOpcode())
         {
-            curInst->setCst(2);     // Multiply instructions take 2 clk cycles for execution
+            case 0x37:
+                cout << "Decode unit received opcode: LUI" << std::endl;
+                break;
+            case 0x17:
+                cout << "Decode unit received opcode: AUIPC" << std::endl;
+                break;   
+            case 0x6F:
+                cout << "Decode unit received opcode: JAL" << std::endl;
+                break;    
+            case 0x67:
+                cout << "Decode unit received opcode: JALR" << std::endl;
+                break;       
+            case 0x63:
+                switch (curInst->getfunc3())
+                {
+                    case 0:
+                        cout << "Decode unit received opcode: BEQ" << std::endl;
+                        break;
+                    case 1:
+                        cout << "Decode unit received opcode: BNE" << std::endl;
+                        break;
+                    case 4:
+                        cout << "Decode unit received opcode: BLT" << std::endl;
+                        break;
+                    case 5:
+                        cout << "Decode unit received opcode: BGT" << std::endl;
+                        break;
+                    case 6:
+                        cout << "Decode unit received opcode: BLTU" << std::endl;
+                        break;
+                    case 7:
+                        cout << "Decode unit received opcode: BGEU" << std::endl;
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case 0x3:
+                cout << "Decode unit received opcode: LW" << std::endl;
+                break;
+            case 0x23:
+                cout << "Decode unit received opcode: SW" << std::endl;
+                break;
+            case 0x13:
+                switch (curInst->getfunc3())
+                {
+                    case 0:
+                        cout << "Decode unit received opcode: ADDI" << std::endl;
+                        break;
+                    case 1:
+                        cout << "Decode unit received opcode: SLLI" << std::endl;
+                        break;
+                    case 2:
+                        cout << "Decode unit received opcode: SLTI" << std::endl;
+                        break;
+                    case 3:
+                        cout << "Decode unit received opcode: SLTIU" << std::endl;
+                        break;
+                    case 4:
+                        cout << "Decode unit received opcode: XORI" << std::endl;
+                        break;
+                    case 5:
+                        cout << "Decode unit received opcode: SRLI" << std::endl;
+                        break;                        
+                    case 6:
+                        cout << "Decode unit received opcode: ORI" << std::endl;
+                        break;
+                    case 7:
+                        cout << "Decode unit received opcode: ANDI" << std::endl;
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case 0x33:
+                switch (curInst->getfunc3())
+                {
+                    case 0:
+                        cout << "Decode unit received opcode: ADD" << std::endl;
+                        break;
+                    case 1:
+                        cout << "Decode unit received opcode: SLL" << std::endl;
+                        break;
+                    case 2:
+                        cout << "Decode unit received opcode: SLT" << std::endl;
+                        break;
+                    case 3:
+                        cout << "Decode unit received opcode: SLTU" << std::endl;
+                        break;
+                    case 4:
+                        cout << "Decode unit received opcode: XOR" << std::endl;
+                        break;
+                    case 5:
+                        cout << "Decode unit received opcode: SRL" << std::endl;
+                        break;                        
+                    case 6:
+                        cout << "Decode unit received opcode: OR" << std::endl;
+                        break;
+                    case 7:
+                        cout << "Decode unit received opcode: AND" << std::endl;
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            default:
+                break;
         }
-        else if((op == 0x7) || (op == 0x27) || (op == 0x43) || (op == 0x47) || (op == 0x4B) || (op == 0x4F) || (op == 0x53))
-        {
-            curInst->setCst(5);     // Floating point instructions take 5 clk cycles for execution
-        }
-        else if(op == 0x00)
-        {}                          // NOP instructions needs no stall time
-        else
-        {
-            curInst->setCst(1);     // Integer instructions take 1 clk cycle for execution
-        }
-        
-        if(curInst->getCst() > 0)
-        {
-            int stall = curInst->getCst();
-            sendInst(curInst);
-            
-            //Set NOP for stall period
-            inst *i = new inst(0x00);
-            i->setCst(stall-1);
-            this->curInst = i;
 
-            //Schedule NOP as next instruction
-            sys->schedule(de,sys->getCurTick()+1,  curInst->getInst(), "decode");
-            cout << " Decode: " << curInst->getInst() << ",";
-
-            return;
-        }
+        cout << "Decode unit received rd: " << curInst->getrd() << std::endl;
+        cout << "Decode unit received funct3: " << curInst->getfunc3() << std::endl;
+        cout << "Decode unit received rs1: " << curInst->getrs1() << std::endl;
+        cout << "Decode unit received immediate: " << curInst->getimm12b() << std::endl;
+        cout << "-----------------------------------------------" << endl;
         sendInst(curInst);
     }
     else
@@ -363,8 +442,6 @@ void execute::recvInst(inst * i)
     }
     curInst = i;
 
-    cout << " Execute: opcode=" << i->getOpcode() << " rd=" << i->getrd() << " func3=" << i->getfunc3() << " rs1=" << i->getrs1() << " immediate=" << i->getimm12b() << ",";
-
     //schedule new event for execute stage
     sys->schedule(ee,sys->getCurTick()+1, curInst->getInst(), "execute");
 }
@@ -378,30 +455,7 @@ void execute::recvInst(inst * i)
  **************************/
 void execute::executeInst()
 {
-    // int val1, val2, result;
-    // string op = curInst->getOpcode();
-    
-    // if(op == "ld" || op == "add.d" || op == "sd" || op == "addi")
-    // {
-    //     val1 = this->getData(1);
-    //     val2 = this->getData(2);
 
-    //     result = val1 + val2;
-    //     string resReg = curInst->getOprand(0);
-    //     sys->regMap[resReg] = result;
-    // }
-    // else if(op == "bne")
-    // {
-    //     val1 = this->getData(0);
-    //     val2 = this->getData(1);
-
-    //     if(val1 == val2)
-    //     {
-    //         flushFlag = true;
-    //         sys->flushMEQ();
-    //     }
-    //     return;
-    // }
 }
 
 /**************************
@@ -443,11 +497,6 @@ void store::recvInst(inst * i)
         return;
     }
     curInst = i;
-
-    if(curInst->getInst() == 0x00)
-        cout << " Store: " << "NOP,";
-    else
-        cout << " Store: opcode=" << i->getOpcode() << " rd=" << i->getrd() << " func3=" << i->getfunc3() << " rs1=" << i->getrs1() << " immediate=" << i->getimm12b() << ",";
 
     //schedule new event for store stage
     sys->schedule(se,sys->getCurTick()+1, curInst->getInst(), "store");

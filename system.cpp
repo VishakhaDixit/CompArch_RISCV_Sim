@@ -49,10 +49,7 @@ void System::schedule(Event *e, TICK t, uint32_t i, string s)
 void System::executeSim(TICK endClkTick) 
 {
 	while ((getCurTick() <= endClkTick) && !(MEQ.empty()))
-	{
-		displayMEQ();
-		std::cout << "\nSimulation Tick:" << getCurTick();
-		
+	{		
 		while(MEQ.begin() != MEQ.end())
 		{
 			if (MEQ.front()->getTime() < getCurTick()) 
