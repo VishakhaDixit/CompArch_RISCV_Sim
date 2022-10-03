@@ -10,6 +10,7 @@
  *
  **************************/
 #include <iostream>
+#include <bitset>
 #include "pipeline.h"
 
 using namespace std;
@@ -68,7 +69,8 @@ void decode::recvInst(inst * i)
         return;
     }
     curInst = i;
-    std::cout << "Decode unit received instruction " << i->getInst() << endl;
+    bitset<32> x(i->getInst());
+    std::cout << "Decode unit received instruction " << x << endl;
 
     //schedule new event for decode stage
     sys->schedule(de,sys->getCurTick()+1, curInst->getInst(), "decode");
