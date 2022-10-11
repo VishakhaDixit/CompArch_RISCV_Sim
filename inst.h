@@ -32,6 +32,9 @@ class inst
     public:
         inst(uint32_t data) : binIns(data) {};
 
+        // Control Signals are initially zero.
+        uint8_t Regdst, jump, branch, memread, memtoreg, alu, memwrite, alusrc, regwrite, sel1, sel2, sel3, sel4, sel5 = 0;
+
         uint32_t getInst() { return binIns; }
         void    setInst(uint32_t i) { binIns = i; }
         string  getInsType() { return insType; }
