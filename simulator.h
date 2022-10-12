@@ -37,7 +37,6 @@ private:
 	System *sys;
 	testEve *te;
 
-	vector<inst *> insQ;
 	vector<uint32_t> instructions = 
 	{
 		0x00300193,
@@ -65,11 +64,12 @@ private:
 	};
 
 	fetch *f;
-	decode *d;
+	decode *d;		
 	execute *e;
 	store *s;
 
 public:
+	vector<inst *> insQ;
 	Simulator(System *_sys) : sys(_sys),  te(new testEve(this)), f(new fetch(sys)),
 							d(new decode(sys)), e(new execute(sys)), s(new store(sys)) {}
 	
