@@ -73,7 +73,7 @@ void decode::recvInst(inst * i)
     std::cout << "Decode unit received instruction " << x << endl;
 
     //schedule new event for decode stage
-    sys->schedule(de,sys->getCurTick()+1, curInst->getInst(), "decode");
+    // sys->schedule(de,sys->getCurTick()+1, curInst->getInst(), "decode");
 }
 
 /**************************
@@ -101,6 +101,11 @@ void decode::decodeInst()
     case 0x37:      
         // LUI - U Type
         // 0-6 Opcode, 7-11 rd, 20-31 Immediate value.
+        //rd = imm, pc = pc+4
+
+        curInst->regwrite = 1;
+        curInst->PcToReg = 2;
+                
         rd = (((1 << 5) - 1) & (binIns >> 7));
         imm20b = (((1 << 20) - 1) & (binIns >> 12));
         break;
@@ -108,6 +113,13 @@ void decode::decodeInst()
     case 0x17:     
         //AUIPC - Add Upper immediate to program counter - U Type
         // 0-6 Opcode, 7-11 rd, 20-31 Immediate value.
+        //rd = pc(addr)+imm(offset), pc = pc+4
+
+        curInst->memread = 1;
+        curInst->aluop = 1;
+        curInst->regwrite = 1; 
+        curInst->memtoreg = 1;
+                
         rd = (((1 << 5) - 1) & (binIns >> 7));
         imm20b = (((1 << 20) - 1) & (binIns >> 12));
         break;    
@@ -115,6 +127,10 @@ void decode::decodeInst()
     case 0x6F :     
         //JAL - Jump & Link - J Type
         // 0-6 Opcode, 7-11 rd, 12-31 Immediate value.
+        // rd = pc+4, pc = pc+imm
+
+        curInst->regwrite = curInst->PcToReg = 1;
+
         rd = (((1 << 5) - 1) & (binIns >> 7));
         bit20 = (binIns & (1<<31)) != 0;
         bit10_1 = (((1 << 10) - 1) & (binIns >> 21));
@@ -129,6 +145,10 @@ void decode::decodeInst()
     case 0x67 :     
         //JALR - I Type
         // 0-6 Opcode, 7-11 rd, 12-14 func3 = 0, 15-19 rs1, 20-31 Immediate value.
+        // rd = pc+4, pc = rs1+imm
+
+        curInst->regwrite = curInst->PcToReg = curInst->RegToPc = 1;
+
         rd = (((1 << 5) - 1) & (binIns >> 7));
         func3 = 0;
         rs1 = (((1 << 5) - 1) & (binIns >> 15));
@@ -138,6 +158,11 @@ void decode::decodeInst()
     case 0x63 :     
         //BEQ, BNE, BLT, BGE, BLTU, BGEU - B Type
         // 0-6 Opcode, 7-11 Immediate value, 12-14 func3 = 0,1-7, 15-19 rs1, 20-24 rs2, 25-31 Immediate value.
+        // pc = pc + (rs1==rs2 ? imm : 4)
+        
+        // Branch ins requires ALU operation to compare the result
+        curInst->branch = curInst->aluop = 1;
+                
         bit11 = (binIns & (1 << 7)) != 0;
         bit4_1 = (((1 << 4) - 1) & (binIns >> 8));
         func3 = (((1 << 3) - 1) & (binIns >> 12));
@@ -156,6 +181,10 @@ void decode::decodeInst()
         //LB, LH, LW, LBU, LHU - I Type
         // Loads a value from imm bytes displaced of the contents of rs1.
         // 0-6 Opcode, 7-11 rd, 12-14 func3 = 0|1|2|4|5, 15-19 rs1, 20-31 Immediate value.
+        //rd = (rs1+imm) -> data from addr of rs1 + imm offset is read from memory and loaded to rd.
+
+        curInst->aluop = curInst->memread = curInst->regwrite = curInst->alusrc = curInst->memtoreg = 1;
+
         rd = (((1 << 5) - 1) & (binIns >> 7));
         func3 = (((1 << 3) - 1) & (binIns >> 12));
         rs1 = (((1 << 5) - 1) & (binIns >> 15));
@@ -165,6 +194,10 @@ void decode::decodeInst()
     case 0x23 :     
         //SB, SH, SW - S Type
         // 0-6 Opcode, 7-11 Immediate value, 12-14 func3 values between 0-2, 15-19 rs1, 20-24 rs2, 25-31 Immediate value.
+        // (rs1+imm) <- rs2
+
+        curInst->memwrite = curInst->aluop = curInst->alusrc = 1;
+
         bit4_0 = (((1 << 5) - 1) & (binIns >> 7));
         func3 = (((1 << 3) - 1) & (binIns >> 12));
         rs1 = (((1 << 5) - 1) & (binIns >> 15));
@@ -178,6 +211,9 @@ void decode::decodeInst()
         // 0-6 Opcode, 7-11 rd, 12-14 func3 values between 0-7, 15-19 rs1, 20-31 Immediate value.
         // SLLI, SRLI, SRAI - I Type
         // 0-6 Opcode, 7-11 rd, 12-14 func3 values between 0-7, 15-19 rs1, 20-24 shamt, 25-31 func7.
+
+        curInst->regwrite = curInst->aluop = curInst->alusrc = curInst->memread = curInst->memtoreg = 1;
+
         rd = (((1 << 5) - 1) & (binIns >> 7));
         func3 = (((1 << 3) - 1) & (binIns >> 12));
         rs1 = (((1 << 5) - 1) & (binIns >> 15));
@@ -197,6 +233,9 @@ void decode::decodeInst()
         //ADD, SUB, SLL, SLT, SLTU, XOR, SRL, SRA, OR, AND - R Type
         // 0-6 Opcode, 7-11 rd, 12-14 func3 values between 0-7, 15-19 rs1, 20-24 rs2, 25-31 func7.
         // func7 differentiates between adding, subtracting, arithmatic shifting, logic shifting.
+                    
+        curInst->Regdst = curInst->aluop = curInst->regwrite = 1;
+
         rd = (((1 << 5) - 1) & (binIns >> 7));
         func3 = (((1 << 3) - 1) & (binIns >> 12));
         rs1 = (((1 << 5) - 1) & (binIns >> 15));
@@ -207,6 +246,9 @@ void decode::decodeInst()
     case 0x7 :      
         //FLW - To load floating point value from memory to rd.
         // 0-6 Opcode, 7-11 rd, 12-14 func3 values between 0-7, 15-19 rs1, 20-31 Immediate value.
+
+        curInst->regwrite = curInst->alusrc = curInst->aluop = curInst->memread = curInst->memtoreg = 1;
+
         rd = (((1 << 5) - 1) & (binIns >> 7));
         func3 = (((1 << 3) - 1) & (binIns >> 12));
         rs1 = (((1 << 5) - 1) & (binIns >> 15));
@@ -216,6 +258,9 @@ void decode::decodeInst()
     case 0x27 :     
         //FSW - To store floating point value from rd to memory.
         // 0-6 Opcode, 7-11 rd, 12-14 func3 values between 0-7, 15-19 rs1, 20-31 Immediate value.
+
+        curInst->memwrite = curInst->aluop = curInst->alusrc = 1;
+
         bit4_0 = (((1 << 5) - 1) & (binIns >> 7));
         func3 = (((1 << 3) - 1) & (binIns >> 12));
         rs1 = (((1 << 5) - 1) & (binIns >> 15));
@@ -227,6 +272,9 @@ void decode::decodeInst()
     case 0x43 :     
         //FMADD.S  
         // 0-6 Opcode, 7-11 rd, 12-14 func3 values between 0-7, 15-19 rs1, 20-24 rs2, 25-31 func7.
+
+        curInst->Regdst = curInst->aluop = curInst->regwrite = 1;
+
         rd = (((1 << 5) - 1) & (binIns >> 7));
         func3 = (((1 << 3) - 1) & (binIns >> 12));
         rs1 = (((1 << 5) - 1) & (binIns >> 15));
@@ -237,6 +285,9 @@ void decode::decodeInst()
     case 0x47 :     
         //FMSUB.S
         // 0-6 Opcode, 7-11 rd, 12-14 func3 values between 0-7, 15-19 rs1, 20-24 rs2, 25-31 func7.
+
+        curInst->Regdst = curInst->aluop = curInst->regwrite = 1;
+
         rd = (((1 << 5) - 1) & (binIns >> 7));
         func3 = (((1 << 3) - 1) & (binIns >> 12));
         rs1 = (((1 << 5) - 1) & (binIns >> 15));
@@ -247,6 +298,9 @@ void decode::decodeInst()
     case 0x4B :     
         //FNMSUB.S
         // 0-6 Opcode, 7-11 rd, 12-14 func3 values between 0-7, 15-19 rs1, 20-24 rs2, 25-31 func7.
+
+        curInst->Regdst = curInst->aluop = curInst->regwrite = 1;
+
         rd = (((1 << 5) - 1) & (binIns >> 7));
         func3 = (((1 << 3) - 1) & (binIns >> 12));
         rs1 = (((1 << 5) - 1) & (binIns >> 15));
@@ -257,6 +311,9 @@ void decode::decodeInst()
     case 0x4F :     
         //FNMADD.S
         // 0-6 Opcode, 7-11 rd, 12-14 func3 values between 0-7, 15-19 rs1, 20-24 rs2, 25-31 func7.
+
+        curInst->Regdst = curInst->aluop = curInst->regwrite = 1;
+
         rd = (((1 << 5) - 1) & (binIns >> 7));
         func3 = (((1 << 3) - 1) & (binIns >> 12));
         rs1 = (((1 << 5) - 1) & (binIns >> 15));
@@ -267,6 +324,9 @@ void decode::decodeInst()
     case 0x53 :     
         //Rest of RV32F instructions
         // 0-6 Opcode, 7-11 rd, 12-14 func3 values between 0-7, 15-19 rs1, 20-24 rs2, 25-31 func7.
+
+        curInst->Regdst = curInst->aluop = curInst->regwrite = 1;
+
         rd = (((1 << 5) - 1) & (binIns >> 7));
         func3 = (((1 << 3) - 1) & (binIns >> 12));
         rs1 = (((1 << 5) - 1) & (binIns >> 15));
@@ -300,8 +360,8 @@ void decode::decodeInst()
 void decode::process()
 {
     //Send decoded instruction to next stage
-    if(!nextStage->isBusy())
-    {
+    // if(!nextStage->isBusy())
+    // {
         this->decodeInst();
 
         switch(curInst->getOpcode())
@@ -419,13 +479,26 @@ void decode::process()
         cout << "Decode unit received funct3: " << curInst->getfunc3() << std::endl;
         cout << "Decode unit received rs1: " << curInst->getrs1() << std::endl;
         cout << "Decode unit received immediate: " << curInst->getimm12b() << std::endl;
+
+        cout << "RegDst: " << curInst->Regdst << std::endl;
+        cout << "Jump: " << curInst->jump << std::endl;
+        cout << "Branch: " << curInst->branch << std::endl;
+        cout << "MemRead: " << curInst->memread << std::endl;
+        cout << "MemWrite: " << curInst->memwrite << std::endl;
+        cout << "MemToReg: " << curInst->memtoreg << std::endl;
+        cout << "ALUOp: " << curInst->aluop << std::endl;
+        cout << "ALUSrc: " << curInst->alusrc << std::endl;
+        cout << "RegWrite: " << curInst->regwrite << std::endl;
+        cout << "PcToReg: " << curInst->PcToReg << std::endl;
+        cout << "RegToPc: " << curInst->RegToPc << std::endl;
         cout << "-----------------------------------------------" << endl;
-        sendInst(curInst);
-    }
-    else
-    {
-        sys->schedule(de,sys->getCurTick()+1, curInst->getInst(), "execute");
-    }
+
+        // sendInst(curInst);
+    // }
+    // else
+    // {
+    //     sys->schedule(de,sys->getCurTick()+1, curInst->getInst(), "execute");
+    // }
 }
 
 /**************************
