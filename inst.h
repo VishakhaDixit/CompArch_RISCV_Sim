@@ -30,10 +30,22 @@ class inst
         uint32_t result;
 
     public:
-        inst(uint32_t data) : binIns(data) {};
-
         // Control Signals are initially zero.
-        uint8_t Regdst, jump, branch, memread, memtoreg, alu, memwrite, alusrc, regwrite, sel1, sel2, sel3, sel4, sel5 = 0;
+        int Regdst, jump, branch, memread, memtoreg, aluop, memwrite, alusrc, regwrite, PcToReg, RegToPc;
+    
+        inst(uint32_t data) : binIns(data) {
+            uint8_t Regdst = 0;
+            uint8_t jump = 0;
+            uint8_t branch = 0;
+            uint8_t memread = 0; 
+            uint8_t memtoreg = 0;
+            uint8_t aluop = 0; 
+            uint8_t memwrite = 0; 
+            uint8_t alusrc = 0; 
+            uint8_t regwrite = 0; 
+            uint8_t PcToReg = 0; 
+            uint8_t RegToPc = 0;
+        };
 
         uint32_t getInst() { return binIns; }
         void    setInst(uint32_t i) { binIns = i; }
