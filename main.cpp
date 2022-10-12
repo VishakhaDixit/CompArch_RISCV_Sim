@@ -16,7 +16,15 @@
 int main() {
 	System *sys = new System();
 	Simulator *es = new Simulator(sys);
-	es->initSim();				//Initialize Simulator device.
-	sys->executeSim(100);		//Run Simulator for 100 clk cycles, this function terminates if pipeline is flushed.
+	decode *d = new decode(sys);
+
+	es->initInsQ();
+
+	for(auto i : es->insQ)
+	{
+		d->recvInst(i);
+		d->process();
+	}
+
 	return 0;
 }
