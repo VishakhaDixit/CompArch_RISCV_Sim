@@ -119,6 +119,7 @@ void decode::decodeInst()
         curInst->aluop = 1;
         curInst->regwrite = 1; 
         curInst->memtoreg = 1;
+        curInst->alusrc = 1;
                 
         rd = (((1 << 5) - 1) & (binIns >> 7));
         imm20b = (((1 << 20) - 1) & (binIns >> 12));
@@ -212,7 +213,7 @@ void decode::decodeInst()
         // SLLI, SRLI, SRAI - I Type
         // 0-6 Opcode, 7-11 rd, 12-14 func3 values between 0-7, 15-19 rs1, 20-24 shamt, 25-31 func7.
 
-        curInst->regwrite = curInst->aluop = curInst->alusrc = curInst->memread = curInst->memtoreg = 1;
+        curInst->regwrite = curInst->aluop = curInst->alusrc = 1;
 
         rd = (((1 << 5) - 1) & (binIns >> 7));
         func3 = (((1 << 3) - 1) & (binIns >> 12));
@@ -368,36 +369,46 @@ void decode::process()
         {
             case 0x37:
                 cout << "Decode unit received opcode: LUI" << std::endl;
+                cout << "LUI rd,imm" << endl;
                 break;
             case 0x17:
                 cout << "Decode unit received opcode: AUIPC" << std::endl;
+                cout << "AUIPC rd,imm" << endl;
                 break;   
             case 0x6F:
                 cout << "Decode unit received opcode: JAL" << std::endl;
+                cout << "JAL rd,imm" << endl;
                 break;    
             case 0x67:
                 cout << "Decode unit received opcode: JALR" << std::endl;
+                cout << "JALR rd,imm(rs1)" << endl;
                 break;       
             case 0x63:
                 switch (curInst->getfunc3())
                 {
                     case 0:
                         cout << "Decode unit received opcode: BEQ" << std::endl;
+                        cout << "BEQ rs1,rs2" << endl;
                         break;
                     case 1:
                         cout << "Decode unit received opcode: BNE" << std::endl;
+                        cout << "BNE rs1,rs2" << endl;
                         break;
                     case 4:
                         cout << "Decode unit received opcode: BLT" << std::endl;
+                        cout << "BLTrs1,rs2" << endl;
                         break;
                     case 5:
                         cout << "Decode unit received opcode: BGT" << std::endl;
+                        cout << "BGT rs1,rs2" << endl;
                         break;
                     case 6:
                         cout << "Decode unit received opcode: BLTU" << std::endl;
+                        cout << "BLTU rs1,rs2" << endl;
                         break;
                     case 7:
                         cout << "Decode unit received opcode: BGEU" << std::endl;
+                        cout << "BGEU rs1,rs2" << endl;
                         break;
                     default:
                         break;
@@ -405,36 +416,46 @@ void decode::process()
                 break;
             case 0x3:
                 cout << "Decode unit received opcode: LW" << std::endl;
+                cout << "LW rd,imm(rs1)" << endl;
                 break;
             case 0x23:
                 cout << "Decode unit received opcode: SW" << std::endl;
+                cout << "SW rs2,imm(rs1)" << endl;
                 break;
             case 0x13:
                 switch (curInst->getfunc3())
                 {
                     case 0:
                         cout << "Decode unit received opcode: ADDI" << std::endl;
+                        cout << "ADDI rd,rs1,imm" << endl;
                         break;
                     case 1:
                         cout << "Decode unit received opcode: SLLI" << std::endl;
+                        cout << "SLLI rd,rs1,shamt" << endl;
                         break;
                     case 2:
                         cout << "Decode unit received opcode: SLTI" << std::endl;
+                        cout << "SLTI rd,rs1,imm" << endl;
                         break;
                     case 3:
                         cout << "Decode unit received opcode: SLTIU" << std::endl;
+                        cout << "SLTIU rd,rs1,imm" << endl;
                         break;
                     case 4:
                         cout << "Decode unit received opcode: XORI" << std::endl;
+                        cout << "XORI rd,rs1,imm" << endl;
                         break;
                     case 5:
                         cout << "Decode unit received opcode: SRLI" << std::endl;
+                        cout << "SRLI rd,rs1,shamt" << endl;
                         break;                        
                     case 6:
                         cout << "Decode unit received opcode: ORI" << std::endl;
+                        cout << "ORI rd,rs1,imm" << endl;
                         break;
                     case 7:
                         cout << "Decode unit received opcode: ANDI" << std::endl;
+                        cout << "ANDI rd,rs1,imm" << endl;
                         break;
                     default:
                         break;
@@ -445,27 +466,35 @@ void decode::process()
                 {
                     case 0:
                         cout << "Decode unit received opcode: ADD" << std::endl;
+                        cout << "ADD rd,rs1,rs2" << endl;
                         break;
                     case 1:
                         cout << "Decode unit received opcode: SLL" << std::endl;
+                        cout << "SLL rd,rs1,rs2" << endl;
                         break;
                     case 2:
                         cout << "Decode unit received opcode: SLT" << std::endl;
+                        cout << "SLT rd,rs1,rs2" << endl;
                         break;
                     case 3:
                         cout << "Decode unit received opcode: SLTU" << std::endl;
+                        cout << "SLTU rd,rs1,rs2" << endl;
                         break;
                     case 4:
                         cout << "Decode unit received opcode: XOR" << std::endl;
+                        cout << "XOR rd,rs1,rs2" << endl;
                         break;
                     case 5:
                         cout << "Decode unit received opcode: SRL" << std::endl;
+                        cout << "SRL rd,rs1,rs2" << endl;
                         break;                        
                     case 6:
                         cout << "Decode unit received opcode: OR" << std::endl;
+                        cout << "OR rd,rs1,rs2" << endl;
                         break;
                     case 7:
                         cout << "Decode unit received opcode: AND" << std::endl;
+                        cout << "AND rd,rs1,rs2" << endl;
                         break;
                     default:
                         break;
@@ -478,6 +507,9 @@ void decode::process()
         cout << "Decode unit received rd: " << curInst->getrd() << std::endl;
         cout << "Decode unit received funct3: " << curInst->getfunc3() << std::endl;
         cout << "Decode unit received rs1: " << curInst->getrs1() << std::endl;
+        cout << "Decode unit received rs2: " << curInst->getrs2() << std::endl;
+        cout << "Decode unit received shamt: " << curInst->getshamt() << std::endl;
+        cout << "Decode unit received funct7: " << curInst->getfunc7() << std::endl;
         cout << "Decode unit received immediate: " << curInst->getimm12b() << std::endl;
 
         cout << "RegDst: " << curInst->Regdst << std::endl;
