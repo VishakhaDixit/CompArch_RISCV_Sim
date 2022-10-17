@@ -14,13 +14,14 @@
 #define __DRAM_H__
 
 #include <stdint.h>
+#include <array>
 #include "iport.h"
 #include "dport.h"
 
 class dram 
 {
     private:
-        uint8_t memory[0x1400]; //DRAM memory
+        std::array<uint8_t, 0x1400> memory; //DRAM memory
         iport ip;
         dport dp;
 
