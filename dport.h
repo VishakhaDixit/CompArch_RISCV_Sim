@@ -21,8 +21,8 @@ class dport
         uint32_t startAddr;
         uint32_t endAddr;
     public:
-        uint8_t getData(uint32_t addr);
-        void    setData(uint32_t addr, uint8_t data);
+        uint32_t getData(uint32_t addr);
+        void    setData(uint32_t addr, uint32_t data);
 };
 
 #endif
