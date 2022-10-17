@@ -28,6 +28,8 @@ class dram
     public:
         iport *getInstPort();
         dport *getDataPort();
+        void  initDram(uint32_t startAddr, std::array<uint8_t, 0x1400> initData);
+        void  printDram();//For Demo
 };
 
 
