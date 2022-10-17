@@ -18,11 +18,11 @@
 class iport
 {
     private:
-        uint32_t instCount = 0;
+        //PC should be part of CPU
         uint32_t startAddr;
         uint32_t endAddr;
     public:
-        uint8_t getNextInstruction();
+        uint32_t getInstruction(uint32_t progCount);
         
 };
 
