@@ -1,6 +1,6 @@
 /**************************
  *
- * @file    dram.h
+ * @file    iport.h
  *
  * @brief   This file contains dram class for DRAM
  *
@@ -26,4 +26,4 @@ class iport
         
 };
 
-#endif
+#endif //__IPORT_H__
