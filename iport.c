@@ -16,10 +16,13 @@
 uint32_t iport::getInstruction(uint32_t progCount)
 {
     uint32_t instr;
-    if(progCount < this.endAddr && progCount > this.startAddr)
+    if(progCount < this->endAddr && progCount > this->startAddr)
     {
 
-        instr = (memory[progCount] << 32) | (memory[progCount + 2] << 24) | (memory[progCount + 3] << 16) | (memory[progCount + 4])
+        instr = (p_dram -> memory[progCount] << 31)     | 
+                (p_dram -> memory[progCount + 2] << 23) | 
+                (p_dram -> memory[progCount + 3] << 15) | 
+                (p_dram -> memory[progCount + 4]);
     }
     else
     {
