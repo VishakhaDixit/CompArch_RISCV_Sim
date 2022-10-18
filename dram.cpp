@@ -7,3 +7,23 @@ dram::dram(uint32_t iportStart, uint32_t iportEnd, uint32_t dportStart, uint32_t
     ip = new iport(this, iportStart, iportEnd);
     dp = new dport(this, dportStart, dportEnd);
 }
+
+iport *dram::getInstPort()
+{
+    return ip;
+}
+
+dport *dram::getDataPort()
+{
+    return dp;
+}
+
+dram::initDram(uint32_t startAddr, std::array<uint8_t, 0x1400> initData)
+{
+
+}
+
+dram::printDram()
+{
+
+}
