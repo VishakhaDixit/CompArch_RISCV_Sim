@@ -15,17 +15,22 @@
 
 #include <stdint.h>
 #include <array>
-#include "iport.h"
-#include "dport.h"
 
-class dram 
+class iport;
+class dport;
+class dram
 {
-    private:
+    friend iport;
+    friend dport;
+    protected:
         std::array<uint8_t, 0x1400> memory; //DRAM memory
-        iport ip;
-        dport dp;
+
+    private:
+        iport *ip;
+        dport *dp;
 
     public:
+        dram(uint32_t iportStart, uint32_t iportEnd, uint32_t dportStart, uint32_t dportEnd);
         iport *getInstPort();
         dport *getDataPort();
         void  initDram(uint32_t startAddr, std::array<uint8_t, 0x1400> initData);
