@@ -22,7 +22,7 @@ class dram
 {
     friend iport;
     friend dport;
-    protected:
+    private:
         std::array<uint8_t, 0x1400> memory; //DRAM memory
 
     private:
