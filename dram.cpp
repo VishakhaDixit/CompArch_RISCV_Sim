@@ -1,4 +1,6 @@
 #include <iostream>
+#include <sstream>
+#include <iomanip>
 #include "dram.h"
 #include "iport.h"
 #include "dport.h"
@@ -24,19 +26,20 @@ void dram::initDram(uint32_t startAddr, std::array<uint8_t, 0x1400> initData)
     std::copy(std::begin(initData), std::end(initData), std::begin(memory));
 }
 
-void dram::printDram()
+void dram::printDram(uint32_t startAddr, uint32_t endAddr)
 {
-    std::cout << "==============DRAM Dump==============" << "\n\n";
-    std::cout << std::to_string(memory[0]) << "  ";
-    std::cout << std::to_string(memory[1]) << "  ";
-    std::cout << std::to_string(memory[2]) << "  ";
-    std::cout << std::to_string(memory[3]) << "  ";
-    for (uint32_t i = 4; i < 0x1400; i++)
+    std::cout << "==============DRAM Dump from " << std::hex << startAddr << " to " << std::hex << endAddr <<  "==============" << "\n\n";
+
+    for (uint32_t i = startAddr; i < endAddr; i+=4)
     {
-        if ((i % 4 == 0) && (i  != 0))
-        {
-            std::cout<< "\n";
+        std::stringstream ss;
+
+        ss << std::hex << std::setfill('0');
+
+        for (int j = 0; j < 4; j++) {
+            ss << "0x" << std::hex << std::setw(2) << static_cast<int>(memory[i + j]) << "  ";
         }
-        std::cout << std::to_string(memory[i]) << "  ";
+
+        std::cout << ss.str() << "\n";
     }
 }

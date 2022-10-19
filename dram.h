@@ -34,7 +34,7 @@ class dram
         iport *getInstPort();
         dport *getDataPort();
         void  initDram(uint32_t startAddr, std::array<uint8_t, 0x1400> initData);
-        void  printDram();//For Demo
+        void  printDram(uint32_t startAddr, uint32_t endAddr);//For Demo
 };
 
 
