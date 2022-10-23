@@ -440,19 +440,21 @@ void execute::executeInst()
 	        //     }
 	        //     break;
 	
-	        // case 0x67 :     //JALR
-	        //     {
-	        //         int32_t imm_offset = 0;
-	        //         imm_offset = curr_inst->getimm12b();
-	        //         //store pc in rd
-	        //         curr_inst->setrd(this->getCPU()->getPC()+4);
-	        //         //set offset to rs1 + imm
-	        //         this->getCPU()->setOffset(this->getCPU()->get_regi(curr_inst->getrs1()) + imm_offset);
-	        //         this->unstall();
-	        //         schedule(this->next()->getEvent(), currTick()+10);
-	        //         this->next()->writeReg(this->getReg());
-	        //     }
-	        //     break;
+	        case 0x67 :     //JALR
+	            {
+	                //JALR x0, x1, 0 is return
+                    //if it is jumping to 0 it is returning from main.
+                    //So flush all pipelines and MEQ
+                    if((curInst->getrd() == 0) && (curInst->getrs1() == 1) && (curInst->getimm12b() == 0))
+                    {
+                        std::cout << "\n================== Main Function Returned ==================" << "\n\n";
+                        std::cout << "\n================== Ending Simulation ==================" << "\n\n";
+                        sys->flushFlag = true;
+                        sys->flushMEQ();
+                    }
+
+	            }
+	            break;
 	
 	        case 0x63 :     //Branch instruction
 	            {

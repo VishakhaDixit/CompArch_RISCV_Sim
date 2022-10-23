@@ -136,11 +136,11 @@ int main() {
 	initData[74] = 0x52;
 	initData[75] = 0x63;
 
-	// RET
-	initData[72] = 0xFC;
-	initData[73] = 0x03;
-	initData[74] = 0x52;
-	initData[75] = 0x63;
+	// RET (JALR x0,x1,0)
+	initData[76] = 0x00;
+	initData[77] = 0x00;
+	initData[78] = 0x80;
+	initData[79] = 0x67;
 
 	dram ram = dram(0x0000, 0x01FF, 0x0200, 0x13FF);
 	ram.initDram(0x00, initData);
