@@ -29,7 +29,7 @@ class System
 	public:
 		System() : curClkTick(1) {}
 
-		unordered_map<int32_t, int> regMap = 
+		unordered_map<uint32_t, int32_t> regMap = 
 		{
 			{0, 0},
 			{1, 0},
