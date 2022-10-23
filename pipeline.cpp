@@ -11,6 +11,7 @@
  **************************/
 #include <iostream>
 #include "pipeline.h"
+#include "dport.h"
 
 using namespace std;
 
@@ -378,6 +379,208 @@ void execute::recvInst(inst * i)
  **************************/
 void execute::executeInst()
 {
+
+    int32_t opcode = curInst->getOpcode();
+	switch(opcode) {
+	
+	        case 0x37 :     //LUI
+	            {
+                    uint32_t data = curInst->getimm20b();
+                    sys->regMap[curInst->getrd()] = data;
+                    std::cout << "\n Register: " << sys->regMap[curInst->getrd()] << "\n";
+	            }
+	            break;
+	
+	        // case 0x17 :     //AUIPC
+	        //     {
+	        //         //set upper 20 bits of offset
+	        //         int32_t imm_offset = 0;
+	        //         imm_offset = curr_inst->getimm20b() << 12;
+	        //         //add offset to PC
+	        //         curr_inst->setresult(imm_offset + this->getCPU()->getPC());
+	        //         this->unstall();
+	        //         schedule(this->next()->getEvent(), currTick()+10);
+	        //         this->next()->writeReg(this->getReg());
+	        //     }
+	        //     break;
+	
+	        // case 0x6F :     //JAL
+	        //     {
+	        //         int32_t imm_offset = curr_inst->getimm20b();
+	        //         //store pc in rd
+	        //         curr_inst->setrd(this->getCPU()->getPC()+4);
+	        //         this->getCPU()->setOffset(imm_offset);
+	        //         this->unstall();
+	        //         schedule(this->next()->getEvent(), currTick()+10);
+	        //         this->next()->writeReg(this->getReg());
+	        //     }
+	        //     break;
+	
+	        // case 0x67 :     //JALR
+	        //     {
+	        //         int32_t imm_offset = 0;
+	        //         imm_offset = curr_inst->getimm12b();
+	        //         //store pc in rd
+	        //         curr_inst->setrd(this->getCPU()->getPC()+4);
+	        //         //set offset to rs1 + imm
+	        //         this->getCPU()->setOffset(this->getCPU()->get_regi(curr_inst->getrs1()) + imm_offset);
+	        //         this->unstall();
+	        //         schedule(this->next()->getEvent(), currTick()+10);
+	        //         this->next()->writeReg(this->getReg());
+	        //     }
+	        //     break;
+	
+	        // case 0x63 :     //Branch instruction
+	        //     {
+	        //         int32_t arg1 = this->getCPU()->get_regi(curr_inst->getrs1());
+	        //         int32_t arg2 = this->getCPU()->get_regi(curr_inst->getrs2());
+	        //         uint32_t uarg1 = this->getCPU()->get_regi(curr_inst->getrs1());
+	        //         uint32_t uarg2 = this->getCPU()->get_regi(curr_inst->getrs2());
+	        //         int32_t offset = curr_inst->getimm12b();
+	        //         switch(curr_inst->getfunct3()) {
+	                    
+	        //                 case 0 :        //BEQ
+	        //                     if (arg1 == arg2) {
+	        //                         this->getCPU()->setOffset(offset);
+	        //                         this->getCPU()->wasTaken();
+	        //                     } else{
+	        //                         this->getCPU()->setOffset(0);
+	        //                         this->getCPU()->wasNotTaken();
+	        //                     }
+	        //                     break;
+	        //                 case 1 :        //BNE
+	        //                     if (arg1 != arg2) {
+	        //                         this->getCPU()->setOffset(offset);
+	        //                         this->getCPU()->wasTaken();
+	        //                     } else{
+	        //                         this->getCPU()->setOffset(0);
+	        //                         this->getCPU()->wasNotTaken();
+	        //                     }
+	        //                     break;
+	        //                 case 4 :        //BLT
+	        //                     if (arg1 < arg2) {
+	        //                         this->getCPU()->setOffset(offset);
+	        //                         this->getCPU()->wasTaken();
+	        //                     } else{
+	        //                         this->getCPU()->setOffset(0);
+	        //                         this->getCPU()->wasNotTaken();
+	        //                     }
+	        //                     break;
+	        //                 case 5 :        //BGT
+	        //                     if (arg1 > arg2) {
+	        //                         this->getCPU()->setOffset(offset);
+	        //                         this->getCPU()->wasTaken();
+	        //                     } else{
+	        //                         this->getCPU()->setOffset(0);
+	        //                         this->getCPU()->wasNotTaken();
+	        //                     }
+	        //                     break;
+	        //                 case 6 :        //BLTU
+	        //                     if (uarg1 < uarg2) {
+	        //                         this->getCPU()->setOffset(offset);
+	        //                         this->getCPU()->wasTaken();
+	        //                     } else{
+	        //                         this->getCPU()->setOffset(0);
+	        //                         this->getCPU()->wasNotTaken();
+	        //                     }
+	        //                     break;
+	        //                 case 7 :        //BGEU
+	        //                     if (uarg1 >= uarg2) {
+	        //                         this->getCPU()->setOffset(offset);
+	        //                         this->getCPU()->wasTaken();
+	        //                     } else{
+	        //                         this->getCPU()->setOffset(0);
+	        //                         this->getCPU()->wasNotTaken();
+	        //                     }
+	        //                     break;
+	        //                 default :
+	        //                     this->getCPU()->setOffset(0);
+	        //                     break;
+	        //             }
+	        //     }
+	        //     break;
+	
+	        case 0x3 :      //load instructions
+	            {
+	                switch(curInst->getfunc3()) {
+	                    case 2 :    //LW
+	                        uint32_t data =  dr->getDataPort()->getData(curInst->getimm12b() + (sys->regMap[curInst->getrs1()]));
+                            sys->regMap[curInst->getrd()] = data;
+	                        break;
+	                }
+	            }
+	            break;
+	
+	        case 0x23 :     //store instructions
+	            {
+	                switch(curInst->getfunc3()) {
+	                    case 2 :    //SW
+                            uint32_t addr = sys->regMap[curInst->getrs1()];
+                            curInst->setAddr(addr);
+	                        break;
+	                }
+	            }
+	
+	        case 0x13 :     //immediate instructions
+	            {
+	                switch(curInst->getfunc3()) {
+	                    case 0 :    //ADDI
+	                        sys->regMap[curInst->getrd()] = sys->regMap[curInst->getrs1()] << curInst->getshamt();
+	                        break;
+	                    case 1 :    //SLLI
+	                        sys->regMap[curInst->getrd()] = sys->regMap[curInst->getrs1()] << curInst->getshamt();
+                             std::cout << "\n Shifted Register: " << sys->regMap[curInst->getrd()] << "\n";
+	                        break;
+	                }
+	            }
+	
+	        case 0x33 :     //rtype instructions
+	            {
+	                switch(curInst->getfunc3()) {
+	                    case 0 :    
+	                        if (curInst->getfunc7() == 0) {  //ADD
+	                            sys->regMap[curInst->getrd()] = sys->regMap[curInst->getrs1()] + sys->regMap[curInst->getrs2()];
+                                std::cout << "\n Added Register: " << sys->regMap[curInst->getrd()] << "\n";
+	                        } else {      //SUB
+	                            sys->regMap[curInst->getrd()] = sys->regMap[curInst->getrs1()] - sys->regMap[curInst->getrs2()];
+	                        }
+	                        break;
+	                    // case 1 :    //SLL
+	                    //     curr_inst->setresult(reg1 << reg2);
+	                    //     break;
+	                    // case 2 :    //SLT
+	                    //     if (reg1 < reg2) {
+	                    //         curr_inst->setresult(1);
+	                    //     } else {
+	                    //         curr_inst->setresult(0);
+	                    //     }
+	                    //     break;
+	                    // case 3 :    //SLTU
+	                    //     if (ureg1 < ureg2) {
+	                    //         curr_inst->setresult(1);
+	                    //     } else {
+	                    //         curr_inst->setresult(0);
+	                    //     }
+	                    //     break;
+	                    // case 4 :    //XOR
+	                    //     curr_inst->setresult(reg1 ^ reg2);
+	                    //     break;
+	                    // case 5 :    //SRL
+	                    //     curr_inst->setresult(reg1 >> reg2);
+	                    //     break;
+	                    // case 6 :    //OR
+	                    //     curr_inst->setresult(reg1 | reg2);
+	                    //     break;
+	                    // case 7 :    //AND
+	                    //     curr_inst->setresult(reg1 & reg2);
+	                    //     break;
+	                }
+	            }
+	        default:
+	            break;
+	    }
+    
+    /*[VDIXIT]*/
     // int val1, val2, result;
     // string op = curInst->getOpcode();
     
@@ -464,5 +667,11 @@ void store::process()
 {
     // Write data to destination register rd.
     // Delete pipelined instruction after write back.
+    if (curInst->getOpcode() == 0x23)
+    {
+        dr->getDataPort()->setData(curInst->getAddr(), curInst->getimm12b());
+        dr->printDram(curInst->getAddr(), curInst->getAddr()+4);
+    }
+
     curInst = NULL;
 }

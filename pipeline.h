@@ -16,6 +16,7 @@
 #include <string>
 #include "system.h"
 #include "inst.h"
+#include "dram.h"
 
 using namespace std;
 
@@ -112,9 +113,12 @@ class execute : public pipeline
         };
 
         executeEvent *ee;
+        dram *dr;
     
     public:
-        execute(System *sys) : pipeline(sys), ee(new executeEvent(this)) {};
+        execute(System *sys, dram* d) : pipeline(sys), ee(new executeEvent(this)) {
+            dr = d;
+        };
 
         void recvInst(inst *i);
         void executeInst();
@@ -135,9 +139,12 @@ class store : public pipeline
         };
 
         storeEvent *se;
+        dram *dr;
     
     public:
-        store(System *sys) : pipeline(sys), se(new storeEvent(this)) {};
+        store(System *sys, dram *d) : pipeline(sys), se(new storeEvent(this)) {
+            dr = d;
+        };
 
         void recvInst(inst *i);
         void process();
