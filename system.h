@@ -28,6 +28,7 @@ class System
 
 	public:
 		System() : curClkTick(1) {}
+        bool flushFlag = false;
 
 		unordered_map<uint32_t, int32_t> regMap = 
 		{

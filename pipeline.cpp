@@ -25,7 +25,7 @@ using namespace std;
  **************************/
 void fetch::recvInst(inst *i)
 {
-    if(flushFlag == true)
+    if(sys->flushFlag == true)
     {
         cout << " Fetch: NOP";
         return;
@@ -67,7 +67,7 @@ void fetch::process()
  **************************/
 void decode::recvInst(inst * i)
 {
-    if(flushFlag == true)
+    if(sys->flushFlag == true)
     {
         cout << " Decode: NOP,";
         return;
@@ -370,7 +370,7 @@ void decode::process()
  **************************/
 void execute::recvInst(inst * i)
 {
-    if(flushFlag == true)
+    if(sys->flushFlag == true)
     {
         cout << " Execute: NOP,";
         return;
@@ -596,7 +596,7 @@ void execute::process()
     {
         if(curInst->getInst() != 0x00)
             this->executeInst();
-        if(flushFlag == false)
+        if(sys->flushFlag == false)
             sendInst(curInst);
     }
     else
@@ -614,7 +614,7 @@ void execute::process()
  **************************/
 void store::recvInst(inst * i)
 {
-    if(flushFlag == true)
+    if(sys->flushFlag == true)
     {
         cout << " Store: NOP,";
         sys->flushMEQ();

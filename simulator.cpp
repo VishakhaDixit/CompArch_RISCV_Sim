@@ -69,6 +69,11 @@ void Simulator::process()
 {
     if(!(f->isBusy()))
     {
+        if (sys->flushFlag == true)
+        {
+            sys->flushFlag = false;
+        }
+        
         uint32_t pc = getPc();
         //Fetch current instruction from front of the instruction queue
         // inst *i = insQ[0];
