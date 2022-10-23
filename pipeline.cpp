@@ -430,75 +430,34 @@ void execute::executeInst()
 	        //     }
 	        //     break;
 	
-	        // case 0x63 :     //Branch instruction
-	        //     {
-	        //         int32_t arg1 = this->getCPU()->get_regi(curr_inst->getrs1());
-	        //         int32_t arg2 = this->getCPU()->get_regi(curr_inst->getrs2());
-	        //         uint32_t uarg1 = this->getCPU()->get_regi(curr_inst->getrs1());
-	        //         uint32_t uarg2 = this->getCPU()->get_regi(curr_inst->getrs2());
-	        //         int32_t offset = curr_inst->getimm12b();
-	        //         switch(curr_inst->getfunct3()) {
+	        case 0x63 :     //Branch instruction
+	            {
+	                int32_t arg1 = sys->regMap[curInst->getrs1()];
+	                int32_t arg2 = sys->regMap[curInst->getrs2()];
+	                switch(curInst->getfunc3()) {
 	                    
-	        //                 case 0 :        //BEQ
-	        //                     if (arg1 == arg2) {
-	        //                         this->getCPU()->setOffset(offset);
-	        //                         this->getCPU()->wasTaken();
-	        //                     } else{
-	        //                         this->getCPU()->setOffset(0);
-	        //                         this->getCPU()->wasNotTaken();
-	        //                     }
-	        //                     break;
-	        //                 case 1 :        //BNE
-	        //                     if (arg1 != arg2) {
-	        //                         this->getCPU()->setOffset(offset);
-	        //                         this->getCPU()->wasTaken();
-	        //                     } else{
-	        //                         this->getCPU()->setOffset(0);
-	        //                         this->getCPU()->wasNotTaken();
-	        //                     }
-	        //                     break;
-	        //                 case 4 :        //BLT
-	        //                     if (arg1 < arg2) {
-	        //                         this->getCPU()->setOffset(offset);
-	        //                         this->getCPU()->wasTaken();
-	        //                     } else{
-	        //                         this->getCPU()->setOffset(0);
-	        //                         this->getCPU()->wasNotTaken();
-	        //                     }
-	        //                     break;
-	        //                 case 5 :        //BGT
-	        //                     if (arg1 > arg2) {
-	        //                         this->getCPU()->setOffset(offset);
-	        //                         this->getCPU()->wasTaken();
-	        //                     } else{
-	        //                         this->getCPU()->setOffset(0);
-	        //                         this->getCPU()->wasNotTaken();
-	        //                     }
-	        //                     break;
-	        //                 case 6 :        //BLTU
-	        //                     if (uarg1 < uarg2) {
-	        //                         this->getCPU()->setOffset(offset);
-	        //                         this->getCPU()->wasTaken();
-	        //                     } else{
-	        //                         this->getCPU()->setOffset(0);
-	        //                         this->getCPU()->wasNotTaken();
-	        //                     }
-	        //                     break;
-	        //                 case 7 :        //BGEU
-	        //                     if (uarg1 >= uarg2) {
-	        //                         this->getCPU()->setOffset(offset);
-	        //                         this->getCPU()->wasTaken();
-	        //                     } else{
-	        //                         this->getCPU()->setOffset(0);
-	        //                         this->getCPU()->wasNotTaken();
-	        //                     }
-	        //                     break;
-	        //                 default :
-	        //                     this->getCPU()->setOffset(0);
-	        //                     break;
-	        //             }
-	        //     }
-	        //     break;
+	                        case 0 :        //BEQ
+	                            break;
+	                        case 1 :        //BNE
+	                            break;
+	                        case 4 :        //BLT
+	                            break;
+	                        case 5 :        //BGE
+	                            if (arg2 >= arg1) {
+                                    sys->regMap[0xE] = sys->regMap[0xE] + curInst->getimm12b();
+	                            } else{
+	                                sys->regMap[0xE] = sys->regMap[0xE] + 4;
+	                            }
+	                            break;
+	                        case 6 :        //BLTU
+	                            break;
+	                        case 7 :        //BGEU
+	                            break;
+	                        default :
+	                            break;
+	                    }
+	            }
+	            break;
 	
 	        case 0x3 :      //load instructions
 	            {
@@ -515,17 +474,18 @@ void execute::executeInst()
 	            {
 	                switch(curInst->getfunc3()) {
 	                    case 2 :    //SW
-                            uint32_t addr = sys->regMap[curInst->getrs1()];
+                            uint32_t addr = sys->regMap[curInst->getrs1()] + curInst->getimm12b();
                             curInst->setAddr(addr);
 	                        break;
 	                }
 	            }
+                break;
 	
 	        case 0x13 :     //immediate instructions
 	            {
 	                switch(curInst->getfunc3()) {
 	                    case 0 :    //ADDI
-	                        sys->regMap[curInst->getrd()] = sys->regMap[curInst->getrs1()] << curInst->getshamt();
+	                        sys->regMap[curInst->getrd()] = sys->regMap[curInst->getrs1()] + curInst->getimm12b();
 	                        break;
 	                    case 1 :    //SLLI
 	                        sys->regMap[curInst->getrd()] = sys->regMap[curInst->getrs1()] << curInst->getshamt();
@@ -533,6 +493,7 @@ void execute::executeInst()
 	                        break;
 	                }
 	            }
+                break;
 	
 	        case 0x33 :     //rtype instructions
 	            {
@@ -576,6 +537,7 @@ void execute::executeInst()
 	                    //     break;
 	                }
 	            }
+                break;
 	        default:
 	            break;
 	    }
@@ -669,7 +631,7 @@ void store::process()
     // Delete pipelined instruction after write back.
     if (curInst->getOpcode() == 0x23)
     {
-        dr->getDataPort()->setData(curInst->getAddr(), curInst->getimm12b());
+        dr->getDataPort()->setData(curInst->getAddr(), sys->regMap[curInst->getrs2()]);
         dr->printDram(curInst->getAddr(), curInst->getAddr()+4);
     }
 
