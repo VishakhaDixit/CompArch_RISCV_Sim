@@ -28,6 +28,7 @@ class inst
         uint32_t binIns;    //  Binary Instruction
         int32_t opcode;
         int32_t rd, func3, func7, rs1, rs2, shamt, imm12b, imm20b;
+        uint32_t addr;
         uint32_t result;
 
     public:
@@ -57,6 +58,9 @@ class inst
         void    setimm20b(int32_t i) { imm20b = i; }   
         int32_t getResult() { return result; }
         void    setresult(int32_t data) { result = data; }
+        uint32_t    getAddr(void){return addr;}
+        void    setAddr(uint32_t ad) { addr = ad; }
+
 };
 
 #endif //__INST_H__
