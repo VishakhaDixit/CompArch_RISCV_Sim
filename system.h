@@ -29,12 +29,20 @@ class System
 	public:
 		System() : curClkTick(1) {}
 
-		unordered_map<string, int> regMap = 
+		unordered_map<int32_t, int> regMap = 
 		{
-			{"x1", 0},
-			{"x2", 0},
-			{"x3", 0},
-			{"x4", 0}
+			{0, 0},
+			{1, 0},
+			{2, 0},
+			{3, 0},
+			{4, 0},
+			{5, 0},
+			{6, 0},
+			{7, 0},
+			{8, 0},
+			{9, 0},
+			{0xE, 0},
+			{0xF, 0x200}
 		};
 		
 		void schedule(Event *e, TICK t, uint32_t i, string s);			
