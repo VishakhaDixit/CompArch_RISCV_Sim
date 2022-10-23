@@ -504,6 +504,10 @@ void execute::executeInst()
 	                        sys->regMap[curInst->getrd()] = sys->regMap[curInst->getrs1()] << curInst->getshamt();
                              std::cout << "\n Shifted Register: " << sys->regMap[curInst->getrd()] << "\n";
 	                        break;
+	                    case 5 :    //SRLI
+	                        sys->regMap[curInst->getrd()] = sys->regMap[curInst->getrs1()] >> curInst->getshamt();
+                             std::cout << "\n Shifted Register: " << sys->regMap[curInst->getrd()] << "\n";
+	                        break;                        
 	                }
 	            }
                 break;
