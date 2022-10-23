@@ -93,9 +93,12 @@ void decode::decodeInst()
     unsigned bit20, bit10_1, bit11, bit19_12, bit4_1, bit10_5, bit12, bit4_0, bit11_5;
     uint32_t binIns = curInst->getInst();
 
+    uint32_t b_7_11;
+    uint32_t b_25_31; 
+
     curInst->setresult(0);
-    int opMask = 6;             
-    opMask = (1 << opMask)-1;     // First 6 bits represents opcode.
+    int opMask = 7;             
+    opMask = (1 << opMask)-1;     // First 7 bits represents opcode.
 
     opcode = binIns & opMask;
 
@@ -147,12 +150,22 @@ void decode::decodeInst()
         rs1 = (((1 << 5) - 1) & (binIns >> 15));
         rs2 = (((1 << 5) - 1) & (binIns >> 20));
         bit10_5 = (((1 << 6) - 1) & (binIns >> 25));
-        bit12 = (binIns & (1<<31)) != 0;
-        imm12b = (bit12 << 1) | bit11;
-        imm12b = (imm12b << 6) | bit10_5;
-        imm12b = (imm12b << 4) | bit4_1;
-        //add on last zero
-        imm12b = imm12b << 1;
+        // bit12 = (binIns & (1<<31)) != 0;
+        // imm12b = (bit12 << 1) | bit11;
+        // imm12b = (imm12b << 6) | bit10_5;
+        // imm12b = (imm12b << 4) | bit4_1;
+        // //add on last zero
+        // imm12b = imm12b << 1;
+        b_7_11  = (binIns & (0x00000f80)) >> 7 ;
+        b_25_31 = (binIns & (0xFE000000)) >> 20 ; 
+        imm12b = b_7_11 | b_25_31;
+
+        if (imm12b > 2048) 
+        {    
+            //this immediate is signed so we must flip
+            imm12b  = -2048 + (imm12b - 2048);
+        }
+
         break;
 
     case 0x3 :      
