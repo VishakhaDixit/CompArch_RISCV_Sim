@@ -106,29 +106,41 @@ int main() {
 	initData[54] = 0x20;
 	initData[55] = 0x23;
 
-	// addi x6, x1, 1
+	// srli x1, x1, 2
 	initData[56] = 0x00;
-	initData[57] = 0x10;
-	initData[58] = 0x83;
-	initData[59] = 0x13;
+	initData[57] = 0x20;
+	initData[58] = 0xD0;
+	initData[59] = 0x93;
+
+	// addi x6, x1, 1
+	initData[60] = 0x00;
+	initData[61] = 0x10;
+	initData[62] = 0x83;
+	initData[63] = 0x13;
 
 	// sw x6, sp
-	initData[60] = 0x00;
-	initData[61] = 0x67;
-	initData[62] = 0xA0;
-	initData[63] = 0x23;
+	initData[64] = 0x00;
+	initData[65] = 0x67;
+	initData[66] = 0xA0;
+	initData[67] = 0x23;
 
 	// lui x0, 255
-	initData[64] = 0x00;
-	initData[65] = 0x0F;
-	initData[66] = 0xF0;
-	initData[67] = 0x37;
+	initData[68] = 0x00;
+	initData[69] = 0x0F;
+	initData[70] = 0xF0;
+	initData[71] = 0x37;
 
 	// bge x6, x0, -56
-	initData[68] = 0xFC;
-	initData[69] = 0x03;
-	initData[70] = 0x54;
-	initData[71] = 0x63;
+	initData[72] = 0xFC;
+	initData[73] = 0x03;
+	initData[74] = 0x52;
+	initData[75] = 0x63;
+
+	// RET
+	initData[72] = 0xFC;
+	initData[73] = 0x03;
+	initData[74] = 0x52;
+	initData[75] = 0x63;
 
 	dram ram = dram(0x0000, 0x01FF, 0x0200, 0x13FF);
 	ram.initDram(0x00, initData);
@@ -146,9 +158,8 @@ int main() {
 	System *sys = new System();
 	Simulator *es = new Simulator(sys, &ram);
 	es->initSim();				//Initialize Simulator device.
-	sys->executeSim(100);		//Run Simulator for 100 clk cycles, this function terminates if pipeline is flushed.
-	ram.printDram(0x200, 0x204);
-	ram.printDram(0xC00, 0xC04);
+	sys->executeSim(200000);		//Run Simulator for 100 clk cycles, this function terminates if pipeline is flushed.
+	ram.printDram(0xC00, 0xFFF);
 
 	return 0;
 }
