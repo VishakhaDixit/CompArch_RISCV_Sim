@@ -46,6 +46,11 @@ void fetch::recvInst(inst *i)
  **************************/
 void fetch::process()
 {
+    if(sys->flushFlag == true)
+    {   
+        curInst = NULL;
+        return;
+    }
     //Send fetched instruction to next stage
     if(!nextStage->isBusy())
     {
@@ -315,6 +320,12 @@ void decode::decodeInst()
  **************************/
 void decode::process()
 {
+    if(sys->flushFlag == true)
+    {   
+        curInst = NULL;
+        return;
+    }
+
     //Send decoded instruction to next stage
     if(!nextStage->isBusy())
     {
@@ -458,6 +469,8 @@ void execute::executeInst()
 	                        case 5 :        //BGE
 	                            if (arg2 >= arg1) {
                                     sys->regMap[0xE] = sys->regMap[0xE] + curInst->getimm12b();
+                                    sys->flushFlag = true;
+                                    curInst = NULL;
 	                            } else{
 	                                sys->regMap[0xE] = sys->regMap[0xE] + 4;
 	                            }
