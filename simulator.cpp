@@ -11,6 +11,7 @@
  **************************/
 
 #include "simulator.h"
+#include "iport.h"
 
 /**************************
  * @brief       This function initializes the Instruction queue with ins to be executed.
@@ -37,15 +38,15 @@ void Simulator::initInsQ()
  **************************/
 void Simulator::initSim()
 {
-    //Init instructions in insQ
-    if(insQ.size() == 0)
-    {
-        initInsQ();
-    }
+    // //Init instructions in insQ
+    // if(insQ.size() == 0)
+    // {
+    //     initInsQ();
+    // }
     
-    //Initialize registers x1 & x2
-    sys->regMap["x1"] = 20;
-    sys->regMap["x2"] = 0;
+    // //Initialize registers x1 & x2
+    // sys->regMap["x1"] = 20;
+    // sys->regMap["x2"] = 0;
 
     //Initialize Event List for first clk tick
     sys->schedule(te, getCurTick(), 0x00, "ClkGen");
@@ -68,14 +69,21 @@ void Simulator::process()
 {
     if(!(f->isBusy()))
     {
+        uint32_t pc = getPc();
         //Fetch current instruction from front of the instruction queue
-        inst *i = insQ[0];
+        // inst *i = insQ[0];
+        uint32_t binInst = ram->getInstPort()->getInstruction(pc);
+        inst *i = new inst(binInst);
         f->recvInst(i);
 
-        //Pop currently fetched instruction from the queue
-        insQ.erase(insQ.begin());
-        //Schedule next instruction at the end of insQ
-        insQ.push_back(i);
+        // //Pop currently fetched instruction from the queue
+        // insQ.erase(insQ.begin());
+        // //Schedule next instruction at the end of insQ
+        // insQ.push_back(i);
+
+        //Increment pc 
+        pc = pc + 4;
+        setPc(pc);
     }
         
     sys->schedule(te, sys->getCurTick()+1, 0x00, "ClkGen");

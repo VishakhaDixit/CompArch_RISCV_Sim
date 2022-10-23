@@ -19,6 +19,7 @@
 #include "event.h"
 #include "pipeline.h"
 #include "inst.h"
+#include "dram.h"
 
 using namespace std;
 
@@ -49,13 +50,23 @@ private:
 	execute *e;
 	store *s;
 
+	dram *ram;
+
+
 public:
-	Simulator(System *_sys) : sys(_sys),  te(new testEve(this)), f(new fetch(sys)),
-							d(new decode(sys)), e(new execute(sys)), s(new store(sys)) {}
+	Simulator(System *_sys, dram *dr) : sys(_sys),  te(new testEve(this)), f(new fetch(sys)),
+							d(new decode(sys)), e(new execute(sys, dr)), s(new store(sys, dr)) {
+								ram = dr;
+							}
 	
 	void initSim();
 	void process();
 	void initInsQ();
+
+	uint32_t getPc() { return sys->regMap[0xE]; }
+	void setPc(uint32_t p) { sys->regMap[0xE] = p; }
+	uint32_t getSp() { return sys->regMap[0xF]; }
+	void setSp(uint32_t s) { sys->regMap[0xF] = s; }
 };
 
 #endif //__SIMULATOR_H__
