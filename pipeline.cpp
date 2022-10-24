@@ -360,7 +360,7 @@ void decode::process()
 
             //Schedule NOP as next instruction
             sys->schedule(de,sys->getCurTick()+1,  curInst->getInst(), "decode");
-            cout << " Decode: " << curInst->getInst() << ",";
+            cout << " Decode: " << "NOP" << ",";
 
             return;
         }
@@ -388,7 +388,125 @@ void execute::recvInst(inst * i)
     }
     curInst = i;
 
-    cout << " Execute: opcode=" << i->getOpcode() << " rd=" << i->getrd() << " func3=" << i->getfunc3() << " rs1=" << i->getrs1() << " immediate=" << i->getimm12b() << ",";
+    if(curInst->getInst() == 0)
+        cout << " Execute: NOP,";
+    else
+    {
+        switch(curInst->getOpcode())
+        {
+            case 0x37:
+                cout << " Execute: LUI" << " rd= x" << curInst->getrd() << ", imm20b=" << curInst->getimm20b() << ",";
+                break;
+            case 0x17:
+                cout << " Execute: AUIPC" << " rd= x" << curInst->getrd() << ", imm20b=" << curInst->getimm20b() << ",";
+                break;   
+            case 0x6F:
+                cout << " Execute: JAL" << " rd= x" << curInst->getrd() << ", imm20b=" << curInst->getimm20b() << ",";
+                break;    
+            case 0x67:
+                cout << " Execute: JALR" << " rd= x" << curInst->getrd() << ", imm12b=" << curInst->getimm12b() << ", rs1=" << sys->regMap[curInst->getrs1()] << ",";
+                break;       
+            case 0x63:
+                switch (curInst->getfunc3())
+                {
+                    case 0:
+                        cout << " Execute: BEQ" << " rs1= x" << curInst->getrs1() << ", rs2=x" << curInst->getrs1() << ", imm12b=" << curInst->getimm12b() << ",";
+                        break;
+                    case 1:
+                        cout << " Execute: BNE" << " rs1= x" << curInst->getrs1() << ", rs2=x" << curInst->getrs1() << ", imm12b=" << curInst->getimm12b() << ",";
+                        break;
+                    case 4:
+                        cout << " Execute: BLE" << " rs1= x" << curInst->getrs1() << ", rs2=x" << curInst->getrs1() << ", imm12b=" << curInst->getimm12b() << ",";
+                        break;
+                    case 5:
+                        cout << " Execute: BGE" << " rs1= x" << curInst->getrs1() << ", rs2=x" << curInst->getrs1() << ", imm12b=" << curInst->getimm12b() << ",";
+                        break;
+                    case 6:
+                        cout << " Execute: BLTU" << " rs1= x" << curInst->getrs1() << ", rs2=x" << curInst->getrs1() << ", imm12b=" << curInst->getimm12b() << ",";
+                        cout << "BLTU rs1,rs2" << endl;
+                        break;
+                    case 7:
+                        cout << " Execute: BGEU" << " rs1= x" << curInst->getrs1() << ", rs2=x" << curInst->getrs1() << ", imm12b=" << curInst->getimm12b() << ",";
+                        cout << "BGEU rs1,rs2" << endl;
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case 0x3:
+                cout << " Execute: LW" << " rd= x" << curInst->getrd() << ", imm12b=" << curInst->getimm12b() << ", rs1=" << sys->regMap[curInst->getrs1()] << ",";
+                break;
+            case 0x23:
+                cout << " Execute: SW" << " rs2= x" << curInst->getrs2() << ", imm12b=" << curInst->getimm12b() << ", rs1=" << sys->regMap[curInst->getrs1()] << ",";
+                break;
+            case 0x13:
+                switch (curInst->getfunc3())
+                {
+                    case 0:
+                        cout << " Execute: ADDI" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", imm12b=" << curInst->getimm12b() << ",";
+                        break;
+                    case 1:
+                        cout << " Execute: SLLI" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", shamt=" << curInst->getshamt() << ",";
+                        break;
+                    case 2:
+                        cout << " Execute: SLTI" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", imm12b=" << curInst->getimm12b() << ",";
+                        break;
+                    case 3:
+                        cout << " Execute: SLTIU" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", imm12b=" << curInst->getimm12b() << ",";
+                        break;
+                    case 4:
+                        cout << " Execute: XORI" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", imm12b=" << curInst->getimm12b() << ",";
+                        break;
+                    case 5:
+                        cout << " Execute: SRLI" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", shamt=" << curInst->getshamt() << ",";
+                        break;                        
+                    case 6:
+                        cout << " Execute: ORI" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", imm12b=" << curInst->getimm12b() << ",";
+                        cout << "ORI rd,rs1,imm" << endl;
+                        break;
+                    case 7:
+                        cout << " Execute: ANDI" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", imm12b=" << curInst->getimm12b() << ",";
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case 0x33:
+                switch (curInst->getfunc3())
+                {
+                    case 0:
+                        cout << " Execute: ADD" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", rs2=" << sys->regMap[curInst->getrs2()] << ",";
+                        break;
+                    case 1:
+                        cout << " Execute: SLL" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", rs2=" << sys->regMap[curInst->getrs2()] << ",";
+                        break;
+                    case 2:
+                        cout << " Execute: SLT" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", rs2=" << sys->regMap[curInst->getrs2()] << ",";
+                        break;
+                    case 3:
+                        cout << " Execute: SLTU" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", rs2=" << sys->regMap[curInst->getrs2()] << ",";
+                        break;
+                    case 4:
+                        cout << " Execute: XOR" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", rs2=" << sys->regMap[curInst->getrs2()] << ",";
+                        break;
+                    case 5:
+                        cout << " Execute: SRL" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", rs2=" << sys->regMap[curInst->getrs2()] << ",";
+                        break;                        
+                    case 6:
+                        cout << " Execute: OR" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", rs2=" << sys->regMap[curInst->getrs2()] << ",";
+                        break;
+                    case 7:
+                        cout << " Execute: AND" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", rs2=" << sys->regMap[curInst->getrs2()] << ",";
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            default:
+                break;
+
+        }
+    }
 
     //schedule new event for execute stage
     sys->schedule(ee,sys->getCurTick()+1, curInst->getInst(), "execute");
@@ -407,198 +525,168 @@ void execute::executeInst()
     int32_t opcode = curInst->getOpcode();
 	switch(opcode) {
 	
-	        case 0x37 :     //LUI
-	            {
-                    uint32_t data = curInst->getimm20b();
-                    sys->regMap[curInst->getrd()] = data;
-                    std::cout << "\n Register: " << sys->regMap[curInst->getrd()] << "\n";
-	            }
-	            break;
-	
-	        // case 0x17 :     //AUIPC
-	        //     {
-	        //         //set upper 20 bits of offset
-	        //         int32_t imm_offset = 0;
-	        //         imm_offset = curr_inst->getimm20b() << 12;
-	        //         //add offset to PC
-	        //         curr_inst->setresult(imm_offset + this->getCPU()->getPC());
-	        //         this->unstall();
-	        //         schedule(this->next()->getEvent(), currTick()+10);
-	        //         this->next()->writeReg(this->getReg());
-	        //     }
-	        //     break;
-	
-	        // case 0x6F :     //JAL
-	        //     {
-	        //         int32_t imm_offset = curr_inst->getimm20b();
-	        //         //store pc in rd
-	        //         curr_inst->setrd(this->getCPU()->getPC()+4);
-	        //         this->getCPU()->setOffset(imm_offset);
-	        //         this->unstall();
-	        //         schedule(this->next()->getEvent(), currTick()+10);
-	        //         this->next()->writeReg(this->getReg());
-	        //     }
-	        //     break;
-	
-	        case 0x67 :     //JALR
-	            {
-	                //JALR x0, x1, 0 is return
-                    //if it is jumping to 0 it is returning from main.
-                    //So flush all pipelines and MEQ
-                    if((curInst->getrd() == 0) && (curInst->getrs1() == 1) && (curInst->getimm12b() == 0))
-                    {
-                        std::cout << "\n================== Main Function Returned ==================" << "\n\n";
-                        std::cout << "\n================== Ending Simulation ==================" << "\n\n";
-                        sys->flushFlag = true;
-                        sys->flushMEQ();
+        case 0x37 :     //LUI
+            {
+                uint32_t data = curInst->getimm20b();
+                sys->regMap[curInst->getrd()] = data;
+            }
+            break;
+
+        // case 0x17 :     //AUIPC
+        //     {
+        //         //set upper 20 bits of offset
+        //         int32_t imm_offset = 0;
+        //         imm_offset = curr_inst->getimm20b() << 12;
+        //         //add offset to PC
+        //         curr_inst->setresult(imm_offset + this->getCPU()->getPC());
+        //         this->unstall();
+        //         schedule(this->next()->getEvent(), currTick()+10);
+        //         this->next()->writeReg(this->getReg());
+        //     }
+        //     break;
+
+        // case 0x6F :     //JAL
+        //     {
+        //         int32_t imm_offset = curr_inst->getimm20b();
+        //         //store pc in rd
+        //         curr_inst->setrd(this->getCPU()->getPC()+4);
+        //         this->getCPU()->setOffset(imm_offset);
+        //         this->unstall();
+        //         schedule(this->next()->getEvent(), currTick()+10);
+        //         this->next()->writeReg(this->getReg());
+        //     }
+        //     break;
+
+        case 0x67 :     //JALR
+            {
+                //JALR x0, x1, 0 is return
+                //if it is jumping to 0 it is returning from main.
+                //So flush all pipelines and MEQ
+                if((curInst->getrd() == 0) && (curInst->getrs1() == 1) && (curInst->getimm12b() == 0))
+                {
+                    std::cout << "\n================== Main Function Returned ==================" << "\n\n";
+                    std::cout << "\n================== Ending Simulation ==================" << "\n\n";
+                    sys->flushFlag = true;
+                    sys->flushMEQ();
+                }
+
+            }
+            break;
+
+        case 0x63 :     //Branch instruction
+            {
+                int32_t arg1 = sys->regMap[curInst->getrs1()];
+                int32_t arg2 = sys->regMap[curInst->getrs2()];
+                switch(curInst->getfunc3()) {
+                    
+                        case 0 :        //BEQ
+                            break;
+                        case 1 :        //BNE
+                            break;
+                        case 4 :        //BLT
+                            break;
+                        case 5 :        //BGE
+                            if (arg2 >= arg1) {
+                                sys->regMap[0xE] = sys->regMap[0xE] + curInst->getimm12b();
+                                sys->flushFlag = true;
+                                curInst = NULL;
+                            } else{
+                                sys->regMap[0xE] = sys->regMap[0xE] + 4;
+                            }
+                            break;
+                        case 6 :        //BLTU
+                            break;
+                        case 7 :        //BGEU
+                            break;
+                        default :
+                            break;
                     }
+            }
+            break;
 
-	            }
-	            break;
-	
-	        case 0x63 :     //Branch instruction
-	            {
-	                int32_t arg1 = sys->regMap[curInst->getrs1()];
-	                int32_t arg2 = sys->regMap[curInst->getrs2()];
-	                switch(curInst->getfunc3()) {
-	                    
-	                        case 0 :        //BEQ
-	                            break;
-	                        case 1 :        //BNE
-	                            break;
-	                        case 4 :        //BLT
-	                            break;
-	                        case 5 :        //BGE
-	                            if (arg2 >= arg1) {
-                                    sys->regMap[0xE] = sys->regMap[0xE] + curInst->getimm12b();
-                                    sys->flushFlag = true;
-                                    curInst = NULL;
-	                            } else{
-	                                sys->regMap[0xE] = sys->regMap[0xE] + 4;
-	                            }
-	                            break;
-	                        case 6 :        //BLTU
-	                            break;
-	                        case 7 :        //BGEU
-	                            break;
-	                        default :
-	                            break;
-	                    }
-	            }
-	            break;
-	
-	        case 0x3 :      //load instructions
-	            {
-	                switch(curInst->getfunc3()) {
-	                    case 2 :    //LW
-	                        uint32_t data =  dr->getDataPort()->getData(curInst->getimm12b() + (sys->regMap[curInst->getrs1()]));
-                            sys->regMap[curInst->getrd()] = data;
-	                        break;
-	                }
-	            }
-	            break;
-	
-	        case 0x23 :     //store instructions
-	            {
-	                switch(curInst->getfunc3()) {
-	                    case 2 :    //SW
-                            uint32_t addr = sys->regMap[curInst->getrs1()] + curInst->getimm12b();
-                            curInst->setAddr(addr);
-	                        break;
-	                }
-	            }
-                break;
-	
-	        case 0x13 :     //immediate instructions
-	            {
-	                switch(curInst->getfunc3()) {
-	                    case 0 :    //ADDI
-	                        sys->regMap[curInst->getrd()] = sys->regMap[curInst->getrs1()] + curInst->getimm12b();
-	                        break;
-	                    case 1 :    //SLLI
-	                        sys->regMap[curInst->getrd()] = sys->regMap[curInst->getrs1()] << curInst->getshamt();
-                             std::cout << "\n Shifted Register: " << sys->regMap[curInst->getrd()] << "\n";
-	                        break;
-	                    case 5 :    //SRLI
-	                        sys->regMap[curInst->getrd()] = sys->regMap[curInst->getrs1()] >> curInst->getshamt();
-                             std::cout << "\n Shifted Register: " << sys->regMap[curInst->getrd()] << "\n";
-	                        break;                        
-	                }
-	            }
-                break;
-	
-	        case 0x33 :     //rtype instructions
-	            {
-	                switch(curInst->getfunc3()) {
-	                    case 0 :    
-	                        if (curInst->getfunc7() == 0) {  //ADD
-	                            sys->regMap[curInst->getrd()] = sys->regMap[curInst->getrs1()] + sys->regMap[curInst->getrs2()];
-                                std::cout << "\n Added Register: " << sys->regMap[curInst->getrd()] << "\n";
-	                        } else {      //SUB
-	                            sys->regMap[curInst->getrd()] = sys->regMap[curInst->getrs1()] - sys->regMap[curInst->getrs2()];
-	                        }
-	                        break;
-	                    // case 1 :    //SLL
-	                    //     curr_inst->setresult(reg1 << reg2);
-	                    //     break;
-	                    // case 2 :    //SLT
-	                    //     if (reg1 < reg2) {
-	                    //         curr_inst->setresult(1);
-	                    //     } else {
-	                    //         curr_inst->setresult(0);
-	                    //     }
-	                    //     break;
-	                    // case 3 :    //SLTU
-	                    //     if (ureg1 < ureg2) {
-	                    //         curr_inst->setresult(1);
-	                    //     } else {
-	                    //         curr_inst->setresult(0);
-	                    //     }
-	                    //     break;
-	                    // case 4 :    //XOR
-	                    //     curr_inst->setresult(reg1 ^ reg2);
-	                    //     break;
-	                    // case 5 :    //SRL
-	                    //     curr_inst->setresult(reg1 >> reg2);
-	                    //     break;
-	                    // case 6 :    //OR
-	                    //     curr_inst->setresult(reg1 | reg2);
-	                    //     break;
-	                    // case 7 :    //AND
-	                    //     curr_inst->setresult(reg1 & reg2);
-	                    //     break;
-	                }
-	            }
-                break;
-	        default:
-	            break;
-	    }
-    
-    /*[VDIXIT]*/
-    // int val1, val2, result;
-    // string op = curInst->getOpcode();
-    
-    // if(op == "ld" || op == "add.d" || op == "sd" || op == "addi")
-    // {
-    //     val1 = this->getData(1);
-    //     val2 = this->getData(2);
+        case 0x3 :      //load instructions
+            {
+                switch(curInst->getfunc3()) {
+                    case 2 :    //LW
+                        uint32_t data =  dr->getDataPort()->getData(curInst->getimm12b() + (sys->regMap[curInst->getrs1()]));
+                        sys->regMap[curInst->getrd()] = data;
+                        break;
+                }
+            }
+            break;
 
-    //     result = val1 + val2;
-    //     string resReg = curInst->getOprand(0);
-    //     sys->regMap[resReg] = result;
-    // }
-    // else if(op == "bne")
-    // {
-    //     val1 = this->getData(0);
-    //     val2 = this->getData(1);
+        case 0x23 :     //store instructions
+            {
+                switch(curInst->getfunc3()) {
+                    case 2 :    //SW
+                        uint32_t addr = sys->regMap[curInst->getrs1()] + curInst->getimm12b();
+                        curInst->setAddr(addr);
+                        break;
+                }
+            }
+            break;
 
-    //     if(val1 == val2)
-    //     {
-    //         flushFlag = true;
-    //         sys->flushMEQ();
-    //     }
-    //     return;
-    // }
+        case 0x13 :     //immediate instructions
+            {
+                switch(curInst->getfunc3()) {
+                    case 0 :    //ADDI
+                        sys->regMap[curInst->getrd()] = sys->regMap[curInst->getrs1()] + curInst->getimm12b();
+                        break;
+                    case 1 :    //SLLI
+                        sys->regMap[curInst->getrd()] = sys->regMap[curInst->getrs1()] << curInst->getshamt();
+                        break;
+                    case 5 :    //SRLI
+                        sys->regMap[curInst->getrd()] = sys->regMap[curInst->getrs1()] >> curInst->getshamt();
+                        break;                        
+                }
+            }
+            break;
+
+        case 0x33 :     //rtype instructions
+            {
+                switch(curInst->getfunc3()) {
+                    case 0 :    
+                        if (curInst->getfunc7() == 0) {  //ADD
+                            sys->regMap[curInst->getrd()] = sys->regMap[curInst->getrs1()] + sys->regMap[curInst->getrs2()];
+                        } else {      //SUB
+                            sys->regMap[curInst->getrd()] = sys->regMap[curInst->getrs1()] - sys->regMap[curInst->getrs2()];
+                        }
+                        break;
+                    // case 1 :    //SLL
+                    //     curr_inst->setresult(reg1 << reg2);
+                    //     break;
+                    // case 2 :    //SLT
+                    //     if (reg1 < reg2) {
+                    //         curr_inst->setresult(1);
+                    //     } else {
+                    //         curr_inst->setresult(0);
+                    //     }
+                    //     break;
+                    // case 3 :    //SLTU
+                    //     if (ureg1 < ureg2) {
+                    //         curr_inst->setresult(1);
+                    //     } else {
+                    //         curr_inst->setresult(0);
+                    //     }
+                    //     break;
+                    // case 4 :    //XOR
+                    //     curr_inst->setresult(reg1 ^ reg2);
+                    //     break;
+                    // case 5 :    //SRL
+                    //     curr_inst->setresult(reg1 >> reg2);
+                    //     break;
+                    // case 6 :    //OR
+                    //     curr_inst->setresult(reg1 | reg2);
+                    //     break;
+                    // case 7 :    //AND
+                    //     curr_inst->setresult(reg1 & reg2);
+                    //     break;
+                }
+            }
+            break;
+        default:
+            break;
+    }
 }
 
 /**************************
@@ -641,10 +729,10 @@ void store::recvInst(inst * i)
     }
     curInst = i;
 
-    if(curInst->getInst() == 0x00)
-        cout << " Store: " << "NOP,";
+    if(curInst->getOpcode() == 0x23)
+        cout << " Store: SW" << " rs2= x" << curInst->getrs2() << ", imm12b=" << curInst->getimm12b() << ", rs1=" << sys->regMap[curInst->getrs1()] << ",";
     else
-        cout << " Store: opcode=" << i->getOpcode() << " rd=" << i->getrd() << " func3=" << i->getfunc3() << " rs1=" << i->getrs1() << " immediate=" << i->getimm12b() << ",";
+        cout << " Store: " << "NOP,";
 
     //schedule new event for store stage
     sys->schedule(se,sys->getCurTick()+1, curInst->getInst(), "store");
@@ -664,7 +752,6 @@ void store::process()
     if (curInst->getOpcode() == 0x23)
     {
         dr->getDataPort()->setData(curInst->getAddr(), sys->regMap[curInst->getrs2()]);
-        dr->printDram(curInst->getAddr(), curInst->getAddr()+4);
     }
 
     curInst = NULL;
