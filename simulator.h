@@ -60,10 +60,10 @@ public:
 	void process();
 	void initInsQ();
 
-	uint32_t getPc() { return sys->regMap[0xE]; }
-	void setPc(uint32_t p) { sys->regMap[0xE] = p; }
-	uint32_t getSp() { return sys->regMap[0xF]; }
-	void setSp(uint32_t s) { sys->regMap[0xF] = s; }
+	uint32_t getPc() { return sys->regMap[cpu_id][0xE]; }
+	void setPc(uint32_t p) { sys->regMap[cpu_id][0xE] = p; }
+	uint32_t getSp() { return sys->regMap[cpu_id][0xF]; }
+	void setSp(uint32_t s) { sys->regMap[cpu_id][0xF] = s; }
 };
 
 #endif //__SIMULATOR_H__

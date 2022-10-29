@@ -406,7 +406,7 @@ void execute::recvInst(inst * i)
                 cout << " Execute: JAL" << " rd= x" << curInst->getrd() << ", imm20b=" << curInst->getimm20b() << ",";
                 break;    
             case 0x67:
-                cout << " Execute: JALR" << " rd= x" << curInst->getrd() << ", imm12b=" << curInst->getimm12b() << ", rs1=" << sys->regMap[curInst->getrs1()] << ",";
+                cout << " Execute: JALR" << " rd= x" << curInst->getrd() << ", imm12b=" << curInst->getimm12b() << ", rs1=" << sys->regMap[cpu_id][curInst->getrs1()] << ",";
                 break;       
             case 0x63:
                 switch (curInst->getfunc3())
@@ -436,38 +436,38 @@ void execute::recvInst(inst * i)
                 }
                 break;
             case 0x3:
-                cout << " Execute: LW" << " rd= x" << curInst->getrd() << ", imm12b=" << curInst->getimm12b() << ", rs1=" << sys->regMap[curInst->getrs1()] << ",";
+                cout << " Execute: LW" << " rd= x" << curInst->getrd() << ", imm12b=" << curInst->getimm12b() << ", rs1=" << sys->regMap[cpu_id][curInst->getrs1()] << ",";
                 break;
             case 0x23:
-                cout << " Execute: SW" << " rs2= x" << curInst->getrs2() << ", imm12b=" << curInst->getimm12b() << ", rs1=" << sys->regMap[curInst->getrs1()] << ",";
+                cout << " Execute: SW" << " rs2= x" << curInst->getrs2() << ", imm12b=" << curInst->getimm12b() << ", rs1=" << sys->regMap[cpu_id][curInst->getrs1()] << ",";
                 break;
             case 0x13:
                 switch (curInst->getfunc3())
                 {
                     case 0:
-                        cout << " Execute: ADDI" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", imm12b=" << curInst->getimm12b() << ",";
+                        cout << " Execute: ADDI" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[cpu_id][curInst->getrs1()] << ", imm12b=" << curInst->getimm12b() << ",";
                         break;
                     case 1:
-                        cout << " Execute: SLLI" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", shamt=" << curInst->getshamt() << ",";
+                        cout << " Execute: SLLI" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[cpu_id][curInst->getrs1()] << ", shamt=" << curInst->getshamt() << ",";
                         break;
                     case 2:
-                        cout << " Execute: SLTI" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", imm12b=" << curInst->getimm12b() << ",";
+                        cout << " Execute: SLTI" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[cpu_id][curInst->getrs1()] << ", imm12b=" << curInst->getimm12b() << ",";
                         break;
                     case 3:
-                        cout << " Execute: SLTIU" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", imm12b=" << curInst->getimm12b() << ",";
+                        cout << " Execute: SLTIU" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[cpu_id][curInst->getrs1()] << ", imm12b=" << curInst->getimm12b() << ",";
                         break;
                     case 4:
-                        cout << " Execute: XORI" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", imm12b=" << curInst->getimm12b() << ",";
+                        cout << " Execute: XORI" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[cpu_id][curInst->getrs1()] << ", imm12b=" << curInst->getimm12b() << ",";
                         break;
                     case 5:
-                        cout << " Execute: SRLI" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", shamt=" << curInst->getshamt() << ",";
+                        cout << " Execute: SRLI" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[cpu_id][curInst->getrs1()] << ", shamt=" << curInst->getshamt() << ",";
                         break;                        
                     case 6:
-                        cout << " Execute: ORI" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", imm12b=" << curInst->getimm12b() << ",";
+                        cout << " Execute: ORI" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[cpu_id][curInst->getrs1()] << ", imm12b=" << curInst->getimm12b() << ",";
                         cout << "ORI rd,rs1,imm" << endl;
                         break;
                     case 7:
-                        cout << " Execute: ANDI" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", imm12b=" << curInst->getimm12b() << ",";
+                        cout << " Execute: ANDI" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[cpu_id][curInst->getrs1()] << ", imm12b=" << curInst->getimm12b() << ",";
                         break;
                     default:
                         break;
@@ -477,28 +477,28 @@ void execute::recvInst(inst * i)
                 switch (curInst->getfunc3())
                 {
                     case 0:
-                        cout << " Execute: ADD" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", rs2=" << sys->regMap[curInst->getrs2()] << ",";
+                        cout << " Execute: ADD" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[cpu_id][curInst->getrs1()] << ", rs2=" << sys->regMap[cpu_id][curInst->getrs2()] << ",";
                         break;
                     case 1:
-                        cout << " Execute: SLL" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", rs2=" << sys->regMap[curInst->getrs2()] << ",";
+                        cout << " Execute: SLL" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[cpu_id][curInst->getrs1()] << ", rs2=" << sys->regMap[cpu_id][curInst->getrs2()] << ",";
                         break;
                     case 2:
-                        cout << " Execute: SLT" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", rs2=" << sys->regMap[curInst->getrs2()] << ",";
+                        cout << " Execute: SLT" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[cpu_id][curInst->getrs1()] << ", rs2=" << sys->regMap[cpu_id][curInst->getrs2()] << ",";
                         break;
                     case 3:
-                        cout << " Execute: SLTU" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", rs2=" << sys->regMap[curInst->getrs2()] << ",";
+                        cout << " Execute: SLTU" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[cpu_id][curInst->getrs1()] << ", rs2=" << sys->regMap[cpu_id][curInst->getrs2()] << ",";
                         break;
                     case 4:
-                        cout << " Execute: XOR" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", rs2=" << sys->regMap[curInst->getrs2()] << ",";
+                        cout << " Execute: XOR" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[cpu_id][curInst->getrs1()] << ", rs2=" << sys->regMap[cpu_id][curInst->getrs2()] << ",";
                         break;
                     case 5:
-                        cout << " Execute: SRL" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", rs2=" << sys->regMap[curInst->getrs2()] << ",";
+                        cout << " Execute: SRL" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[cpu_id][curInst->getrs1()] << ", rs2=" << sys->regMap[cpu_id][curInst->getrs2()] << ",";
                         break;                        
                     case 6:
-                        cout << " Execute: OR" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", rs2=" << sys->regMap[curInst->getrs2()] << ",";
+                        cout << " Execute: OR" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[cpu_id][curInst->getrs1()] << ", rs2=" << sys->regMap[cpu_id][curInst->getrs2()] << ",";
                         break;
                     case 7:
-                        cout << " Execute: AND" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[curInst->getrs1()] << ", rs2=" << sys->regMap[curInst->getrs2()] << ",";
+                        cout << " Execute: AND" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[cpu_id][curInst->getrs1()] << ", rs2=" << sys->regMap[cpu_id][curInst->getrs2()] << ",";
                         break;
                     default:
                         break;
@@ -530,7 +530,7 @@ void execute::executeInst()
         case 0x37 :     //LUI
             {
                 uint32_t data = curInst->getimm20b();
-                sys->regMap[curInst->getrd()] = data;
+                sys->regMap[cpu_id][curInst->getrd()] = data;
             }
             break;
 
@@ -562,8 +562,8 @@ void execute::executeInst()
 
         case 0x63 :     //Branch instruction
             {
-                int32_t arg1 = sys->regMap[curInst->getrs1()];
-                int32_t arg2 = sys->regMap[curInst->getrs2()];
+                int32_t arg1 = sys->regMap[cpu_id][curInst->getrs1()];
+                int32_t arg2 = sys->regMap[cpu_id][curInst->getrs2()];
                 switch(curInst->getfunc3()) {
                     
                         case 0 :        //BEQ
@@ -574,11 +574,11 @@ void execute::executeInst()
                             break;
                         case 5 :        //BGE
                             if (arg2 >= arg1) {
-                                sys->regMap[0xE] = sys->regMap[0xE] + curInst->getimm12b();
+                                sys->regMap[cpu_id][0xE] = sys->regMap[cpu_id][0xE] + curInst->getimm12b();
                                 sys->flushFlag = true;
                                 curInst = NULL;
                             } else{
-                                sys->regMap[0xE] = sys->regMap[0xE] + 4;
+                                sys->regMap[cpu_id][0xE] = sys->regMap[cpu_id][0xE] + 4;
                             }
                             break;
                         case 6 :        //BLTU
@@ -595,9 +595,9 @@ void execute::executeInst()
             {
                 switch(curInst->getfunc3()) {
                     case 2 :    //LW
-                        uint32_t data =  arb->getData(curInst->getimm12b() + (sys->regMap[curInst->getrs1()]));
+                        uint32_t data =  arb->getData(curInst->getimm12b() + (sys->regMap[cpu_id][curInst->getrs1()]));
                         arb->setBusyFlag(false);
-                        sys->regMap[curInst->getrd()] = data;
+                        sys->regMap[cpu_id][curInst->getrd()] = data;
                         break;
                 }
             }
@@ -607,7 +607,7 @@ void execute::executeInst()
             {
                 switch(curInst->getfunc3()) {
                     case 2 :    //SW
-                        uint32_t addr = sys->regMap[curInst->getrs1()] + curInst->getimm12b();
+                        uint32_t addr = sys->regMap[cpu_id][curInst->getrs1()] + curInst->getimm12b();
                         curInst->setAddr(addr);
                         break;
                 }
@@ -618,13 +618,13 @@ void execute::executeInst()
             {
                 switch(curInst->getfunc3()) {
                     case 0 :    //ADDI
-                        sys->regMap[curInst->getrd()] = sys->regMap[curInst->getrs1()] + curInst->getimm12b();
+                        sys->regMap[cpu_id][curInst->getrd()] = sys->regMap[cpu_id][curInst->getrs1()] + curInst->getimm12b();
                         break;
                     case 1 :    //SLLI
-                        sys->regMap[curInst->getrd()] = sys->regMap[curInst->getrs1()] << curInst->getshamt();
+                        sys->regMap[cpu_id][curInst->getrd()] = sys->regMap[cpu_id][curInst->getrs1()] << curInst->getshamt();
                         break;
                     case 5 :    //SRLI
-                        sys->regMap[curInst->getrd()] = sys->regMap[curInst->getrs1()] >> curInst->getshamt();
+                        sys->regMap[cpu_id][curInst->getrd()] = sys->regMap[cpu_id][curInst->getrs1()] >> curInst->getshamt();
                         break;                        
                 }
             }
@@ -635,9 +635,9 @@ void execute::executeInst()
                 switch(curInst->getfunc3()) {
                     case 0 :    
                         if (curInst->getfunc7() == 0) {  //ADD
-                            sys->regMap[curInst->getrd()] = sys->regMap[curInst->getrs1()] + sys->regMap[curInst->getrs2()];
+                            sys->regMap[cpu_id][curInst->getrd()] = sys->regMap[cpu_id][curInst->getrs1()] + sys->regMap[cpu_id][curInst->getrs2()];
                         } else {      //SUB
-                            sys->regMap[curInst->getrd()] = sys->regMap[curInst->getrs1()] - sys->regMap[curInst->getrs2()];
+                            sys->regMap[cpu_id][curInst->getrd()] = sys->regMap[cpu_id][curInst->getrs1()] - sys->regMap[cpu_id][curInst->getrs2()];
                         }
                         break;
                     // case 1 :    //SLL
@@ -731,7 +731,7 @@ void store::recvInst(inst * i)
     curInst = i;
 
     if(curInst->getOpcode() == 0x23)
-        cout << " Store: SW" << " rs2= x" << curInst->getrs2() << ", imm12b=" << curInst->getimm12b() << ", rs1=" << sys->regMap[curInst->getrs1()] << ",";
+        cout << " Store: SW" << " rs2= x" << curInst->getrs2() << ", imm12b=" << curInst->getimm12b() << ", rs1=" << sys->regMap[cpu_id][curInst->getrs1()] << ",";
     else
         cout << " Store: " << "NOP,";
 
@@ -755,7 +755,7 @@ void store::process()
         if(arb->getBusyFlag() ==false)
         {
             arb->setBusyFlag(true);
-            arb->setData(curInst->getAddr(), sys->regMap[curInst->getrs2()]);
+            arb->setData(curInst->getAddr(), sys->regMap[cpu_id][curInst->getrs2()]);
             arb->setBusyFlag(false);
         }
         else
