@@ -50,7 +50,7 @@ private:
 
 
 public:
-	Simulator(System *_sys, arbiter *a, uint8_t id) : sys(_sys),  te(new testEve(this)), f(new fetch(sys, a)),
+	Simulator(System *_sys, arbiter *a, uint8_t id) : sys(_sys),  te(new testEve(this)), f(new fetch(sys, a, id)),
 							d(new decode(sys)), e(new execute(sys, a, id)), s(new store(sys, a, id)) {
 								arb = a;
 								cpu_id = id;
@@ -58,7 +58,6 @@ public:
 	
 	void initSim();
 	void process();
-	void initInsQ();
 
 	uint32_t getPc() { return sys->regMap[cpu_id][0xE]; }
 	void setPc(uint32_t p) { sys->regMap[cpu_id][0xE] = p; }
