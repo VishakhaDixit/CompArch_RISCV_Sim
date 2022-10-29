@@ -16,6 +16,7 @@
 #include "dram.h"
 #include "iport.h"
 #include "dport.h"
+#include "arbiter.h"
 
 int main() {
 
@@ -154,6 +155,8 @@ int main() {
 	{
 		ram.getDataPort()->setData(0x800 + (i*4), 0x02020202);
 	}
+	
+	arbiter *arb = new arbiter(&ram);
 	
 	System *sys = new System();
 	Simulator *es = new Simulator(sys, &ram);
