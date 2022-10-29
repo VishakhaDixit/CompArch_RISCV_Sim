@@ -31,20 +31,37 @@ class System
         bool flushFlag = false;
 
 		//TODO: Make this a vector for multi-cpu system.
-		unordered_map<uint32_t, int32_t> regMap = 
+		
+		unordered_map<uint32_t, int32_t>regMap[2] = 
 		{
-			{0, 0},
-			{1, 0},
-			{2, 0},
-			{3, 0},
-			{4, 0},
-			{5, 0},
-			{6, 0},
-			{7, 0},
-			{8, 0},
-			{9, 0},
-			{0xE, 0},
-			{0xF, 0x200}
+			{
+				{0, 0},
+				{1, 0},
+				{2, 0},
+				{3, 0},
+				{4, 0},
+				{5, 0},
+				{6, 0},
+				{7, 0},
+				{8, 0},
+				{9, 0},
+				{0xE, 0},
+				{0xF, 0x200}
+			},
+			{
+				{0, 0},
+				{1, 0},
+				{2, 0},
+				{3, 0},
+				{4, 0},
+				{5, 0},
+				{6, 0},
+				{7, 0},
+				{8, 0},
+				{9, 0},
+				{0xE, 0x100},
+				{0xF, 0x300}
+			}
 		};
 		
 		void schedule(Event *e, TICK t, uint32_t i, string s);			
