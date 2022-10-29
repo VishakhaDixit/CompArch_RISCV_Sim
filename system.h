@@ -30,6 +30,7 @@ class System
 		System() : curClkTick(1) {}
         bool flushFlag = false;
 
+		//TODO: Make this a vector for multi-cpu system.
 		unordered_map<uint32_t, int32_t> regMap = 
 		{
 			{0, 0},
