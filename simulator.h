@@ -19,7 +19,7 @@
 #include "event.h"
 #include "pipeline.h"
 #include "inst.h"
-#include "dram.h"
+#include "arbiter.h"
 
 using namespace std;
 
@@ -36,6 +36,7 @@ private:
 	};
 
 	//TODO: Add CPU ID.
+	uint8_t cpu_id;
 	System *sys;
 	testEve *te;
 
@@ -51,13 +52,15 @@ private:
 	execute *e;
 	store *s;
 
-	dram *ram;
+	// dram *ram;
+	arbiter *arb;
 
 
 public:
-	Simulator(System *_sys, dram *dr) : sys(_sys),  te(new testEve(this)), f(new fetch(sys)),
-							d(new decode(sys)), e(new execute(sys, dr)), s(new store(sys, dr)) {
-								ram = dr;
+	Simulator(System *_sys, arbiter *a, uint8_t id) : sys(_sys),  te(new testEve(this)), f(new fetch(sys, a)),
+							d(new decode(sys)), e(new execute(sys, a, id)), s(new store(sys, a, id)) {
+								arb = a;
+								cpu_id = id;
 							}
 	
 	void initSim();

@@ -74,21 +74,21 @@ void Simulator::process()
             sys->flushFlag = false;
         }
         
+        // Check if arbiter is busy
+        if(!arb->getBusyFlag())
+        {
+            arb->setBusyFlag(true);
         uint32_t pc = getPc();
-        //Fetch current instruction from front of the instruction queue
-        // inst *i = insQ[0];
-        uint32_t binInst = ram->getInstPort()->getInstruction(pc);
+
+            //Fetch current instruction 
+            uint32_t binInst = arb->getInstruction(pc);
         inst *i = new inst(binInst);
         f->recvInst(i);
-
-        // //Pop currently fetched instruction from the queue
-        // insQ.erase(insQ.begin());
-        // //Schedule next instruction at the end of insQ
-        // insQ.push_back(i);
 
         //Increment pc 
         pc = pc + 4;
         setPc(pc);
+        }
     }
         
     sys->schedule(te, sys->getCurTick()+1, 0x00, "ClkGen");

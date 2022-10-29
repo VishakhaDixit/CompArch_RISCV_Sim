@@ -159,8 +159,8 @@ int main() {
 	arbiter *arb = new arbiter(&ram);
 	
 	System *sys = new System();
-	Simulator *es = new Simulator(sys, &ram);
-	es->initSim();				//Initialize Simulator device.
+	Simulator *cpu0 = new Simulator(sys, arb, 0);
+	cpu0->initSim();				//Initialize Simulator device.
 	sys->executeSim(200000);		//Run Simulator for 100 clk cycles, this function terminates if pipeline is flushed.
 	ram.printDram(0xC00, 0xFFF);
 
