@@ -1,6 +1,6 @@
 lui x7, 0x400
-lui x7, 0x800
-lui x7, 0xC00
+lui x8, 0x800
+lui x9, 0xC00
 lui x0, 0x00
 sw 0x00, sp
 lw x1, sp
@@ -16,5 +16,5 @@ srli x1, x1, 2
 addi x6, x1, 1
 sw x6, sp
 lui x0, 255
-bge x6, x0, -56
+bge x6, x0, -60
 RET (JALR x0,x1,0)
