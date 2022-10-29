@@ -16,7 +16,7 @@
 #include <string>
 #include "system.h"
 #include "inst.h"
-#include "dram.h"
+#include "arbiter.h"
 
 using namespace std;
 
@@ -66,9 +66,12 @@ class fetch : public pipeline
         };
 
         fetchEvent *fe;
+        arbiter *arb;
     
     public:
-        fetch(System *sys) : pipeline(sys), fe(new fetchEvent(this)) {};
+        fetch(System *sys, arbiter *a) : pipeline(sys), fe(new fetchEvent(this)) {
+            arb = a;
+        };
 
         void recvInst(inst *i);
         void process();
@@ -111,11 +114,13 @@ class execute : public pipeline
         };
 
         executeEvent *ee;
-        dram *dr;
+        arbiter *arb;
+        uint8_t cpu_id;
     
     public:
-        execute(System *sys, dram* d) : pipeline(sys), ee(new executeEvent(this)) {
-            dr = d;
+        execute(System *sys, arbiter* a, uint8_t id) : pipeline(sys), ee(new executeEvent(this)) {
+            arb = a;
+            cpu_id = id;
         };
 
         void recvInst(inst *i);
@@ -137,11 +142,13 @@ class store : public pipeline
         };
 
         storeEvent *se;
-        dram *dr;
+        arbiter *arb;
+        uint8_t cpu_id;
     
     public:
-        store(System *sys, dram *d) : pipeline(sys), se(new storeEvent(this)) {
-            dr = d;
+        store(System *sys, arbiter *a, uint8_t id) : pipeline(sys), se(new storeEvent(this)) {
+            arb = a;
+            cpu_id = id;
         };
 
         void recvInst(inst *i);
