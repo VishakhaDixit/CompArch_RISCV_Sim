@@ -277,12 +277,12 @@ int main() {
 
 	for (uint32_t i = 0; i < 256; i++)
 	{
-		ram.getDataPort()->setData(0x400 + (i*4), 0x01010101);
+		ram.getDataPort()->setData(0x400 + (i*4), 0x02020202);
 	}
 	
 	for (uint32_t i = 0; i < 256; i++)
 	{
-		ram.getDataPort()->setData(0x800 + (i*4), 0x02020202);
+		ram.getDataPort()->setData(0x800 + (i*4), 0x01010101);
 	}
 
 	arbiter *arb = new arbiter(&ram);
