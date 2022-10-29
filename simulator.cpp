@@ -14,22 +14,6 @@
 #include "iport.h"
 
 /**************************
- * @brief       This function initializes the Instruction queue with ins to be executed.
- *
- * @param [in]  NULL
- *
- * @return      NULL
- **************************/
-void Simulator::initInsQ()
-{
-    for(uint32_t val : instructions)
-    {
-        inst *i = new inst(val);
-        insQ.push_back(i);
-    }
-}
-
-/**************************
  * @brief       This function intializes the simulator.
  *
  * @param [in]  NULL
@@ -38,16 +22,6 @@ void Simulator::initInsQ()
  **************************/
 void Simulator::initSim()
 {
-    // //Init instructions in insQ
-    // if(insQ.size() == 0)
-    // {
-    //     initInsQ();
-    // }
-    
-    // //Initialize registers x1 & x2
-    // sys->regMap["x1"] = 20;
-    // sys->regMap["x2"] = 0;
-
     //Initialize Event List for first clk tick
     sys->schedule(te, getCurTick(), 0x00, "ClkGen");
 
@@ -73,21 +47,21 @@ void Simulator::process()
         {
             sys->flushFlag = false;
         }
-        
+
         // Check if arbiter is busy
         if(!arb->getBusyFlag())
         {
             arb->setBusyFlag(true);
-        uint32_t pc = getPc();
+            uint32_t pc = getPc();
 
             //Fetch current instruction 
             uint32_t binInst = arb->getInstruction(pc);
-        inst *i = new inst(binInst);
-        f->recvInst(i);
+            inst *i = new inst(binInst);
+            f->recvInst(i);
 
-        //Increment pc 
-        pc = pc + 4;
-        setPc(pc);
+            //Increment pc 
+            pc = pc + 4;
+            setPc(pc);
         }
     }
         

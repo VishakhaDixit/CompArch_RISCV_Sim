@@ -534,30 +534,15 @@ void execute::executeInst()
             }
             break;
 
-        // case 0x17 :     //AUIPC
-        //     {
-        //         //set upper 20 bits of offset
-        //         int32_t imm_offset = 0;
-        //         imm_offset = curr_inst->getimm20b() << 12;
-        //         //add offset to PC
-        //         curr_inst->setresult(imm_offset + this->getCPU()->getPC());
-        //         this->unstall();
-        //         schedule(this->next()->getEvent(), currTick()+10);
-        //         this->next()->writeReg(this->getReg());
-        //     }
-        //     break;
+        case 0x17 :     //AUIPC
+            {
+            }
+            break;
 
-        // case 0x6F :     //JAL
-        //     {
-        //         int32_t imm_offset = curr_inst->getimm20b();
-        //         //store pc in rd
-        //         curr_inst->setrd(this->getCPU()->getPC()+4);
-        //         this->getCPU()->setOffset(imm_offset);
-        //         this->unstall();
-        //         schedule(this->next()->getEvent(), currTick()+10);
-        //         this->next()->writeReg(this->getReg());
-        //     }
-        //     break;
+        case 0x6F :     //JAL
+            {
+            }
+            break;
 
         case 0x67 :     //JALR
             {
@@ -707,7 +692,7 @@ void execute::process()
         if(curInst->getInst() != 0x00)
         {
             if(curInst->getOpcode() != 0x3)
-            this->executeInst();
+                this->executeInst();
             else if((curInst->getOpcode() == 0x3) && (arb->getBusyFlag()==false))
             {
                 arb->setBusyFlag(true);

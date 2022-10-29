@@ -40,13 +40,6 @@ private:
 	System *sys;
 	testEve *te;
 
-	vector<inst *> insQ;
-	vector<uint32_t> instructions = 
-	{
-		0x00300193,
-		0x00618193
-	};
-
 	fetch *f;
 	decode *d;
 	execute *e;
