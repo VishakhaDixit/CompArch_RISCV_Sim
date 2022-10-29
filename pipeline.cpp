@@ -52,6 +52,8 @@ void fetch::process()
         return;
     }
     //Send fetched instruction to next stage
+    arb->setBusyFlag(false);
+    
     if(!nextStage->isBusy())
     {
         sendInst(curInst);
@@ -608,7 +610,8 @@ void execute::executeInst()
             {
                 switch(curInst->getfunc3()) {
                     case 2 :    //LW
-                        uint32_t data =  dr->getDataPort()->getData(curInst->getimm12b() + (sys->regMap[curInst->getrs1()]));
+                        uint32_t data =  arb->getData(curInst->getimm12b() + (sys->regMap[curInst->getrs1()]));
+                        arb->setBusyFlag(false);
                         sys->regMap[curInst->getrd()] = data;
                         break;
                 }
@@ -702,7 +705,20 @@ void execute::process()
     if(!nextStage->isBusy())
     {
         if(curInst->getInst() != 0x00)
+        {
+            if(curInst->getOpcode() != 0x3)
             this->executeInst();
+            else if((curInst->getOpcode() == 0x3) && (arb->getBusyFlag()==false))
+            {
+                arb->setBusyFlag(true);
+                this->executeInst();
+            }
+            else
+            {
+                sys->schedule(ee,sys->getCurTick()+1, curInst->getInst(), "execute");
+                return;
+            }
+        }
         if(sys->flushFlag == false)
             sendInst(curInst);
     }
@@ -751,7 +767,17 @@ void store::process()
     // Delete pipelined instruction after write back.
     if (curInst->getOpcode() == 0x23)
     {
-        dr->getDataPort()->setData(curInst->getAddr(), sys->regMap[curInst->getrs2()]);
+        if(arb->getBusyFlag() ==false)
+        {
+            arb->setBusyFlag(true);
+            arb->setData(curInst->getAddr(), sys->regMap[curInst->getrs2()]);
+            arb->setBusyFlag(false);
+        }
+        else
+        {
+            sys->schedule(se,sys->getCurTick()+1, curInst->getInst(), "store");
+            return;
+        }
     }
 
     curInst = NULL;
