@@ -21,11 +21,12 @@ class arbiter
 {
     private:
     dram* ram;
-    uint8_t cpu_id;
+    bool isBusy;
 
     public:
         arbiter(dram* dr){
             ram = dr;
+            isBusy = false;
         };
         uint32_t getInstruction(uint32_t progCoun);
         uint32_t getData(uint32_t addr);
