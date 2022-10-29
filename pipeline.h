@@ -67,10 +67,12 @@ class fetch : public pipeline
 
         fetchEvent *fe;
         arbiter *arb;
+        uint8_t cpu_id;
     
     public:
-        fetch(System *sys, arbiter *a) : pipeline(sys), fe(new fetchEvent(this)) {
+        fetch(System *sys, arbiter *a, uint8_t id) : pipeline(sys), fe(new fetchEvent(this)) {
             arb = a;
+            cpu_id = id;
         };
 
         void recvInst(inst *i);

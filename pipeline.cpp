@@ -30,7 +30,7 @@ void fetch::recvInst(inst *i)
         cout << " Fetch: NOP";
         return;
     }
-    cout << " Fetch: " << i->getInst() << endl;
+    cout << " Fetch: " << i->getInst() << "-(CPU-" << std::to_string(cpu_id) << ")" << endl;
     curInst = i;
 
     //schedule new event for fetch stage
@@ -61,7 +61,7 @@ void fetch::process()
     else
     {
         sys->schedule(fe,sys->getCurTick()+1, curInst->getInst(), "fetch");
-        cout << " Fetch: " << curInst->getInst() << endl;
+        cout << " Fetch: " << curInst->getInst() << "-(CPU-" << std::to_string(cpu_id) << ")" << endl;
     }
 }
 
