@@ -24,7 +24,9 @@ class arbiter
         arbiter(dram* dr){
             ram = dr;
         };
-        bool getInstruction(uint8_t cpu_id, uint32_t progCoun, uint32_t& instr);
-        bool getData(uint8_t cpu_id, uint32_t addr, uint32_t& data);
-        bool setData(uint8_t cpu_id, uint32_t addr, uint32_t data);
+        uint32_t getInstruction(uint32_t progCoun);
+        uint32_t getData(uint32_t addr);
+        void setData(uint32_t addr, uint32_t data);
+        bool getBusyFlag(void);
+        void setBusyFlag(bool flag);
 };
