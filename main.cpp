@@ -295,7 +295,14 @@ int main() {
 	cpu1->initSim();				//Initialize Simulator device.
 
 	sys->executeSim(200000);		//Run Simulator for 100 clk cycles, this function terminates if pipeline is flushed.
+
+	cout << "=======================CPU-0 RESULTS BEGIN==========================" << endl;
 	ram.printDram(0xC00, 0xFFF);
+	cout << "=======================CPU-0 RESULTS END============================" << endl;
+
+	cout << "=======================CPU-1 RESULTS BEGIN==========================" << endl;
+	ram.printDram(0x1000, 0x13FF);
+	cout << "=======================CPU-1 RESULTS END============================" << endl;
 
 	return 0;
 }
