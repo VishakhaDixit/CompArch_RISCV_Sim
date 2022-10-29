@@ -10,6 +10,9 @@
  *
  **************************/
 
+#ifndef __ARBITER_H__
+#define __ARBITER_H__
+
 #include <stdint.h>
 #include <array>
 #include "dram.h"
@@ -30,3 +33,5 @@ class arbiter
         bool getBusyFlag(void);
         void setBusyFlag(bool flag);
 };
+
+#endif //__ARBITER_H__
