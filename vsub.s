@@ -1,6 +1,6 @@
 lui x7, 0x400
 lui x8, 0x800
-lui x9, 0xC00
+lui x9, 0x1000
 lui x0, 0x00
 sw 0x00, sp
 lw x1, sp
@@ -10,7 +10,7 @@ lw x3, x2
 add x2, x8, x1
 lw x4, x2
 add x2, x9, x1
-add x5, x3, x4
+sub x5, x3, x4
 sw x5, x2
 srli x1, x1, 2
 addi x6, x1, 1
