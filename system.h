@@ -63,6 +63,8 @@ class System
 				{0xF, 0x300}
 			}
 		};
+
+		uint64_t cpu_cpi[2] = {0, 0};
 		
 		void schedule(Event *e, TICK t, uint32_t i, string s);			
 		void executeSim(TICK endClkTick=-1);

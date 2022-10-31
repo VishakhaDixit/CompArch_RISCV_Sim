@@ -57,6 +57,9 @@ void Simulator::process()
             //Fetch current instruction 
             uint32_t binInst = arb->getInstruction(pc);
             inst *i = new inst(binInst);
+
+            sys->cpu_cpi[cpu_id] += 2;
+
             f->recvInst(i);
 
             //Increment pc 

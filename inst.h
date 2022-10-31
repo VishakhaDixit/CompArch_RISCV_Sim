@@ -34,6 +34,8 @@ class inst
     public:
         inst(uint32_t data) : binIns(data) {};
 
+        string name = "";
+
         uint32_t getInst() { return binIns; }
         void    setInst(uint32_t i) { binIns = i; }
         int     getCst() { return cst; }

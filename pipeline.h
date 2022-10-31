@@ -93,9 +93,12 @@ class decode : public pipeline
         };
 
         decodeEvent *de;
+        uint8_t cpu_id;
     
     public:
-        decode(System *sys) : pipeline(sys), de(new decodeEvent(this)) {};
+        decode(System *sys, uint8_t id) : pipeline(sys), de(new decodeEvent(this)) {
+            cpu_id = id;
+        };
 
         void recvInst(inst *i);
         void decodeInst();

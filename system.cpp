@@ -51,7 +51,7 @@ void System::executeSim(TICK endClkTick)
 	while ((getCurTick() <= endClkTick) && !(MEQ.empty()))
 	{
 		displayMEQ();
-		std::cout << "\nSimulation Tick:" << getCurTick();
+		std::cout << "\nSimulation Tick:" << getCurTick() * 10;
 		
 		while(MEQ.begin() != MEQ.end())
 		{
@@ -90,7 +90,7 @@ void System::displayMEQ()
 	std::cout << "\nStart of MEQ\n";
 	for (auto e : MEQ) 
 	{
-		std::cout << "TICK:"<< e->getTime() << " INS:" << e->getInst() << " STAGE:" << e->getStage() << std::endl;
+		std::cout << "TICK:"<< e->getTime() * 10 << " INS:" << e->getInst() << " STAGE:" << e->getStage() << std::endl;
 	}
 	std::cout << "End of MEQ\n";
 }

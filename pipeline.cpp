@@ -63,6 +63,8 @@ void fetch::process()
         sys->schedule(fe,sys->getCurTick()+1, curInst->getInst(), "fetch");
         cout << " Fetch: " << curInst->getInst() << "-(CPU-" << std::to_string(cpu_id) << ")" << endl;
     }
+
+    sys->cpu_cpi[cpu_id]++;
 }
 
 /**************************
@@ -328,6 +330,8 @@ void decode::process()
         return;
     }
 
+    sys->cpu_cpi[cpu_id]++;
+
     //Send decoded instruction to next stage
     if(!nextStage->isBusy())
     {
@@ -398,6 +402,7 @@ void execute::recvInst(inst * i)
         {
             case 0x37:
                 cout << " Execute: LUI" << " rd= x" << curInst->getrd() << ", imm20b=" << curInst->getimm20b() << ",";
+                curInst->name = "LUI";
                 break;
             case 0x17:
                 cout << " Execute: AUIPC" << " rd= x" << curInst->getrd() << ", imm20b=" << curInst->getimm20b() << ",";
@@ -407,6 +412,7 @@ void execute::recvInst(inst * i)
                 break;    
             case 0x67:
                 cout << " Execute: JALR" << " rd= x" << curInst->getrd() << ", imm12b=" << curInst->getimm12b() << ", rs1=" << sys->regMap[cpu_id][curInst->getrs1()] << ",";
+                curInst->name = "JALR";
                 break;       
             case 0x63:
                 switch (curInst->getfunc3())
@@ -422,6 +428,7 @@ void execute::recvInst(inst * i)
                         break;
                     case 5:
                         cout << " Execute: BGE" << " rs1= x" << curInst->getrs1() << ", rs2=x" << curInst->getrs1() << ", imm12b=" << curInst->getimm12b() << ",";
+                        curInst->name = "BGE";
                         break;
                     case 6:
                         cout << " Execute: BLTU" << " rs1= x" << curInst->getrs1() << ", rs2=x" << curInst->getrs1() << ", imm12b=" << curInst->getimm12b() << ",";
@@ -437,18 +444,22 @@ void execute::recvInst(inst * i)
                 break;
             case 0x3:
                 cout << " Execute: LW" << " rd= x" << curInst->getrd() << ", imm12b=" << curInst->getimm12b() << ", rs1=" << sys->regMap[cpu_id][curInst->getrs1()] << ",";
+                curInst->name = "LW";
                 break;
             case 0x23:
                 cout << " Execute: SW" << " rs2= x" << curInst->getrs2() << ", imm12b=" << curInst->getimm12b() << ", rs1=" << sys->regMap[cpu_id][curInst->getrs1()] << ",";
+                curInst->name = "SW";
                 break;
             case 0x13:
                 switch (curInst->getfunc3())
                 {
                     case 0:
                         cout << " Execute: ADDI" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[cpu_id][curInst->getrs1()] << ", imm12b=" << curInst->getimm12b() << ",";
+                        curInst->name = "ADDI";
                         break;
                     case 1:
                         cout << " Execute: SLLI" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[cpu_id][curInst->getrs1()] << ", shamt=" << curInst->getshamt() << ",";
+                        curInst->name = "SLLI";
                         break;
                     case 2:
                         cout << " Execute: SLTI" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[cpu_id][curInst->getrs1()] << ", imm12b=" << curInst->getimm12b() << ",";
@@ -461,6 +472,7 @@ void execute::recvInst(inst * i)
                         break;
                     case 5:
                         cout << " Execute: SRLI" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[cpu_id][curInst->getrs1()] << ", shamt=" << curInst->getshamt() << ",";
+                        curInst->name = "SRLI";
                         break;                        
                     case 6:
                         cout << " Execute: ORI" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[cpu_id][curInst->getrs1()] << ", imm12b=" << curInst->getimm12b() << ",";
@@ -477,7 +489,14 @@ void execute::recvInst(inst * i)
                 switch (curInst->getfunc3())
                 {
                     case 0:
+                        if(curInst->getfunc7() == 0) {
                         cout << " Execute: ADD" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[cpu_id][curInst->getrs1()] << ", rs2=" << sys->regMap[cpu_id][curInst->getrs2()] << ",";
+                        curInst->name = "ADD";
+                        }
+                        else {
+                        cout << " Execute: SUB" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[cpu_id][curInst->getrs1()] << ", rs2=" << sys->regMap[cpu_id][curInst->getrs2()] << ",";
+                        curInst->name = "SUB";
+                        }
                         break;
                     case 1:
                         cout << " Execute: SLL" << " rd= x" << curInst->getrd() << ", rs1=" << sys->regMap[cpu_id][curInst->getrs1()] << ", rs2=" << sys->regMap[cpu_id][curInst->getrs2()] << ",";
@@ -523,7 +542,6 @@ void execute::recvInst(inst * i)
  **************************/
 void execute::executeInst()
 {
-
     int32_t opcode = curInst->getOpcode();
 	switch(opcode) {
 	
@@ -595,6 +613,7 @@ void execute::executeInst()
             {
                 switch(curInst->getfunc3()) {
                     case 2 :    //LW
+                        sys->cpu_cpi[cpu_id] += 2;
                         uint32_t data =  arb->getData(curInst->getimm12b() + (sys->regMap[cpu_id][curInst->getrs1()]));
                         arb->setBusyFlag(false);
                         sys->regMap[cpu_id][curInst->getrd()] = data;
@@ -686,6 +705,8 @@ void execute::executeInst()
  **************************/
 void execute::process()
 {
+    sys->cpu_cpi[cpu_id]++;
+
     //Send executed instruction to next stage
     if(!nextStage->isBusy())
     {
@@ -748,6 +769,8 @@ void store::recvInst(inst * i)
  **************************/
 void store::process()
 {
+    sys->cpu_cpi[cpu_id]++;
+
     // Write data to destination register rd.
     // Delete pipelined instruction after write back.
     if (curInst->getOpcode() == 0x23)
@@ -755,6 +778,7 @@ void store::process()
         if(arb->getBusyFlag() ==false)
         {
             arb->setBusyFlag(true);
+            sys->cpu_cpi[cpu_id] += 2;
             arb->setData(curInst->getAddr(), sys->regMap[cpu_id][curInst->getrs2()]);
             arb->setBusyFlag(false);
         }
@@ -763,6 +787,11 @@ void store::process()
             sys->schedule(se,sys->getCurTick()+1, curInst->getInst(), "store");
             return;
         }
+    }
+
+    if(curInst->getInst() != 0x00) {
+        cout << "\nTotal CPI for " << curInst->name << " is: " << to_string(sys->cpu_cpi[cpu_id]) << "[CPU-" << to_string(cpu_id) << "]" << endl;
+        sys->cpu_cpi[cpu_id] = 0;
     }
 
     curInst = NULL;
