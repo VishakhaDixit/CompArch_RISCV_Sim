@@ -791,6 +791,16 @@ void store::process()
 
     if(curInst->getInst() != 0x00) {
         cout << "\nTotal CPI for " << curInst->name << " is: " << to_string(sys->cpu_cpi[cpu_id]) << "[CPU-" << to_string(cpu_id) << "]" << endl;
+        
+        if(cpu_id == 0)
+        {
+            sys->cpu_cpi0 += sys->cpu_cpi[cpu_id];
+        }
+        else 
+        {
+            sys->cpu_cpi1 += sys->cpu_cpi[cpu_id];
+        }
+
         sys->cpu_cpi[cpu_id] = 0;
     }
 
