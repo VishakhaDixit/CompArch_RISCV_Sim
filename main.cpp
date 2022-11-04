@@ -296,7 +296,12 @@ int main() {
 
 	sys->executeSim(200000);		//Run Simulator for 100 clk cycles, this function terminates if pipeline is flushed.
 
-	cout << "=======================CPU-0 RESULTS BEGIN==========================" << endl;
+
+	// Calculate Total CPI 
+	cout << "\nTotal CPI for CPU-0 = " << sys->cpu_cpi0/sys->getCurTick();
+	cout << "\nTotal CPI for CPU-1 = " << sys->cpu_cpi1/sys->getCurTick() << endl;
+
+	cout << "\n=======================CPU-0 RESULTS BEGIN==========================" << endl;
 	ram.printDram(0xC00, 0xFFF);
 	cout << "=======================CPU-0 RESULTS END============================" << endl;
 
