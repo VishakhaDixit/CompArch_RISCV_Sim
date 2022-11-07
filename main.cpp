@@ -22,33 +22,12 @@
 
 #define ADDRESSES_FILE_NAME "addresses.txt"
 
-std::fstream address_file;
-std::vector<int> addresses;
-
-void read_file()
-{
-    address_file.open(ADDRESSES_FILE_NAME, std::ios::in);
-
-    if (address_file.is_open())
-    { 
-        string line;
-        while (getline(address_file, line))
-        { 
-            // cout <<"String:: "<< line << "   ";
-            // cout <<"Integer:: "<< strtoul(line.c_str(),nullptr,16) << " " << std::endl;
-            addresses.push_back(strtoul(line.c_str(),nullptr,16));
-        }
-    }
-
-    address_file.close();
-}
-
 int main() {
 
-
+/*
 	std::array<uint8_t, 0x1400> initData; 
 
-	/*=======================CPU-0 INSTRUCTOINS BEGIN==========================*/
+	//=======================CPU-0 INSTRUCTOINS BEGIN==========================
 
 	// lui x7, 0x400
 	initData[0] = 0x00;
@@ -170,9 +149,9 @@ int main() {
 	initData[78] = 0x80;
 	initData[79] = 0x67;
 
-	/*=======================CPU-0 INSTRUCTOINS END==========================*/
+	//=======================CPU-0 INSTRUCTOINS END============================
 
-	/*=======================CPU-1 INSTRUCTOINS BEGIN==========================*/
+	//=======================CPU-1 INSTRUCTOINS BEGIN==========================
 
 	// lui x7, 0x400
 	initData[0x100] = 0x00;
@@ -294,7 +273,7 @@ int main() {
 	initData[0x14E] = 0x80;
 	initData[0x14F] = 0x67;
 
-	/*=======================CPU-1 INSTRUCTOINS END==========================*/
+	//=======================CPU-1 INSTRUCTOINS END==========================
 
 
 	dram ram = dram(0x0000, 0x01FF, 0x0200, 0x13FF);
@@ -311,30 +290,49 @@ int main() {
 	}
 
 	arbiter *arb = new arbiter(&ram);
-
-	Cache *cache = new Cache(256,32,none);
 	
-	// System *sys = new System();
-	// Simulator *cpu0 = new Simulator(sys, arb, 0);
-	// cpu0->initSim();				//Initialize Simulator device.
+	System *sys = new System();
+	Simulator *cpu0 = new Simulator(sys, arb, 0);
+	cpu0->initSim();				//Initialize Simulator device.
 		
-	// Simulator *cpu1 = new Simulator(sys, arb, 1);
-	// cpu1->initSim();				//Initialize Simulator device.
+	Simulator *cpu1 = new Simulator(sys, arb, 1);
+	cpu1->initSim();				//Initialize Simulator device.
 
-	// sys->executeSim(200000);		//Run Simulator for 100 clk cycles, this function terminates if pipeline is flushed.
+	sys->executeSim(200000);		//Run Simulator for 100 clk cycles, this function terminates if pipeline is flushed.
 
 
-	// // Calculate Total CPI 
-	// cout << "\nTotal CPI for CPU-0 = " << sys->cpu_cpi0/sys->getCurTick();
-	// cout << "\nTotal CPI for CPU-1 = " << sys->cpu_cpi1/sys->getCurTick() << endl;
+	// Calculate Total CPI 
+	cout << "\nTotal CPI for CPU-0 = " << sys->cpu_cpi0/sys->getCurTick();
+	cout << "\nTotal CPI for CPU-1 = " << sys->cpu_cpi1/sys->getCurTick() << endl;
 
-	// cout << "\n=======================CPU-0 RESULTS BEGIN==========================" << endl;
-	// ram.printDram(0xC00, 0xFFF);
-	// cout << "=======================CPU-0 RESULTS END============================" << endl;
+	cout << "\n=======================CPU-0 RESULTS BEGIN==========================" << endl;
+	ram.printDram(0xC00, 0xFFF);
+	cout << "=======================CPU-0 RESULTS END============================" << endl;
 
-	// cout << "=======================CPU-1 RESULTS BEGIN==========================" << endl;
-	// ram.printDram(0x1000, 0x13FF);
-	// cout << "=======================CPU-1 RESULTS END============================" << endl;
+	cout << "=======================CPU-1 RESULTS BEGIN==========================" << endl;
+	ram.printDram(0x1000, 0x13FF);
+	cout << "=======================CPU-1 RESULTS END============================" << endl; */
+
+	Cache *cache = new Cache(256, 32, none);
+	std::fstream address_file;
+
+	address_file.open(ADDRESSES_FILE_NAME, std::ios::in);
+
+	if (address_file.is_open())
+	{ 
+		string line;
+		while (getline(address_file, line))
+		{ 
+			uint32_t addr = strtoul(line.c_str(),nullptr,16);
+			cache->process(addr);
+		}
+	}
+
+	address_file.close();
+
+	std::cout << "Total Reads: " << cache->getNumHits() + cache->getNumMisses() << std::endl;
+    std::cout << "Total Hits: " << cache->getNumHits() << " Percentage: " << ((double)cache->getNumHits()/(double)(cache->getNumHits()+cache->getNumMisses()))*100 << "%" << std::endl;
+    std::cout << "Total Misses: " << cache->getNumMisses() << " Percentage: " << ((double)cache->getNumMisses()/(double)(cache->getNumHits()+cache->getNumMisses()))*100 << "%" << std::endl;
 
 	return 0;
 }
