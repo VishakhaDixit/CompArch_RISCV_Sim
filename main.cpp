@@ -12,11 +12,36 @@
 
 #include <iostream>
 #include <array>
+#include <fstream>
 #include "simulator.h"
 #include "dram.h"
 #include "iport.h"
 #include "dport.h"
 #include "arbiter.h"
+#include "cache.h"
+
+#define ADDRESSES_FILE_NAME "addresses.txt"
+
+std::fstream address_file;
+std::vector<int> addresses;
+
+void read_file()
+{
+    address_file.open(ADDRESSES_FILE_NAME, std::ios::in);
+
+    if (address_file.is_open())
+    { 
+        string line;
+        while (getline(address_file, line))
+        { 
+            // cout <<"String:: "<< line << "   ";
+            // cout <<"Integer:: "<< strtoul(line.c_str(),nullptr,16) << " " << std::endl;
+            addresses.push_back(strtoul(line.c_str(),nullptr,16));
+        }
+    }
+
+    address_file.close();
+}
 
 int main() {
 
@@ -286,28 +311,30 @@ int main() {
 	}
 
 	arbiter *arb = new arbiter(&ram);
+
+	Cache *cache = new Cache(256,32,none);
 	
-	System *sys = new System();
-	Simulator *cpu0 = new Simulator(sys, arb, 0);
-	cpu0->initSim();				//Initialize Simulator device.
+	// System *sys = new System();
+	// Simulator *cpu0 = new Simulator(sys, arb, 0);
+	// cpu0->initSim();				//Initialize Simulator device.
 		
-	Simulator *cpu1 = new Simulator(sys, arb, 1);
-	cpu1->initSim();				//Initialize Simulator device.
+	// Simulator *cpu1 = new Simulator(sys, arb, 1);
+	// cpu1->initSim();				//Initialize Simulator device.
 
-	sys->executeSim(200000);		//Run Simulator for 100 clk cycles, this function terminates if pipeline is flushed.
+	// sys->executeSim(200000);		//Run Simulator for 100 clk cycles, this function terminates if pipeline is flushed.
 
 
-	// Calculate Total CPI 
-	cout << "\nTotal CPI for CPU-0 = " << sys->cpu_cpi0/sys->getCurTick();
-	cout << "\nTotal CPI for CPU-1 = " << sys->cpu_cpi1/sys->getCurTick() << endl;
+	// // Calculate Total CPI 
+	// cout << "\nTotal CPI for CPU-0 = " << sys->cpu_cpi0/sys->getCurTick();
+	// cout << "\nTotal CPI for CPU-1 = " << sys->cpu_cpi1/sys->getCurTick() << endl;
 
-	cout << "\n=======================CPU-0 RESULTS BEGIN==========================" << endl;
-	ram.printDram(0xC00, 0xFFF);
-	cout << "=======================CPU-0 RESULTS END============================" << endl;
+	// cout << "\n=======================CPU-0 RESULTS BEGIN==========================" << endl;
+	// ram.printDram(0xC00, 0xFFF);
+	// cout << "=======================CPU-0 RESULTS END============================" << endl;
 
-	cout << "=======================CPU-1 RESULTS BEGIN==========================" << endl;
-	ram.printDram(0x1000, 0x13FF);
-	cout << "=======================CPU-1 RESULTS END============================" << endl;
+	// cout << "=======================CPU-1 RESULTS BEGIN==========================" << endl;
+	// ram.printDram(0x1000, 0x13FF);
+	// cout << "=======================CPU-1 RESULTS END============================" << endl;
 
 	return 0;
 }
