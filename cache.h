@@ -36,11 +36,12 @@ class Cache{
         bool isHit(uint32_t addr);
 
         uint8_t getData(uint32_t addr);
+        void process(uint32_t addr);
 
 
         //for testing
-        int getNumHits() {return hit_num;}
-        int getNumMisses() {return miss_num;}
+        int getNumHits() { return hit_num; } 
+        int getNumMisses() { return miss_num; }
 };
 
 #endif //__CACHE_H__
