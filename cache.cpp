@@ -39,7 +39,7 @@ void Cache::updateCacheLine(uint32_t set, uint32_t set_size, uint32_t tag)
         maps[set]->tag = tag;
         maps[set]->valid_bit = 1;
     }
-    else if(assoc == two_way)
+    else if(assoc == two_way || assoc == four_way)
     {
         uint32_t stCacheAddr = (set_size * set);
         pair<uint32_t, uint32_t> min_cnt;
@@ -91,6 +91,27 @@ bool Cache::isHit(uint32_t addr)
 
         line_tag = addr / cache_size;
         set_num = (addr >> idx_bits) & 0x1;
+
+        uint32_t stCacheAddr = (set_size * set_num);
+
+        for(uint32_t i = stCacheAddr; i < stCacheAddr+set_size; i++)
+        {
+            if ((maps[i]->valid_bit) && (maps[i]->tag == line_tag)) 
+            {
+                return true;
+            } 
+        }
+
+        updateCacheLine(set_num, set_size, line_tag);
+    }    
+    else if(assoc == four_way)
+    {
+        total_lines = cache_size / line_size;
+        idx_bits = log2(total_lines);
+        set_size = total_lines / 4;
+
+        line_tag = addr / cache_size;
+        set_num = (addr >> idx_bits) & 0x3;
 
         uint32_t stCacheAddr = (set_size * set_num);
 
