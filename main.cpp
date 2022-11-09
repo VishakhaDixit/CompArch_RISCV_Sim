@@ -313,7 +313,7 @@ int main() {
 	ram.printDram(0x1000, 0x13FF);
 	cout << "=======================CPU-1 RESULTS END============================" << endl; */
 
-	Cache *cache = new Cache(256, 32, none);
+	Cache *cache = new Cache(256, 4, two_way);
 	std::fstream address_file;
 
 	address_file.open(ADDRESSES_FILE_NAME, std::ios::in);
