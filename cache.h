@@ -17,10 +17,9 @@ class Cache{
 
         //struct to keep all of line data
         struct lineData {
-            uint8_t index;
             uint32_t tag;
             bool valid_bit;
-            uint8_t lru_count; //tracks lru (Bit-PLRU)
+            uint32_t lru_count; //tracks lru
         };
         std::vector<lineData*> maps;
         
@@ -33,10 +32,10 @@ class Cache{
         Cache(size_t size, size_t line_size, associativity_type a);
         virtual ~Cache();
 
+        void updateCacheLine(uint32_t set, uint32_t set_size, uint32_t tag);
         bool isHit(uint32_t addr);
-
-        uint8_t getData(uint32_t addr);
         void process(uint32_t addr);
+        uint8_t getData(uint32_t addr);
 
 
         //for testing
