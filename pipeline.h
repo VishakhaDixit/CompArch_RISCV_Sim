@@ -16,7 +16,6 @@
 #include <string>
 #include "system.h"
 #include "inst.h"
-#include "arbiter.h"
 #include "cache.h"
 
 using namespace std;
@@ -67,13 +66,11 @@ class fetch : public pipeline
         };
 
         fetchEvent *fe;
-        arbiter *arb;
         uint8_t cpu_id;
 	    Cache *iCache;
     
     public:
-        fetch(System *sys, arbiter *a, Cache *i_cache, uint8_t id) : pipeline(sys), fe(new fetchEvent(this)) {
-            arb = a;
+        fetch(System *sys, Cache *i_cache, uint8_t id) : pipeline(sys), fe(new fetchEvent(this)) {
             cpu_id = id;
             iCache = i_cache;
         };
@@ -122,14 +119,12 @@ class execute : public pipeline
         };
 
         executeEvent *ee;
-        arbiter *arb;
         uint8_t cpu_id;
         Cache *dCache;
         bool isExecuted;
     
     public:
-        execute(System *sys, arbiter* a, Cache *d_cache, uint8_t id) : pipeline(sys), ee(new executeEvent(this)) {
-            arb = a;
+        execute(System *sys, Cache *d_cache, uint8_t id) : pipeline(sys), ee(new executeEvent(this)) {
             cpu_id = id;
             dCache = d_cache;
             isExecuted = false;
@@ -154,13 +149,11 @@ class store : public pipeline
         };
 
         storeEvent *se;
-        arbiter *arb;
         uint8_t cpu_id;
         Cache *dCache;
     
     public:
-        store(System *sys, arbiter *a,Cache *d_cache, uint8_t id) : pipeline(sys), se(new storeEvent(this)) {
-            arb = a;
+        store(System *sys,Cache *d_cache, uint8_t id) : pipeline(sys), se(new storeEvent(this)) {
             cpu_id = id;
             dCache = d_cache;
         };
