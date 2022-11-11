@@ -49,6 +49,7 @@ class Event
 		string getStage() { return stage; }
 		
 		virtual void process() = 0;
+		virtual void process(uint32_t addr) = 0;
 };
 
 #endif //__EVENT_H__
