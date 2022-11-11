@@ -30,7 +30,7 @@ Cache::Cache(size_t size, size_t _line, associativity_type a, arbiter *arbC)
 
 Cache::~Cache()
 {
-
+    delete this;
 }
 
 
