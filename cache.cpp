@@ -55,26 +55,46 @@ void Cache::updateCache(uint32_t addr, uint32_t val)
 
         return;
     }
-    else if(assoc == two_way || assoc == four_way)
+    else if(assoc == two_way)
     {
-        uint32_t stCacheAddr = (this->set_size * set);
-        pair<uint32_t, uint32_t> min_cnt;
-        min_cnt.first = stCacheAddr;
-        min_cnt.second = maps[stCacheAddr]->lru_count;
+        total_lines = cache_size / line_size;
+        idx_bits = log2(total_lines);
+        this->set_size = total_lines / 2;
 
-        for(uint32_t i = stCacheAddr; i < (stCacheAddr + this->set_size); i++)
-        {
-            if(maps[i]->lru_count < min_cnt.second)
-            {
-                min_cnt.first = i;
-                min_cnt.second = maps[i]->lru_count;
-            }
-        }
-
-        maps[min_cnt.first]->valid_bit = 1;
-        maps[min_cnt.first]->tag = tag;
-        maps[min_cnt.first]->lru_count++;
+        tag = addr / cache_size;
+        set= (addr >> idx_bits) & 0x1;
     }
+    else if(assoc == four_way)
+    {
+        total_lines = cache_size / line_size;
+        idx_bits = log2(total_lines);
+        this->set_size = total_lines / 4;
+
+        tag = addr / cache_size;
+        set= (addr >> idx_bits) & 0x3;
+    }
+    
+    uint32_t stCacheAddr = (this->set_size * set);
+    pair<uint32_t, uint32_t> min_cnt;
+    min_cnt.first = stCacheAddr;
+    min_cnt.second = maps[stCacheAddr]->lru_count;
+
+    for(uint32_t i = stCacheAddr; i < (stCacheAddr + this->set_size); i++)
+    {
+        if(maps[i]->lru_count < min_cnt.second)
+        {
+            min_cnt.first = i;
+            min_cnt.second = maps[i]->lru_count;
+        }
+    }
+
+    maps[min_cnt.first]->valid_bit = 1;
+    maps[min_cnt.first]->tag = tag;
+    maps[min_cnt.first]->lru_count++;
+    maps[min_cnt.first]->set_num = set;
+    maps[min_cnt.first]->data = val;
+
+    return;
 }
 
 bool Cache::isHit(uint32_t addr)
