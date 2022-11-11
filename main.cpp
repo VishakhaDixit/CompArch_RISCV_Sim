@@ -24,7 +24,6 @@
 
 int main() {
 
-/*
 	std::array<uint8_t, 0x1400> initData; 
 
 	//=======================CPU-0 INSTRUCTOINS BEGIN==========================
@@ -290,12 +289,14 @@ int main() {
 	}
 
 	arbiter *arb = new arbiter(&ram);
+	Cache *i_cache = new Cache(256, 4, none, arb);
+	Cache *d_cache = new Cache(512, 4, none, arb);
 	
 	System *sys = new System();
-	Simulator *cpu0 = new Simulator(sys, arb, 0);
+	Simulator *cpu0 = new Simulator(sys, arb, i_cache, d_cache, 0);
 	cpu0->initSim();				//Initialize Simulator device.
 		
-	Simulator *cpu1 = new Simulator(sys, arb, 1);
+	Simulator *cpu1 = new Simulator(sys, arb, i_cache, d_cache, 1);
 	cpu1->initSim();				//Initialize Simulator device.
 
 	sys->executeSim(200000);		//Run Simulator for 100 clk cycles, this function terminates if pipeline is flushed.
@@ -311,28 +312,28 @@ int main() {
 
 	cout << "=======================CPU-1 RESULTS BEGIN==========================" << endl;
 	ram.printDram(0x1000, 0x13FF);
-	cout << "=======================CPU-1 RESULTS END============================" << endl; */
+	cout << "=======================CPU-1 RESULTS END============================" << endl; 
 
-	Cache *cache = new Cache(256, 4, four_way);
-	std::fstream address_file;
+	// Cache *cache = new Cache(256, 4, four_way);
+	// std::fstream address_file;
 
-	address_file.open(ADDRESSES_FILE_NAME, std::ios::in);
+	// address_file.open(ADDRESSES_FILE_NAME, std::ios::in);
 
-	if (address_file.is_open())
-	{ 
-		string line;
-		while (getline(address_file, line))
-		{ 
-			uint32_t addr = strtoul(line.c_str(),nullptr,16);
-			cache->process(addr);
-		}
-	}
+	// if (address_file.is_open())
+	// { 
+	// 	string line;
+	// 	while (getline(address_file, line))
+	// 	{ 
+	// 		uint32_t addr = strtoul(line.c_str(),nullptr,16);
+	// 		cache->process(addr);
+	// 	}
+	// }
 
-	address_file.close();
+	// address_file.close();
 
-	std::cout << "Total Reads: " << cache->getNumHits() + cache->getNumMisses() << std::endl;
-    std::cout << "Total Hits: " << cache->getNumHits() << " Percentage: " << ((double)cache->getNumHits()/(double)(cache->getNumHits()+cache->getNumMisses()))*100 << "%" << std::endl;
-    std::cout << "Total Misses: " << cache->getNumMisses() << " Percentage: " << ((double)cache->getNumMisses()/(double)(cache->getNumHits()+cache->getNumMisses()))*100 << "%" << std::endl;
+	// std::cout << "Total Reads: " << cache->getNumHits() + cache->getNumMisses() << std::endl;
+    // std::cout << "Total Hits: " << cache->getNumHits() << " Percentage: " << ((double)cache->getNumHits()/(double)(cache->getNumHits()+cache->getNumMisses()))*100 << "%" << std::endl;
+    // std::cout << "Total Misses: " << cache->getNumMisses() << " Percentage: " << ((double)cache->getNumMisses()/(double)(cache->getNumHits()+cache->getNumMisses()))*100 << "%" << std::endl;
 
 	return 0;
 }
