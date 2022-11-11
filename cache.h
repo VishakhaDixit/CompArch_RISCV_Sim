@@ -52,8 +52,9 @@ class Cache : public System{
 
         void updateCache(uint32_t addr, uint32_t val);
         bool isHit(uint32_t addr);
-        void process(uint32_t addr);
-        uint8_t getData(uint32_t addr);
+        uint32_t getInsFromRAM(uint32_t addr);
+        uint32_t getDataFromRAM(uint32_t addr);
+        void setDataToRAM(uint32_t addr, uint32_t dataVal);
 
         bool isArbBusy();
         void setArbBusy(bool flag);

@@ -183,6 +183,17 @@ uint32_t Cache::getInsFromRAM(uint32_t addr)
 
     return insVal;
 }
+
+uint32_t Cache::getDataFromRAM(uint32_t addr)
 {
-    return 0;
+    uint32_t dataVal = arb->getData(addr);
+    updateCache(addr, dataVal);
+
+    return dataVal;
+}
+
+void Cache::setDataToRAM(uint32_t addr, uint32_t dataVal)
+{
+    updateCache(addr, dataVal);
+    arb->setData(addr, dataVal);
 }
