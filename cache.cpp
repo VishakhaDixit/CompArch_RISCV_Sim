@@ -10,6 +10,7 @@ Cache::Cache(size_t size, size_t _line, associativity_type a, arbiter *arbC)
     assoc = a;
     cache_size = size;
     line_size = _line;
+    set_size = 0;
     arb = arbC;
 
     uint32_t num_lines;
@@ -22,6 +23,7 @@ Cache::Cache(size_t size, size_t _line, associativity_type a, arbiter *arbC)
         table->tag = 0;
         table->valid_bit = false;
         table->lru_count = 0;   // lru bits initialized to 0
+        table->set_num = 0;
         maps.push_back(table);
     }
 }
@@ -42,12 +44,12 @@ void Cache::updateCacheLine(uint32_t set, uint32_t set_size, uint32_t tag)
     }
     else if(assoc == two_way || assoc == four_way)
     {
-        uint32_t stCacheAddr = (set_size * set);
+        uint32_t stCacheAddr = (this->set_size * set);
         pair<uint32_t, uint32_t> min_cnt;
         min_cnt.first = stCacheAddr;
         min_cnt.second = maps[stCacheAddr]->lru_count;
 
-        for(uint32_t i = stCacheAddr; i < stCacheAddr+set_size; i++)
+        for(uint32_t i = stCacheAddr; i < (stCacheAddr + this->set_size); i++)
         {
             if(maps[i]->lru_count < min_cnt.second)
             {
@@ -88,14 +90,14 @@ bool Cache::isHit(uint32_t addr)
     {
         total_lines = cache_size / line_size;
         idx_bits = log2(total_lines);
-        set_size = total_lines / 2;
+        this->set_size = total_lines / 2;
 
         line_tag = addr / cache_size;
         set_num = (addr >> idx_bits) & 0x1;
 
-        uint32_t stCacheAddr = (set_size * set_num);
+        uint32_t stCacheAddr = (this->set_size * set_num);
 
-        for(uint32_t i = stCacheAddr; i < stCacheAddr+set_size; i++)
+        for(uint32_t i = stCacheAddr; i < (stCacheAddr + this->set_size); i++)
         {
             if ((maps[i]->valid_bit) && (maps[i]->tag == line_tag)) 
             {
@@ -109,14 +111,14 @@ bool Cache::isHit(uint32_t addr)
     {
         total_lines = cache_size / line_size;
         idx_bits = log2(total_lines);
-        set_size = total_lines / 4;
+        this->set_size = total_lines / 4;
 
         line_tag = addr / cache_size;
         set_num = (addr >> idx_bits) & 0x3;
 
-        uint32_t stCacheAddr = (set_size * set_num);
+        uint32_t stCacheAddr = (this->set_size * set_num);
 
-        for(uint32_t i = stCacheAddr; i < stCacheAddr+set_size; i++)
+        for(uint32_t i = stCacheAddr; i < (stCacheAddr + this->set_size); i++)
         {
             if ((maps[i]->valid_bit) && (maps[i]->tag == line_tag)) 
             {

@@ -28,12 +28,15 @@ class Cache : public System{
 
         size_t cache_size;
         size_t line_size;
+        size_t set_size;
 
         //struct to keep all of line data
         struct lineData {
             uint32_t tag;
             bool valid_bit;
             uint32_t lru_count; //tracks lru
+            uint8_t set_num;
+            uint32_t data;
         };
         std::vector<lineData*> maps;
         
