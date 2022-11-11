@@ -84,18 +84,25 @@ void Simulator::process()
             pc = pc + 4;
             setPc(pc);           
         }
+        // On Cache miss
+        else
+        {
+            //Get data from RAM is arbiter is not busy
+            if(!iCache->isArbBusy())
+            {
+                iCache->setArbBusy(true);
 
-            //Fetch current instruction 
-            uint32_t binInst = arb->getInstruction(pc);
-            inst *i = new inst(binInst);
+                uint32_t binInst = iCache->getInsFromRAM(pc);
+                inst *i = new inst(binInst);
 
-            sys->cpu_cpi[cpu_id] += 2;
+                sys->cpu_cpi[cpu_id] += 2;
 
-            f->recvInst(i);
+                f->recvInst(i);
 
-            //Increment pc 
-            pc = pc + 4;
-            setPc(pc);
+                //Increment pc 
+                pc = pc + 4;
+                setPc(pc); 
+            }
         }
     }
         
