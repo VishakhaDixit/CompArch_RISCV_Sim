@@ -551,6 +551,7 @@ void execute::executeInst()
                 uint32_t data = curInst->getimm20b();
                 sys->regMap[cpu_id][curInst->getrd()] = data;
             }
+            this->isExecuted = true;
             break;
 
         case 0x17 :     //AUIPC
@@ -575,8 +576,9 @@ void execute::executeInst()
                     sys->flushFlag = true;
                     sys->flushMEQ();
                 }
-
             }
+            this->isExecuted = true;
+
             break;
 
         case 0x63 :     //Branch instruction
@@ -592,13 +594,18 @@ void execute::executeInst()
                         case 4 :        //BLT
                             break;
                         case 5 :        //BGE
-                            if (arg2 >= arg1) {
+                            if (arg2 >= arg1) 
+                            {
                                 sys->regMap[cpu_id][0xE] = sys->regMap[cpu_id][0xE] + curInst->getimm12b();
                                 sys->flushFlag = true;
                                 curInst = NULL;
-                            } else{
+                            } else
+                            {
                                 sys->regMap[cpu_id][0xE] = sys->regMap[cpu_id][0xE] + 4;
                             }
+
+                            this->isExecuted = true;
+
                             break;
                         case 6 :        //BLTU
                             break;
@@ -615,9 +622,35 @@ void execute::executeInst()
                 switch(curInst->getfunc3()) {
                     case 2 :    //LW
                         sys->cpu_cpi[cpu_id] += 2;
-                        uint32_t data =  arb->getData(curInst->getimm12b() + (sys->regMap[cpu_id][curInst->getrs1()]));
-                        arb->setBusyFlag(false);
-                        sys->regMap[cpu_id][curInst->getrd()] = data;
+
+                        // uint32_t data =  arb->getData(curInst->getimm12b() + (sys->regMap[cpu_id][curInst->getrs1()]));
+                        // arb->setBusyFlag(false);
+                        // sys->regMap[cpu_id][curInst->getrd()] = data;
+
+                        uint32_t data = 0;
+                        uint32_t addr = curInst->getimm12b() + (sys->regMap[cpu_id][curInst->getrs1()]);
+                        
+                        if(dCache->getData(addr, &data))
+                        {
+                            sys->regMap[cpu_id][curInst->getrd()] = data;
+                            this->isExecuted = true;
+                        }
+                        else
+                        {
+                            if(!dCache->isArbBusy())
+                            {
+                                dCache->setArbBusy(true);
+                                uint32_t data =  dCache->getDataFromRAM(addr);
+                                sys->regMap[cpu_id][curInst->getrd()] = data;
+                                dCache->setArbBusy(false);
+                                this->isExecuted = true;
+                            }
+                            else
+                            {
+                                sys->schedule(ee,sys->getCurTick()+1, curInst->getInst(), "execute");
+                                this->isExecuted = false;
+                            }
+                        }
                         break;
                 }
             }
@@ -629,6 +662,7 @@ void execute::executeInst()
                     case 2 :    //SW
                         uint32_t addr = sys->regMap[cpu_id][curInst->getrs1()] + curInst->getimm12b();
                         curInst->setAddr(addr);
+                        this->isExecuted = true;
                         break;
                 }
             }
@@ -639,12 +673,15 @@ void execute::executeInst()
                 switch(curInst->getfunc3()) {
                     case 0 :    //ADDI
                         sys->regMap[cpu_id][curInst->getrd()] = sys->regMap[cpu_id][curInst->getrs1()] + curInst->getimm12b();
+                        this->isExecuted = true;
                         break;
                     case 1 :    //SLLI
                         sys->regMap[cpu_id][curInst->getrd()] = sys->regMap[cpu_id][curInst->getrs1()] << curInst->getshamt();
+                        this->isExecuted = true;
                         break;
                     case 5 :    //SRLI
                         sys->regMap[cpu_id][curInst->getrd()] = sys->regMap[cpu_id][curInst->getrs1()] >> curInst->getshamt();
+                        this->isExecuted = true;
                         break;                        
                 }
             }
@@ -659,36 +696,8 @@ void execute::executeInst()
                         } else {      //SUB
                             sys->regMap[cpu_id][curInst->getrd()] = sys->regMap[cpu_id][curInst->getrs1()] - sys->regMap[cpu_id][curInst->getrs2()];
                         }
+                        this->isExecuted = true;
                         break;
-                    // case 1 :    //SLL
-                    //     curr_inst->setresult(reg1 << reg2);
-                    //     break;
-                    // case 2 :    //SLT
-                    //     if (reg1 < reg2) {
-                    //         curr_inst->setresult(1);
-                    //     } else {
-                    //         curr_inst->setresult(0);
-                    //     }
-                    //     break;
-                    // case 3 :    //SLTU
-                    //     if (ureg1 < ureg2) {
-                    //         curr_inst->setresult(1);
-                    //     } else {
-                    //         curr_inst->setresult(0);
-                    //     }
-                    //     break;
-                    // case 4 :    //XOR
-                    //     curr_inst->setresult(reg1 ^ reg2);
-                    //     break;
-                    // case 5 :    //SRL
-                    //     curr_inst->setresult(reg1 >> reg2);
-                    //     break;
-                    // case 6 :    //OR
-                    //     curr_inst->setresult(reg1 | reg2);
-                    //     break;
-                    // case 7 :    //AND
-                    //     curr_inst->setresult(reg1 & reg2);
-                    //     break;
                 }
             }
             break;
@@ -713,20 +722,23 @@ void execute::process()
     {
         if(curInst->getInst() != 0x00)
         {
-            if(curInst->getOpcode() != 0x3)
-                this->executeInst();
-            else if((curInst->getOpcode() == 0x3) && (arb->getBusyFlag()==false))
-            {
-                arb->setBusyFlag(true);
-                this->executeInst();
-            }
-            else
-            {
-                sys->schedule(ee,sys->getCurTick()+1, curInst->getInst(), "execute");
-                return;
-            }
+            // if(curInst->getOpcode() != 0x3)
+            //     this->executeInst();
+            // else if((curInst->getOpcode() == 0x3) && (arb->getBusyFlag()==false))
+            // {
+            //     arb->setBusyFlag(true);
+            //     this->executeInst();
+            // }
+            // else
+            // {
+            //     sys->schedule(ee,sys->getCurTick()+1, curInst->getInst(), "execute");
+            //     return;
+            // }
+
+            this->executeInst();
+
         }
-        if(sys->flushFlag == false)
+        if((sys->flushFlag == false) && (this->isExecuted == true))
             sendInst(curInst);
     }
     else
@@ -776,18 +788,34 @@ void store::process()
     // Delete pipelined instruction after write back.
     if (curInst->getOpcode() == 0x23)
     {
-        if(arb->getBusyFlag() ==false)
+        // if(arb->getBusyFlag() ==false)
+        // {
+        //     arb->setBusyFlag(true);
+        //     sys->cpu_cpi[cpu_id] += 2;
+        //     arb->setData(curInst->getAddr(), sys->regMap[cpu_id][curInst->getrs2()]);
+        //     arb->setBusyFlag(false);
+        // }
+        // else
+        // {
+        //     sys->schedule(se,sys->getCurTick()+1, curInst->getInst(), "store");
+        //     return;
+        // }
+
+
+        if(!dCache->isArbBusy())
         {
-            arb->setBusyFlag(true);
+            dCache->setArbBusy(true);
             sys->cpu_cpi[cpu_id] += 2;
-            arb->setData(curInst->getAddr(), sys->regMap[cpu_id][curInst->getrs2()]);
-            arb->setBusyFlag(false);
+            dCache->setDataToRAM(curInst->getAddr(), sys->regMap[cpu_id][curInst->getrs2()]);
+            dCache->setArbBusy(false);
         }
         else
         {
             sys->schedule(se,sys->getCurTick()+1, curInst->getInst(), "store");
             return;
         }
+
+
     }
 
     if(curInst->getInst() != 0x00) {
