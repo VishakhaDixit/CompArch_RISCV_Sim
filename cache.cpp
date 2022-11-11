@@ -5,11 +5,12 @@
 #include <cstdlib>
 #include <cmath>
 
-Cache::Cache(size_t size, size_t _line, associativity_type a)
+Cache::Cache(size_t size, size_t _line, associativity_type a, arbiter *arbC)
 {
     assoc = a;
     cache_size = size;
     line_size = _line;
+    arb = arbC;
 
     uint32_t num_lines;
 

@@ -4,6 +4,7 @@
 #include <utility>
 #include <vector>
 #include <string>
+#include "arbiter.h"
 #include "system.h"
 
 using namespace std;
@@ -37,12 +38,13 @@ class Cache : public System{
         std::vector<lineData*> maps;
         
         associativity_type assoc;
+        arbiter *arb;
 
         //for testing puruposes
         int hit_num, miss_num;
 
     public:
-        Cache(size_t size, size_t line_size, associativity_type a);
+        Cache(size_t size, size_t line_size, associativity_type a, arbiter *arbC);
         virtual ~Cache();
 
         void updateCacheLine(uint32_t set, uint32_t set_size, uint32_t tag);
