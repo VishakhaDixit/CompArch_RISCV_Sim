@@ -34,7 +34,6 @@ private:
 	public:
 		testEve(Simulator * es) : Event(), simDev(es) {}
 		virtual void process() override { simDev->process(); }
-        void process(uint32_t addr) {}
 	};
 
 	//TODO: Add CPU ID.
@@ -49,13 +48,17 @@ private:
 
 	// dram *ram;
 	arbiter *arb;
+	Cache *iCache;
+	Cache *dCache;
 
 
 public:
-	Simulator(System *_sys, arbiter *a, Cache *i_cache, Cache *d_cache, uint8_t id) : sys(_sys),  te(new testEve(this)), f(new fetch(sys, a, id)),
-							d(new decode(sys, id)), e(new execute(sys, a, id)), s(new store(sys, a, id)) {
+	Simulator(System *_sys, arbiter *a, Cache *i_cache, Cache *d_cache, uint8_t id) : sys(_sys),  te(new testEve(this)), f(new fetch(sys, a,i_cache, id)),
+							d(new decode(sys, id)), e(new execute(sys, a, d_cache, id)), s(new store(sys, a, d_cache, id)) {
 								arb = a;
 								cpu_id = id;
+								iCache = i_cache;
+								dCache = d_cache;
 							}
 	
 	void initSim();
