@@ -52,7 +52,8 @@ void fetch::process()
         return;
     }
     //Send fetched instruction to next stage
-    arb->setBusyFlag(false);
+    // arb->setBusyFlag(false);
+    iCache->setArbBusy(false);
     
     if(!nextStage->isBusy())
     {
