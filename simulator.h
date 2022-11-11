@@ -33,6 +33,7 @@ private:
 	public:
 		testEve(Simulator * es) : Event(), simDev(es) {}
 		virtual void process() override { simDev->process(); }
+        void process(uint32_t addr) {}
 	};
 
 	//TODO: Add CPU ID.
