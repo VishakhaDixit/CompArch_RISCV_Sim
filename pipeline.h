@@ -63,7 +63,6 @@ class fetch : public pipeline
         public:
             fetchEvent(fetch *fd) : Event(), fDev(fd) {}
             void process() { fDev->process(); }
-            void process(uint32_t addr) {}
 
         };
 
@@ -93,7 +92,6 @@ class decode : public pipeline
         public:
             decodeEvent(decode *dd) : Event(), dDev(dd) {}
             void process() { dDev->process(); }
-            void process(uint32_t addr) {}
 
         };
 
@@ -120,7 +118,6 @@ class execute : public pipeline
         public:
             executeEvent(execute *ed) : Event(), eDev(ed) {}
             void process() { eDev->process(); }
-            void process(uint32_t addr) {}
 
         };
 
@@ -153,7 +150,6 @@ class store : public pipeline
         public:
             storeEvent(store *sd) : Event(), sDev(sd) {}
             void process() { sDev->process(); }
-            void process(uint32_t addr) {}
 
         };
 
