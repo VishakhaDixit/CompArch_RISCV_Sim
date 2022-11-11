@@ -55,6 +55,8 @@ class Cache : public System{
         void process(uint32_t addr);
         uint8_t getData(uint32_t addr);
 
+        bool isArbBusy();
+        void setArbBusy(bool flag);
 
         //for testing
         int getNumHits() { return hit_num; } 

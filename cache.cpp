@@ -165,16 +165,14 @@ bool Cache::isHit(uint32_t addr)
     return false;
 }
 
-void Cache::process(uint32_t addr)
+bool Cache::isArbBusy()
 {
-    if(this->isHit(addr))
-    {
-        hit_num++;
-    }
-    else
-    {
-        miss_num++;
-    }
+    return arb->getBusyFlag();
+}
+
+void Cache::setArbBusy(bool flag)
+{
+    arb->setBusyFlag(flag);
 }
 
 
