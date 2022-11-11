@@ -127,11 +127,15 @@ class execute : public pipeline
         executeEvent *ee;
         arbiter *arb;
         uint8_t cpu_id;
+        Cache *dCache;
+        bool isExecuted;
     
     public:
-        execute(System *sys, arbiter* a, uint8_t id) : pipeline(sys), ee(new executeEvent(this)) {
+        execute(System *sys, arbiter* a, Cache *d_cache, uint8_t id) : pipeline(sys), ee(new executeEvent(this)) {
             arb = a;
             cpu_id = id;
+            dCache = d_cache;
+            isExecuted = false;
         };
 
         void recvInst(inst *i);
@@ -156,11 +160,13 @@ class store : public pipeline
         storeEvent *se;
         arbiter *arb;
         uint8_t cpu_id;
+        Cache *dCache;
     
     public:
-        store(System *sys, arbiter *a, uint8_t id) : pipeline(sys), se(new storeEvent(this)) {
+        store(System *sys, arbiter *a,Cache *d_cache, uint8_t id) : pipeline(sys), se(new storeEvent(this)) {
             arb = a;
             cpu_id = id;
+            dCache = d_cache;
         };
 
         void recvInst(inst *i);
