@@ -105,7 +105,6 @@ bool Cache::isHit(uint32_t addr)
     uint8_t set_num;
     uint32_t total_lines;
     uint8_t idx_bits;
-    uint32_t set_size;
 
     if(assoc == none)
     {
@@ -116,8 +115,6 @@ bool Cache::isHit(uint32_t addr)
         {
             return true;
         }
-            
-        updateCacheLine(line_num, 0, line_tag);
     }
     else if(assoc == two_way)
     {
@@ -137,8 +134,6 @@ bool Cache::isHit(uint32_t addr)
                 return true;
             } 
         }
-
-        updateCacheLine(set_num, set_size, line_tag);
     }    
     else if(assoc == four_way)
     {
@@ -158,8 +153,6 @@ bool Cache::isHit(uint32_t addr)
                 return true;
             } 
         }
-
-        updateCacheLine(set_num, set_size, line_tag);
     }
 
     return false;
