@@ -176,7 +176,13 @@ void Cache::setArbBusy(bool flag)
 }
 
 
-uint8_t Cache::getData(uint32_t addr)
+uint32_t Cache::getInsFromRAM(uint32_t addr)
+{
+    uint32_t insVal = arb->getInstruction(addr);
+    updateCache(addr, insVal);
+
+    return insVal;
+}
 {
     return 0;
 }
