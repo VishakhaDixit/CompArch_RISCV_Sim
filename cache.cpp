@@ -34,13 +34,26 @@ Cache::~Cache()
 }
 
 
-void Cache::updateCacheLine(uint32_t set, uint32_t set_size, uint32_t tag)
+void Cache::updateCache(uint32_t addr, uint32_t val)
 {
+    uint32_t line_idx;
+    uint32_t tag;
+    uint8_t set;
+    uint32_t total_lines;
+    uint8_t idx_bits;
+
     // Update Cache Entry
     if(assoc == none) 
     {
+        line_idx = addr % cache_size;
+        tag = addr / cache_size;
+        set = line_idx >> (int)std::log2(line_size);
+
         maps[set]->tag = tag;
         maps[set]->valid_bit = 1;
+        maps[set]->data = val;
+
+        return;
     }
     else if(assoc == two_way || assoc == four_way)
     {

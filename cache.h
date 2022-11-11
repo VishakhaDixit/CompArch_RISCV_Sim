@@ -50,7 +50,7 @@ class Cache : public System{
         Cache(size_t size, size_t line_size, associativity_type a, arbiter *arbC);
         virtual ~Cache();
 
-        void updateCacheLine(uint32_t set, uint32_t set_size, uint32_t tag);
+        void updateCache(uint32_t addr, uint32_t val);
         bool isHit(uint32_t addr);
         void process(uint32_t addr);
         uint8_t getData(uint32_t addr);
