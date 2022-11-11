@@ -1,3 +1,15 @@
+/**************************
+ *
+ * @file    cache.h
+ *
+ * @brief   This file contains class for Cache.
+ *
+ * @date    Nov 11, 2022
+ *
+ * @author  Vishakha Dixit
+ *
+ **************************/
+
 #ifndef __CACHE_H__
 #define __CACHE_H__
 
@@ -12,7 +24,7 @@ using namespace std;
 
 enum associativity_type {none, two_way, four_way, full};
 
-class Cache : public System{
+class Cache : public System {
     private: 
         size_t cache_size;
         size_t line_size;

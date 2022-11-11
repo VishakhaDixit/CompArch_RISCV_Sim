@@ -1,3 +1,15 @@
+/**************************
+ *
+ * @file    cache.cpp
+ *
+ * @brief   This file contains definitions for Cache class APIs.
+ *
+ * @date    Nov 11, 2022
+ *
+ * @author  Vishakha Dixit
+ *
+ **************************/
+
 #include "cache.h"
 #include <cassert>
 #include <cstring>
