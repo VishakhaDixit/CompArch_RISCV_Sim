@@ -175,6 +175,21 @@ void Cache::setArbBusy(bool flag)
     arb->setBusyFlag(flag);
 }
 
+bool Cache::getData(uint32_t addr, uint32_t *data_buf)
+{
+    if(isHit(addr))
+    {
+        if(assoc == none)
+        {
+            uint32_t line_idx = addr % cache_size;
+            uint32_t line_num = line_idx >> (int)std::log2(line_size);
+            *data_buf = (maps[line_num]->data);
+            return true;
+        }
+    }
+
+    return false;
+}
 
 uint32_t Cache::getInsFromRAM(uint32_t addr)
 {
