@@ -20,8 +20,6 @@
 #include "arbiter.h"
 #include "cache.h"
 
-#define ADDRESSES_FILE_NAME "addresses.txt"
-
 int main() {
 
 	std::array<uint8_t, 0x1400> initData; 

@@ -48,25 +48,6 @@ void Simulator::process()
             sys->flushFlag = false;
         }
 
-        // Check if arbiter is busy
-        // if(!arb->getBusyFlag())
-        // {
-        //     arb->setBusyFlag(true);
-        //     uint32_t pc = getPc();
-
-        //     //Fetch current instruction 
-        //     uint32_t binInst = arb->getInstruction(pc);
-        //     inst *i = new inst(binInst);
-
-        //     sys->cpu_cpi[cpu_id] += 2;
-
-        //     f->recvInst(i);
-
-        //     //Increment pc 
-        //     pc = pc + 4;
-        //     setPc(pc);
-        // }
-
         uint32_t pc = getPc();
         uint32_t *data_buf = NULL;
 

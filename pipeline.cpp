@@ -52,7 +52,6 @@ void fetch::process()
         return;
     }
     //Send fetched instruction to next stage
-    // arb->setBusyFlag(false);
     iCache->setArbBusy(false);
     
     if(!nextStage->isBusy())
@@ -160,12 +159,6 @@ void decode::decodeInst()
         rs1 = (((1 << 5) - 1) & (binIns >> 15));
         rs2 = (((1 << 5) - 1) & (binIns >> 20));
         bit10_5 = (((1 << 6) - 1) & (binIns >> 25));
-        // bit12 = (binIns & (1<<31)) != 0;
-        // imm12b = (bit12 << 1) | bit11;
-        // imm12b = (imm12b << 6) | bit10_5;
-        // imm12b = (imm12b << 4) | bit4_1;
-        // //add on last zero
-        // imm12b = imm12b << 1;
         b_7_11  = (binIns & (0x00000f80)) >> 7 ;
         b_25_31 = (binIns & (0xFE000000)) >> 20 ; 
         imm12b = b_7_11 | b_25_31;
@@ -623,10 +616,6 @@ void execute::executeInst()
                     case 2 :    //LW
                         sys->cpu_cpi[cpu_id] += 2;
 
-                        // uint32_t data =  arb->getData(curInst->getimm12b() + (sys->regMap[cpu_id][curInst->getrs1()]));
-                        // arb->setBusyFlag(false);
-                        // sys->regMap[cpu_id][curInst->getrd()] = data;
-
                         uint32_t data = 0;
                         uint32_t addr = curInst->getimm12b() + (sys->regMap[cpu_id][curInst->getrs1()]);
                         
@@ -722,22 +711,9 @@ void execute::process()
     {
         if(curInst->getInst() != 0x00)
         {
-            // if(curInst->getOpcode() != 0x3)
-            //     this->executeInst();
-            // else if((curInst->getOpcode() == 0x3) && (arb->getBusyFlag()==false))
-            // {
-            //     arb->setBusyFlag(true);
-            //     this->executeInst();
-            // }
-            // else
-            // {
-            //     sys->schedule(ee,sys->getCurTick()+1, curInst->getInst(), "execute");
-            //     return;
-            // }
-
             this->executeInst();
-
         }
+
         if((sys->flushFlag == false) && (this->isExecuted == true))
             sendInst(curInst);
     }
@@ -788,20 +764,6 @@ void store::process()
     // Delete pipelined instruction after write back.
     if (curInst->getOpcode() == 0x23)
     {
-        // if(arb->getBusyFlag() ==false)
-        // {
-        //     arb->setBusyFlag(true);
-        //     sys->cpu_cpi[cpu_id] += 2;
-        //     arb->setData(curInst->getAddr(), sys->regMap[cpu_id][curInst->getrs2()]);
-        //     arb->setBusyFlag(false);
-        // }
-        // else
-        // {
-        //     sys->schedule(se,sys->getCurTick()+1, curInst->getInst(), "store");
-        //     return;
-        // }
-
-
         if(!dCache->isArbBusy())
         {
             dCache->setArbBusy(true);
