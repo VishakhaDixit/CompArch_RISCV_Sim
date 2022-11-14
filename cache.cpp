@@ -200,6 +200,28 @@ bool Cache::getData(uint32_t addr, uint32_t *data_buf)
             hit_num++;
             return true;
         }
+        else if(assoc == two_way)
+        {
+            uint32_t total_lines = cache_size / line_size;
+            uint32_t idx_bits = log2(total_lines);
+            this->set_size = total_lines / 2;
+
+            uint32_t tag = addr / cache_size;
+            uint8_t set= (addr >> idx_bits) & 0x1;
+
+            uint32_t stCacheAddr = (this->set_size * set);
+
+            for(uint32_t i = stCacheAddr; i < (stCacheAddr + this->set_size); i++)
+            {
+                if((maps[i]->valid_bit) && maps[i]->tag == tag)
+                {
+                    *data_buf = (maps[i]->data);
+                    maps[i]->lru_count++;
+                    hit_num++;
+                    return true;
+                }
+            }
+        }
     }
 
     miss_num++;
