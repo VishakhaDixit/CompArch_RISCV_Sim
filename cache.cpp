@@ -192,10 +192,12 @@ bool Cache::getData(uint32_t addr, uint32_t *data_buf)
             uint32_t line_idx = addr % cache_size;
             uint32_t line_num = line_idx >> (int)std::log2(line_size);
             *data_buf = (maps[line_num]->data);
+            hit_num++;
             return true;
         }
     }
 
+    miss_num++;
     return false;
 }
 
