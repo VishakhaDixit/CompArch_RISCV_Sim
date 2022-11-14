@@ -287,14 +287,17 @@ int main() {
 	}
 
 	arbiter *arb = new arbiter(&ram);
-	Cache *i_cache = new Cache(256, 4, none, arb);
-	Cache *d_cache = new Cache(512, 4, none, arb);
+	Cache *i_cache_cpu0 = new Cache(256, 4, none, arb);
+	Cache *d_cache_cpu0 = new Cache(512, 4, none, arb);
+
+	Cache *i_cache_cpu1 = new Cache(256, 4, none, arb);
+	Cache *d_cache_cpu1 = new Cache(512, 4, none, arb);
 	
 	System *sys = new System();
-	Simulator *cpu0 = new Simulator(sys, i_cache, d_cache, 0);
+	Simulator *cpu0 = new Simulator(sys, i_cache_cpu0, d_cache_cpu0, 0);
 	cpu0->initSim();				//Initialize Simulator device.
 		
-	Simulator *cpu1 = new Simulator(sys, i_cache, d_cache, 1);
+	Simulator *cpu1 = new Simulator(sys, i_cache_cpu1, d_cache_cpu1, 1);
 	cpu1->initSim();				//Initialize Simulator device.
 
 	sys->executeSim(200000);		//Run Simulator for 100 clk cycles, this function terminates if pipeline is flushed.
