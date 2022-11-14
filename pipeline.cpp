@@ -63,8 +63,6 @@ void fetch::process()
         sys->schedule(fe,sys->getCurTick()+1, curInst->getInst(), "fetch");
         cout << " Fetch: " << curInst->getInst() << "-(CPU-" << std::to_string(cpu_id) << ")" << endl;
     }
-
-    sys->cpu_cpi[cpu_id]++;
 }
 
 /**************************
@@ -323,8 +321,6 @@ void decode::process()
         curInst = NULL;
         return;
     }
-
-    sys->cpu_cpi[cpu_id]++;
 
     //Send decoded instruction to next stage
     if(!nextStage->isBusy())
@@ -614,8 +610,6 @@ void execute::executeInst()
             {
                 switch(curInst->getfunc3()) {
                     case 2 :    //LW
-                        sys->cpu_cpi[cpu_id] += 2;
-
                         uint32_t data = 0;
                         uint32_t addr = curInst->getimm12b() + (sys->regMap[cpu_id][curInst->getrs1()]);
                         
@@ -623,11 +617,16 @@ void execute::executeInst()
                         {
                             sys->regMap[cpu_id][curInst->getrd()] = data;
                             this->isExecuted = true;
+                            sys->cpu_sim_ticks_per_ins[cpu_id] += 4;
+                            sys->totalSimTicks += 4;
                         }
                         else
                         {
                             if(!dCache->isArbBusy())
                             {
+                                sys->cpu_sim_ticks_per_ins[cpu_id] += 100;
+                                sys->totalSimTicks += 100;
+                                sys->cpu_clk_ticks_per_ins[cpu_id] += 10;
                                 dCache->setArbBusy(true);
                                 uint32_t data =  dCache->getDataFromRAM(addr);
                                 sys->regMap[cpu_id][curInst->getrd()] = data;
@@ -704,8 +703,6 @@ void execute::executeInst()
  **************************/
 void execute::process()
 {
-    sys->cpu_cpi[cpu_id]++;
-
     //Send executed instruction to next stage
     if(!nextStage->isBusy())
     {
@@ -758,8 +755,6 @@ void store::recvInst(inst * i)
  **************************/
 void store::process()
 {
-    sys->cpu_cpi[cpu_id]++;
-
     // Write data to destination register rd.
     // Delete pipelined instruction after write back.
     if (curInst->getOpcode() == 0x23)
@@ -767,7 +762,9 @@ void store::process()
         if(!dCache->isArbBusy())
         {
             dCache->setArbBusy(true);
-            sys->cpu_cpi[cpu_id] += 2;
+            sys->cpu_sim_ticks_per_ins[cpu_id] += 100;
+            sys->totalSimTicks += 100;
+            sys->cpu_clk_ticks_per_ins[cpu_id] += 10;
             dCache->setDataToRAM(curInst->getAddr(), sys->regMap[cpu_id][curInst->getrs2()]);
             dCache->setArbBusy(false);
         }
@@ -781,18 +778,21 @@ void store::process()
     }
 
     if(curInst->getInst() != 0x00) {
-        cout << "\nTotal CPI for " << curInst->name << " is: " << to_string(sys->cpu_cpi[cpu_id]) << "[CPU-" << to_string(cpu_id) << "]" << endl;
+        cout << "\nTotal CPI for " << curInst->name << " is: " << to_string(sys->cpu_sim_ticks_per_ins[cpu_id]) << "[CPU-" << to_string(cpu_id) << "]" << endl;
         
         if(cpu_id == 0)
         {
-            sys->cpu_cpi0 += sys->cpu_cpi[cpu_id];
+            sys->total_sim_ticks_cpu0 += sys->cpu_sim_ticks_per_ins[cpu_id];
+            sys->total_cpu_clk_cpu0 += sys->cpu_clk_ticks_per_ins[cpu_id];
         }
         else 
         {
-            sys->cpu_cpi1 += sys->cpu_cpi[cpu_id];
+            sys->total_sim_ticks_cpu1 += sys->cpu_sim_ticks_per_ins[cpu_id];
+            sys->total_cpu_clk_cpu1 += sys->cpu_clk_ticks_per_ins[cpu_id];
         }
 
-        sys->cpu_cpi[cpu_id] = 0;
+        sys->cpu_sim_ticks_per_ins[cpu_id] = 0;
+        sys->cpu_clk_ticks_per_ins[cpu_id] = 0;
     }
 
     curInst = NULL;

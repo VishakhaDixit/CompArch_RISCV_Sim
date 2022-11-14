@@ -49,15 +49,18 @@ void Simulator::process()
         }
 
         uint32_t pc = getPc();
-        uint32_t *data_buf = NULL;
+        uint32_t data_buf = 0;
 
         //Get Instruction from Cache on Hit
-        if(iCache->getData(pc, data_buf))
+        if(iCache->getData(pc, &data_buf))
         {
-            uint32_t binInst = *data_buf;
+            uint32_t binInst = data_buf;
             inst *i = new inst(binInst);
 
-            sys->cpu_cpi[cpu_id] += 2;
+            sys->cpu_sim_ticks_per_ins[cpu_id] += 3;
+            sys->totalSimTicks += 3;
+            sys->totalInsExecuted[cpu_id]++;
+            sys->cpu_clk_ticks_per_ins[cpu_id]++;
 
             f->recvInst(i);
 
@@ -76,7 +79,10 @@ void Simulator::process()
                 uint32_t binInst = iCache->getInsFromRAM(pc);
                 inst *i = new inst(binInst);
 
-                sys->cpu_cpi[cpu_id] += 2;
+                sys->cpu_sim_ticks_per_ins[cpu_id] += 100;
+                sys->totalSimTicks += 100;
+                sys->totalInsExecuted[cpu_id]++;
+                sys->cpu_clk_ticks_per_ins[cpu_id] += 10;
 
                 f->recvInst(i);
 
