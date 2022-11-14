@@ -38,6 +38,9 @@ Cache::Cache(size_t size, size_t _line, associativity_type a, arbiter *arbC)
         table->set_num = 0;
         maps.push_back(table);
     }
+
+    hit_num = 0;
+    miss_num = 0;
 }
 
 Cache::~Cache()
