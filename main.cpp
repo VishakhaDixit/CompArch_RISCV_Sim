@@ -302,6 +302,25 @@ int main() {
 
 	sys->executeSim(200000);		//Run Simulator for 100 clk cycles, this function terminates if pipeline is flushed.
 
+	cout << "\n=======================I-CACHE CPU-0 RESULTS==========================" << endl;
+	std::cout << "Total Reads: " << i_cache_cpu0->getNumHits() + i_cache_cpu0->getNumMisses() << std::endl;
+    std::cout << "Total Hits: " << i_cache_cpu0->getNumHits() << " Percentage: " << ((double)i_cache_cpu0->getNumHits()/(double)(i_cache_cpu0->getNumHits()+i_cache_cpu0->getNumMisses()))*100 << "%" << std::endl;
+    std::cout << "Total Misses: " << i_cache_cpu0->getNumMisses() << " Percentage: " << ((double)i_cache_cpu0->getNumMisses()/(double)(i_cache_cpu0->getNumHits()+i_cache_cpu0->getNumMisses()))*100 << "%" << std::endl;
+
+	cout << "\n=======================D-CACHE CPU-0 RESULTS==========================" << endl;
+	std::cout << "Total Reads: " << d_cache_cpu0->getNumHits() + d_cache_cpu0->getNumMisses() << std::endl;
+    std::cout << "Total Hits: " << d_cache_cpu0->getNumHits() << " Percentage: " << ((double)d_cache_cpu0->getNumHits()/(double)(d_cache_cpu0->getNumHits()+d_cache_cpu0->getNumMisses()))*100 << "%" << std::endl;
+    std::cout << "Total Misses: " << d_cache_cpu0->getNumMisses() << " Percentage: " << ((double)d_cache_cpu0->getNumMisses()/(double)(d_cache_cpu0->getNumHits()+d_cache_cpu0->getNumMisses()))*100 << "%" << std::endl;
+
+	cout << "\n=======================I-CACHE CPU-1 RESULTS==========================" << endl;
+	std::cout << "Total Reads: " << i_cache_cpu1->getNumHits() + i_cache_cpu1->getNumMisses() << std::endl;
+    std::cout << "Total Hits: " << i_cache_cpu1->getNumHits() << " Percentage: " << ((double)i_cache_cpu1->getNumHits()/(double)(i_cache_cpu1->getNumHits()+i_cache_cpu1->getNumMisses()))*100 << "%" << std::endl;
+    std::cout << "Total Misses: " << i_cache_cpu1->getNumMisses() << " Percentage: " << ((double)i_cache_cpu1->getNumMisses()/(double)(i_cache_cpu1->getNumHits()+i_cache_cpu1->getNumMisses()))*100 << "%" << std::endl;
+
+	cout << "\n=======================D-CACHE CPU-1 RESULTS==========================" << endl;
+	std::cout << "Total Reads: " << d_cache_cpu1->getNumHits() + d_cache_cpu1->getNumMisses() << std::endl;
+    std::cout << "Total Hits: " << d_cache_cpu1->getNumHits() << " Percentage: " << ((double)d_cache_cpu1->getNumHits()/(double)(d_cache_cpu1->getNumHits()+d_cache_cpu1->getNumMisses()))*100 << "%" << std::endl;
+    std::cout << "Total Misses: " << d_cache_cpu1->getNumMisses() << " Percentage: " << ((double)d_cache_cpu1->getNumMisses()/(double)(d_cache_cpu1->getNumHits()+d_cache_cpu1->getNumMisses()))*100 << "%" << std::endl;
 
 	// Calculate Total CPI 
 	cout << "\nTotal CPI for CPU-0 = " << sys->cpu_cpi0/sys->getCurTick();
