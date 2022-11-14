@@ -96,7 +96,12 @@ void Cache::updateCache(uint32_t addr, uint32_t val)
 
     for(uint32_t i = stCacheAddr; i < (stCacheAddr + this->set_size); i++)
     {
-        if(maps[i]->lru_count < min_cnt.second)
+        if(maps[i]->tag == tag)
+        {
+            min_cnt.first = i;
+            break;
+        }
+        else if(maps[i]->lru_count < min_cnt.second)
         {
             min_cnt.first = i;
             min_cnt.second = maps[i]->lru_count;
