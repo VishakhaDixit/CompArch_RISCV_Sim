@@ -323,8 +323,8 @@ int main() {
     std::cout << "Total Misses: " << d_cache_cpu1->getNumMisses() << " Percentage: " << ((double)d_cache_cpu1->getNumMisses()/(double)(d_cache_cpu1->getNumHits()+d_cache_cpu1->getNumMisses()))*100 << "%" << std::endl;
 
 	// Calculate Total CPI 
-	cout << "\nTotal CPI for CPU-0 = " << sys->cpu_cpi0/sys->getCurTick();
-	cout << "\nTotal CPI for CPU-1 = " << sys->cpu_cpi1/sys->getCurTick() << endl;
+	cout << "\nTotal CPI for CPU-0 = " << (float) sys->total_cpu_clk_cpu0/sys->totalInsExecuted[0];
+	cout << "\nTotal CPI for CPU-1 = " << (float) sys->total_cpu_clk_cpu1/sys->totalInsExecuted[1] << endl;
 
 	cout << "\n=======================CPU-0 RESULTS BEGIN==========================" << endl;
 	ram.printDram(0xC00, 0xFFF);
