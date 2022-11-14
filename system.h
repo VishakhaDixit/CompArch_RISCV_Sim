@@ -64,10 +64,17 @@ class System
 			}
 		};
 
-		uint64_t cpu_cpi[2] = {0, 0};
+		// Used for displaying in terms of Simulation ticks
+		uint64_t cpu_sim_ticks_per_ins[2] = {0, 0};
+		uint64_t total_sim_ticks_cpu0 = 0;
+		uint64_t total_sim_ticks_cpu1 = 0;
+		uint64_t totalSimTicks = 1;
 
-		uint64_t cpu_cpi0 = 0;
-		uint64_t cpu_cpi1 = 0;
+		// Used for Calculating CPI in terms of CPU clk.
+		uint64_t totalInsExecuted[2] = {0, 0};
+		uint64_t cpu_clk_ticks_per_ins[2] = {0, 0};
+		uint64_t total_cpu_clk_cpu0 = 0;
+		uint64_t total_cpu_clk_cpu1 = 0;
 		
 		void schedule(Event *e, TICK t, uint32_t i, string s);			
 		void executeSim(TICK endClkTick=-1);
