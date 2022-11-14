@@ -288,10 +288,10 @@ int main() {
 
 	arbiter *arb = new arbiter(&ram);
 	Cache *i_cache_cpu0 = new Cache(256, 4, none, arb);
-	Cache *d_cache_cpu0 = new Cache(512, 4, none, arb);
+	Cache *d_cache_cpu0 = new Cache(512, 4, two_way, arb);
 
 	Cache *i_cache_cpu1 = new Cache(256, 4, none, arb);
-	Cache *d_cache_cpu1 = new Cache(512, 4, none, arb);
+	Cache *d_cache_cpu1 = new Cache(512, 4, two_way, arb);
 	
 	System *sys = new System();
 	Simulator *cpu0 = new Simulator(sys, i_cache_cpu0, d_cache_cpu0, 0);
