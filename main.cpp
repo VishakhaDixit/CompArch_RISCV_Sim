@@ -333,27 +333,6 @@ int main() {
 	cout << "=======================CPU-1 RESULTS BEGIN==========================" << endl;
 	ram.printDram(0x1000, 0x13FF);
 	cout << "=======================CPU-1 RESULTS END============================" << endl; 
-
-	// Cache *cache = new Cache(256, 4, four_way);
-	// std::fstream address_file;
-
-	// address_file.open(ADDRESSES_FILE_NAME, std::ios::in);
-
-	// if (address_file.is_open())
-	// { 
-	// 	string line;
-	// 	while (getline(address_file, line))
-	// 	{ 
-	// 		uint32_t addr = strtoul(line.c_str(),nullptr,16);
-	// 		cache->process(addr);
-	// 	}
-	// }
-
-	// address_file.close();
-
-	// std::cout << "Total Reads: " << cache->getNumHits() + cache->getNumMisses() << std::endl;
-    // std::cout << "Total Hits: " << cache->getNumHits() << " Percentage: " << ((double)cache->getNumHits()/(double)(cache->getNumHits()+cache->getNumMisses()))*100 << "%" << std::endl;
-    // std::cout << "Total Misses: " << cache->getNumMisses() << " Percentage: " << ((double)cache->getNumMisses()/(double)(cache->getNumHits()+cache->getNumMisses()))*100 << "%" << std::endl;
-
+	
 	return 0;
 }
