@@ -1,6 +1,6 @@
 CC=g++
-CFLAGS=-Iheaders --std=c++11 -g
-OBJS = system.o main.o pipeline.o simulator.o dram.o iport.o dport.o arbiter.o cache.o
+CFLAGS=-Iheaders --std=c++17 -g
+OBJS = system.o main.o pipeline.o simulator.o dram.o iport.o dport.o arbiter.o cache.o mesi.o cache_simulator.o globals.o
 TARGET = demo
 
 .PHONY : clean run all
