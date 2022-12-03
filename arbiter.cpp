@@ -26,3 +26,8 @@ void arbiter::setBusyFlag(bool flag)
 {
     isBusy = flag;
 }
+
+void arbiter::processMESI(operation_type op, uint8_t cpu_id, uint32_t addr, uint32_t *clk)
+{
+    mesi_proto->process(op, cpu_id, addr, clk);
+}

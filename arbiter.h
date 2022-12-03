@@ -16,15 +16,17 @@
 #include <stdint.h>
 #include <array>
 #include "dram.h"
+#include "mesi.h"
 
 class arbiter
 {
     private:
     dram* ram;
     bool isBusy;
+    Mesi *mesi_proto;
 
     public:
-        arbiter(dram* dr){
+        arbiter(dram* dr, Globals *g) : mesi_proto(new Mesi(g)){
             ram = dr;
             isBusy = false;
         };
@@ -33,6 +35,8 @@ class arbiter
         void setData(uint32_t addr, uint32_t data);
         bool getBusyFlag(void);
         void setBusyFlag(bool flag);
+
+        void processMESI(operation_type op, uint8_t cpu_id, uint32_t addr, uint32_t *clk);
 };
 
 #endif //__ARBITER_H__
