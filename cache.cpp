@@ -255,3 +255,34 @@ void Cache::setDataToRAM(uint32_t addr, uint32_t dataVal)
     updateCache(addr, dataVal);
     arb->setData(addr, dataVal);
 }
+
+cache_state Cache::getCurCacheState(uint32_t addr)
+{
+    cache_state st;
+
+    if(assoc == none)
+    {
+        uint32_t line_idx = addr % cache_size;
+        uint32_t line_num = line_idx >> (int)std::log2(line_size);
+        st = maps[line_num]->state;
+    }
+
+    return st;
+}
+
+void Cache::setCurCacheState(uint32_t addr, cache_state st)
+{
+    if(assoc == none)
+    {
+        uint32_t line_idx = addr % cache_size;
+        uint32_t line_num = line_idx >> (int)std::log2(line_size);
+        maps[line_num]->state = st;
+        if(st == invalid)
+        {
+            maps[line_num]->valid_bit = false;
+            return;
+        }
+
+        maps[line_num]->valid_bit = true;
+    }
+}

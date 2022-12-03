@@ -62,6 +62,9 @@ class Cache : public System {
         void processArbMesi(operation_type op, uint8_t cpu_id, uint32_t addr, uint32_t *clk);
         void setArbBusy(bool flag);
 
+        cache_state getCurCacheState(uint32_t addr);
+        void setCurCacheState(uint32_t addr, cache_state st);
+
         //for testing
         int getNumHits() { return hit_num; } 
         int getNumMisses() { return miss_num; }
