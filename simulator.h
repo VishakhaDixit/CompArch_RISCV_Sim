@@ -56,6 +56,14 @@ public:
 								iCache = i_cache;
 								dCache = d_cache;
 							}
+
+	// For testing purposes
+	Simulator(Cache *d_cache, uint8_t id) {
+		dCache = d_cache;
+		cpu_id = id;
+	}
+
+
 	
 	void initSim();
 	void process();
