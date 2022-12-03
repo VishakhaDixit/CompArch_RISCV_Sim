@@ -6,6 +6,7 @@
 #include "simulator.h"
 #include "arbiter.h"
 #include "globals.h"
+#include "directory.h"
 
 using namespace std;
 
@@ -29,13 +30,15 @@ class CacheSim
         dram *ram;
         uint8_t totalCpus;
         Globals *gb;
+        Directory *dir;
 
     public:
 
         CacheSim(dram *r, Globals *g, uint8_t total_cpus);
 
     	void initSim();
-	    void process();
+	    void processSnoopy();
+        void processDirectory();
 };
 
 
