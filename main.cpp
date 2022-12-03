@@ -19,9 +19,10 @@
 #include "dport.h"
 #include "arbiter.h"
 #include "cache.h"
+#include "cache_simulator.h"
 
 int main() {
-
+/*
 	std::array<uint8_t, 0x1400> initData; 
 
 	//=======================CPU-0 INSTRUCTOINS BEGIN==========================
@@ -333,6 +334,24 @@ int main() {
 	cout << "=======================CPU-1 RESULTS BEGIN==========================" << endl;
 	ram.printDram(0x1000, 0x13FF);
 	cout << "=======================CPU-1 RESULTS END============================" << endl; 
-	
+	*/
+
+
+	std::array<uint8_t, 0x1400> initData = {0};
+
+	dram ram = dram(0x0000, 0x01FF, 0x0200, 0x13FF);
+	ram.initDram(0x00, initData);
+		
+	for (uint32_t i = 0; i < 256; i++)
+	{
+		ram.getDataPort()->setData(0x400 + (i*4), 0x02020202);
+	}
+
+	uint8_t total_cpus = 4;
+	Globals *gb = new Globals();
+	CacheSim *sim = new CacheSim(&ram, gb, total_cpus);
+	sim->initSim();
+	sim->process();
+
 	return 0;
 }
