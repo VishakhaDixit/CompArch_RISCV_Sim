@@ -36,6 +36,7 @@ Cache::Cache(size_t size, size_t _line, associativity_type a, arbiter *arbC)
         table->valid_bit = false;
         table->lru_count = 0;   // lru bits initialized to 0
         table->set_num = 0;
+        table->state = invalid;
         maps.push_back(table);
     }
 
@@ -181,6 +182,11 @@ bool Cache::isHit(uint32_t addr)
 bool Cache::isArbBusy()
 {
     return arb->getBusyFlag();
+}
+
+void Cache::processArbMesi(operation_type op, uint8_t cpu_id, uint32_t addr, uint32_t *clk)
+{
+    arb->processMESI(op, cpu_id, addr, clk);
 }
 
 void Cache::setArbBusy(bool flag)

@@ -37,6 +37,7 @@ class Cache : public System {
             uint32_t lru_count; //tracks lru
             uint8_t set_num;
             uint32_t data;
+            cache_state state;  //MESI states
         };
         std::vector<lineData*> maps;
         
@@ -58,6 +59,7 @@ class Cache : public System {
         void setDataToRAM(uint32_t addr, uint32_t dataVal);
 
         bool isArbBusy();
+        void processArbMesi(operation_type op, uint8_t cpu_id, uint32_t addr, uint32_t *clk);
         void setArbBusy(bool flag);
 
         //for testing
