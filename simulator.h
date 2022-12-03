@@ -46,10 +46,11 @@ private:
 	store *s;
 
 	Cache *iCache;
-	Cache *dCache;
 
 
 public:
+	Cache *dCache;
+
 	Simulator(System *_sys, Cache *i_cache, Cache *d_cache, uint8_t id) : sys(_sys),  te(new testEve(this)), f(new fetch(sys,i_cache, id)),
 							d(new decode(sys, id)), e(new execute(sys, d_cache, id)), s(new store(sys, d_cache, id)) {
 								cpu_id = id;
@@ -68,6 +69,7 @@ public:
 	void initSim();
 	void process();
 
+	uint8_t getCpuId() { return cpu_id; }
 	uint32_t getPc() { return sys->regMap[cpu_id][0xE]; }
 	void setPc(uint32_t p) { sys->regMap[cpu_id][0xE] = p; }
 	uint32_t getSp() { return sys->regMap[cpu_id][0xF]; }
