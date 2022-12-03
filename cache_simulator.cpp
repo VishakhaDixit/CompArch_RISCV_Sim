@@ -333,6 +333,8 @@ void CacheSim::processDirectory()
                         cout << "->" << s;
                     cout << "\n";
                 }
+
+                clk_tick += 3;
             }
         }
         
