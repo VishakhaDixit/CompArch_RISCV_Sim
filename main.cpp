@@ -344,14 +344,14 @@ int main() {
 		
 	for (uint32_t i = 0; i < 256; i++)
 	{
-		ram.getDataPort()->setData(0x400 + (i*4), 0x02020202);
+		ram.getDataPort()->setData(0x400 + (i*4), 2);
 	}
 
 	uint8_t total_cpus = 4;
 	Globals *gb = new Globals();
 	CacheSim *sim = new CacheSim(&ram, gb, total_cpus);
 	sim->initSim();
-	sim->process();
+	sim->processDirectory();
 
 	return 0;
 }
