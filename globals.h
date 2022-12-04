@@ -20,6 +20,7 @@ class Globals
 
         // Map of cpu id and cache line.
         unordered_map< uint8_t, line_data_t > curCacheState;
+        unordered_map<uint32_t, uint8_t> supplier_map;
 
         string convToStr(cache_state s);
         cache_state getUpdtCacheState(uint8_t cpu_id, uint32_t addr);
