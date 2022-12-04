@@ -81,7 +81,6 @@ void CacheSim::processSnoopy()
             else
             {
                 cout << "[CPU-" << to_string(i.cpu->getCpuId()) << "]: LW x1, " << i.addr << endl;
-                cout << "[CPU-" << to_string(i.cpu->getCpuId()) << "]: MM Read" << endl;
 
                 //Get data from RAM is arbiter is not busy
                 if(!i.cpu->dCache->isArbBusy())
@@ -89,8 +88,14 @@ void CacheSim::processSnoopy()
                     i.cpu->dCache->setArbBusy(true);
                     
                     i.cpu->dCache->processArbMesi(Read, i.cpu->getCpuId(), i.addr, &clk_tick);
+
+                    if(gb->getUpdtCacheState(i.cpu->getCpuId(), i.addr) == exclusive)
+                        cout << "Supplier: Main Memory" << endl;
+                    else
+                        cout << "Supplier: CPU-" << to_string(gb->supplier_map[i.addr]) << endl;
+
                     uint32_t data_buf = i.cpu->dCache->getInsFromRAM(i.addr); 
-                    cout << "Data loaded from RAM --> x1 = " << data_buf << endl;
+                    cout << "Data loaded --> x1 = " << data_buf << endl;
                     cout << "States: " << endl;
 
                     i.cpu->dCache->setArbBusy(false);
@@ -149,7 +154,6 @@ void CacheSim::processSnoopy()
 
                         if(state_transitions_map[i.addr].size() == 0)
                         {
-                            clk_tick += 2;
                             state_transitions_map[i.addr] = result;
                         }
                         state_transitions_map[i.addr][x->getCpuId()].push_back(gb->convToStr(st));
@@ -165,6 +169,7 @@ void CacheSim::processSnoopy()
                         cout << "->" << s;
                     cout << "\n";
                 }
+                clk_tick += 2;
             }
         }
 
@@ -217,6 +222,7 @@ void CacheSim::processDirectory()
                     cout << "[CPU-" << to_string(i.cpu->getCpuId()) << "]: Received data --> x1 = " << data_buf << " [from CPU-" << to_string(dir->directory_map[i.addr].cpu_id) << "]" << endl; 
                     
                     cout << "Sharers: ";
+                    cout << "CPU-" << to_string(dir->directory_map[i.addr].cpu_id) << " "; 
                     for(auto s : dir->directory_map[i.addr].sharers)
                     {
                         cout << s << " ";
@@ -334,7 +340,7 @@ void CacheSim::processDirectory()
                     cout << "\n";
                 }
 
-                clk_tick += 3;
+                clk_tick += 5;
             }
         }
         
