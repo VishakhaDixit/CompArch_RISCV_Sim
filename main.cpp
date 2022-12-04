@@ -351,6 +351,7 @@ int main() {
 	Globals *gb = new Globals();
 	CacheSim *sim = new CacheSim(&ram, gb, total_cpus);
 	sim->initSim();
+	// sim->processSnoopy();
 	sim->processDirectory();
 
 	return 0;
