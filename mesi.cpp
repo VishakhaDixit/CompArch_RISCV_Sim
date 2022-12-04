@@ -19,6 +19,7 @@ void Mesi::process(operation_type opType, uint8_t cpu_id, uint32_t addr, uint32_
             if(gb->curCacheState.empty())   
             {
                 new_cs = exclusive;
+                gb->supplier_map[addr] = cpu_id;
                 *clk += 4;
             }
             else 
@@ -31,7 +32,6 @@ void Mesi::process(operation_type opType, uint8_t cpu_id, uint32_t addr, uint32_
                         {
                             new_cs = shared;
                             updateCurCacheState(key, addr, shared);
-                            *clk += 1;
                         }
                     }
                     else
@@ -39,6 +39,7 @@ void Mesi::process(operation_type opType, uint8_t cpu_id, uint32_t addr, uint32_
                         new_cs = exclusive;
                     }
                 }
+                *clk += 1;
             }
 
             updateCurCacheState(cpu_id, addr, new_cs);
@@ -51,6 +52,7 @@ void Mesi::process(operation_type opType, uint8_t cpu_id, uint32_t addr, uint32_
     else if(opType == Write)
     {
         new_cs = modified;
+        gb->supplier_map[addr] = cpu_id;
         *clk += 3;
 
         for(auto & [key, value] : gb->curCacheState)
