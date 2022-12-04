@@ -1,0 +1,142 @@
+[CPU-0]: LW x1, 1024
+[CPU-0]: MM Read
+Data loaded from RAM --> x1 = 0
+States: 
+CPU-0 ->invalid->exclusive
+CPU-1 ->invalid
+CPU-2 ->invalid
+CPU-3 ->invalid
+Clk Tick: 5
+
+======================================================================
+======================================================================
+
+[CPU-1]: LW x1, 1024
+[CPU-1]: Received data --> x1 = 1 [from CPU-0]
+Sharers: CPU-0 Cpu-1 
+States: 
+CPU-0 ->invalid->exclusive->shared
+CPU-1 ->invalid->shared
+CPU-2 ->invalid
+CPU-3 ->invalid
+Clk Tick: 6
+
+======================================================================
+======================================================================
+
+[CPU-2]: LW x1, 1024
+[CPU-2]: Received data --> x1 = 1 [from CPU-0]
+Sharers: CPU-0 Cpu-1 Cpu-2 
+States: 
+CPU-0 ->invalid->exclusive->shared
+CPU-1 ->invalid->shared
+CPU-2 ->invalid->shared
+CPU-3 ->invalid
+Clk Tick: 7
+
+======================================================================
+======================================================================
+
+[CPU-1]: SW x1, 1024
+[CPU-1]: Main Memory Write
+Data Written to RAM --> x1 = 3
+States: 
+CPU-0 ->invalid->exclusive->shared->invalid
+CPU-1 ->invalid->shared->modified
+CPU-2 ->invalid->shared->invalid
+CPU-3 ->invalid
+Clk Tick: 12
+
+======================================================================
+======================================================================
+
+[CPU-3]: LW x1, 1024
+[CPU-3]: Received data --> x1 = 1 [from CPU-1]
+Sharers: CPU-1 Cpu-3 
+States: 
+CPU-0 ->invalid->exclusive->shared->invalid
+CPU-1 ->invalid->shared->modified->shared
+CPU-2 ->invalid->shared->invalid
+CPU-3 ->invalid->shared
+Clk Tick: 13
+
+======================================================================
+======================================================================
+
+[CPU-3]: SW x1, 1024
+[CPU-3]: Main Memory Write
+Data Written to RAM --> x1 = 3
+States: 
+CPU-0 ->invalid->exclusive->shared->invalid
+CPU-1 ->invalid->shared->modified->shared->invalid
+CPU-2 ->invalid->shared->invalid
+CPU-3 ->invalid->shared->modified
+Clk Tick: 18
+
+======================================================================
+======================================================================
+
+[CPU-3]: SW x1, 1028
+[CPU-3]: Main Memory Write
+Data Written to RAM --> x1 = 3
+States: 
+CPU-0 ->invalid
+CPU-1 ->invalid
+CPU-2 ->invalid
+CPU-3 ->invalid->modified
+Clk Tick: 23
+
+======================================================================
+======================================================================
+
+[CPU-1]: LW x1, 1028
+[CPU-1]: Received data --> x1 = 1 [from CPU-3]
+Sharers: CPU-3 Cpu-1 
+States: 
+CPU-0 ->invalid
+CPU-1 ->invalid->shared
+CPU-2 ->invalid
+CPU-3 ->invalid->modified->shared
+Clk Tick: 24
+
+======================================================================
+======================================================================
+
+[CPU-1]: LW x1, 1028
+[CPU-1]: Local Cache Read --> x1 = 1
+States: 
+CPU-0 ->invalid
+CPU-1 ->invalid->shared
+CPU-2 ->invalid
+CPU-3 ->invalid->modified->shared
+Clk Tick: 25
+
+======================================================================
+======================================================================
+
+[CPU-1]: SW x1, 1028
+[CPU-1]: Main Memory Write
+Data Written to RAM --> x1 = 3
+States: 
+CPU-0 ->invalid
+CPU-1 ->invalid->shared->modified
+CPU-2 ->invalid
+CPU-3 ->invalid->modified->shared->invalid
+Clk Tick: 30
+
+======================================================================
+======================================================================
+
+[CPU-1]: SW x1, 1032
+[CPU-1]: Main Memory Write
+Data Written to RAM --> x1 = 3
+States: 
+CPU-0 ->invalid
+CPU-1 ->invalid->modified
+CPU-2 ->invalid
+CPU-3 ->invalid
+Clk Tick: 35
+
+======================================================================
+======================================================================
+
